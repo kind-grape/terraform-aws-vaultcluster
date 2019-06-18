@@ -1,0 +1,15 @@
+#  Local .terraform directories
+**/.terraform*
+**/packer/
+**varfiles/
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
+
+id_rsa*
+
+crash.log
