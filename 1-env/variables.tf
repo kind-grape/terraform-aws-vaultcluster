@@ -132,9 +132,6 @@ variable "consul_bk" {
   description = "Default values for an instance"
 
   default = {
-    ebs_name          = "xvdz"
-    ebs_type          = "gp2"
-    ebs_size          = "50"
     root_name         = "/"
     root_size         = "50"
     root_type         = "gp2"
@@ -163,9 +160,6 @@ variable "consul_bk" {
 
 variable "consul_sd" {
   default = {
-    ebs_name          = "xvdz"
-    ebs_type          = "gp2"
-    ebs_size          = "50"
     root_name         = "/"
     root_size         = "50"
     root_type         = "gp2"
@@ -194,9 +188,6 @@ variable "consul_sd" {
 
 variable "vault" {
   default = {
-    ebs_name          = "xvdz"
-    ebs_type          = "gp2"
-    ebs_size          = "50"
     root_name         = "/"
     root_size         = "50"
     root_type         = "gp2"
@@ -210,7 +201,7 @@ variable "vault" {
     datacenter_consul = "csl"
     ports             = "8200,8201"
     ingress_rules     = "vault-tcp,vault-cluster-tcp"
-    listening_port    = "7500"
+    listening_port    = "8200"
     autojoin          = false
     tlslistener       = false
     enterprise        = false
