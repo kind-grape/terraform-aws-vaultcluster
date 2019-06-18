@@ -151,8 +151,8 @@ variable "rules" {
     storm-supervisor-tcp = [6700, 6703, "tcp", "Supervisor"]
 
     # Vault
-    vault-tcp          = [8200, 8200, "tcp", "Vault server"]
-    vault-cluster-tcp  = [8201, 8201, "tcp", "Vault Cluster Com port"]
+    vault-tcp         = [8200, 8200, "tcp", "Vault server"]
+    vault-cluster-tcp = [8201, 8201, "tcp", "Vault Cluster Com port"]
 
     # Web
     web-jmx-tcp = [1099, 1099, "tcp", "JMX"]

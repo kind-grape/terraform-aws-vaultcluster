@@ -851,7 +851,6 @@ resource "aws_vpc_endpoint" "kms" {
   private_dns_enabled = "${var.kms_endpoint_private_dns_enabled}"
 }
 
-
 #######################
 # VPC Endpoint for ECS
 #######################
@@ -873,7 +872,6 @@ resource "aws_vpc_endpoint" "ecs" {
   private_dns_enabled = "${var.ecs_endpoint_private_dns_enabled}"
 }
 
-
 #######################
 # VPC Endpoint for ECS Agent
 #######################
@@ -894,7 +892,6 @@ resource "aws_vpc_endpoint" "ecs_agent" {
   subnet_ids          = ["${coalescelist(var.ecs_agent_endpoint_subnet_ids, aws_subnet.private.*.id)}"]
   private_dns_enabled = "${var.ecs_agent_endpoint_private_dns_enabled}"
 }
-
 
 #######################
 # VPC Endpoint for ECS Telemetry

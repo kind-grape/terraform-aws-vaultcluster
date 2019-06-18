@@ -79,7 +79,7 @@ variable "ingress_rules" {
   type        = "list"
 
   default = [
-    "ssh-tcp"
+    "ssh-tcp",
   ]
 }
 
@@ -88,7 +88,7 @@ variable "security_groups" {
   type        = "list"
 
   default = [
-    "ssh-tcp"
+    "ssh-tcp",
   ]
 }
 
@@ -123,8 +123,8 @@ variable "kms" {
   type        = "map"
 
   default = {
-    iam_instance_profile_path   = "/" # standard or premium
-    key_deletion_window         = "10"
+    iam_instance_profile_path = "/"  # standard or premium
+    key_deletion_window       = "30"
   }
 }
 
