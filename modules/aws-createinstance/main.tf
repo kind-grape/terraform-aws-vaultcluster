@@ -1,5 +1,5 @@
 data "template_file" "user_data_consul" {
-  count    = "${var.serverinfo["role"] == "consul" ? 1 : 0}"
+  count    = "${var.serverinfo["role"] == "consul" && var.serverinfo["count"] >= 1 ? 1 : 0}"
   template = "${file("var.user_data")}"
   vars = {
     consul_bootstrap_expect = "${var.serverinfo["count"]}"
@@ -18,7 +18,7 @@ data "template_file" "user_data_consul" {
 }
 
 data "template_file" "user_data_vault" {
-  count    = "${var.serverinfo["role"] == "vault" ? 1 : 0}"
+  count    = "${var.serverinfo["role"] == "vault" && var.serverinfo["count"] >= 1 ? 1 : 0}"
   template = "${file("var.user_data")}"
   vars = {
     # consul_bootstrap_expect = "${aws_instance.vault.private_ip}"

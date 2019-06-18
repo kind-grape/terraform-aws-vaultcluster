@@ -117,10 +117,15 @@ variable "tags" {
   }
 }
 
-variable "extra_tags" {
+variable "vault_extra_tags" {
   description = "Tags used across all resources that can be tagged"
   type        = "map"
+  default = {}
+}
 
+variable "consul_bk_extra_tags" {
+  description = "Tags used across all resources that can be tagged"
+  type        = "map"
   default = {}
 }
 

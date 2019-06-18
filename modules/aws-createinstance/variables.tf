@@ -1,6 +1,6 @@
 variable "os_user" {}
 variable "user_data" {
-  default = "template/user_data.sh"
+  default = "user_data.sh"
 }
 variable "key_name" {}
 variable "hostname" {}

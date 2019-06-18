@@ -16,16 +16,9 @@ module "consulbk_sg" {
   }
 }
 
-
 locals {
-  extra_tags = "${map("auto_join", var.consul_bk["role"])}"
+  consul_bk_extra_tags = "${map("auto_join", var.consul_bk["role"])}"
 }
-# variable "extra_tags" {
-#   type = "map"
-#   default = {
-#     auto_join = "${var.consul_bk["role"]}"
-#   }
-# }
 
 module "consul_bk" {
   source          = "../modules/aws-createinstance"
@@ -35,20 +28,7 @@ module "consul_bk" {
   environment     = "${var.environment}"
   os_user         = "${var.os_user}"
   key_name        = "${var.key_name}"
-  tags            = "${merge(var.tags, var.extra_tags)}"
+  tags            = "${merge(var.tags, var.consul_bk_extra_tags)}"
   serverinfo      = "${var.consul_bk}"
   hostname        = "${lower(var.tags["client"])}-${var.consul_bk["role"]}-srv"
 }
-
-# module "consul_bk_config" {
-#   source          = "../modules/consul_bk_config"
-#   ssh_public_key  = "${file(var.ssh_public_key_location)}"
-#   region          = "${var.region}"
-#   masterkey       = "${var.masterkey}"
-#   environment     = "${var.environment}"
-#   os_user         = "${var.os_user}"
-#   key_name        = "${var.key_name}"
-#   tags            = "${var.tags}"
-#   serverinfo      = "${var.consul_bk}"
-#   hostname        = "${lower(var.tags["client"])}-${var.consul_bk["role"]}-srv"
-# }

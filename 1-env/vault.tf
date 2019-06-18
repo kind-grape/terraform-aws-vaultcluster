@@ -16,6 +16,10 @@ module "vault_sg" {
   }
 }
 
+locals {
+  vault_extra_tags = "${map("auto_join", var.vault["role"])}"
+}
+
 module "vault" {
   source          = "../modules/aws-createinstance"
   region          = "${var.region}"
@@ -24,7 +28,7 @@ module "vault" {
   environment     = "${var.environment}"
   os_user         = "${var.os_user}"
   key_name        = "${var.key_name}"
-  tags            = "${var.tags}"
+  tags            = "${merge(var.tags, var.vault_extra_tags)}"
   serverinfo      = "${var.vault}"
   hostname        = "${lower(var.tags["client"])}-${var.vault["role"]}-srv"
 }
