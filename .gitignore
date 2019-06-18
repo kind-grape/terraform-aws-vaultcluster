@@ -1,5 +1,7 @@
 #  Local .terraform directories
 **/.terraform*
+
+
 **/packer/
 **varfiles/
 
@@ -10,6 +12,8 @@
 # .tfvars files
 *.tfvars
 
+# Other files that should not be kept
 id_rsa*
+*.json
 
 crash.log
