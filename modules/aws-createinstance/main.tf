@@ -14,7 +14,7 @@ resource "aws_instance" "default" {
   }
 
   tags        = {
-    Name          = "${lower(var.tags["client"])}-${var.environment}-srv${count.index}"
+    Name          = "${var.hostname}${count.index}"
     client        = "${var.tags["client"]}"
   }
 }
