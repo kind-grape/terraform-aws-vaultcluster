@@ -18,7 +18,6 @@ module "vault_sg" {
 
 module "vault" {
   source          = "../modules/aws-createinstance"
-  ssh_public_key  = "${file(var.ssh_public_key_location)}"
   region          = "${var.region}"
   security_groups = "${module.vault_sg.this_security_group_id}"
   subnet_id       = "${var.subnet_id}"

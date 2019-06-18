@@ -12,6 +12,11 @@ variable "chef_project" {
   default = "vaultcluster"
 }
 
+variable "playfile" {
+  description = ""
+  default = "boostrap.yml"
+}
+
 variable "sdenckey" {}
 variable "dataenckey" {}
 variable "sdsrvnodes" {}

@@ -23,13 +23,12 @@ variable "os_user" {
   default     = "ec2-user"
 }
 
-variable "ssh_public_key_location" {
-  description = "Public Key location from within Terraform"
-  type        = "string"
-  default     = "../varfiles/id_rsa.pub"
-}
+# variable "ssh_public_key_location" {
+#   description = "Public Key location from within Terraform"
+#   type        = "string"
+#   default     = "../varfiles/id_rsa.pub"
+# }
 
-# variable "ssh_private_key_location" {}
 variable "address_space" {
   description = "Default Supernet that all networks reside within"
   type        = "string"
@@ -88,7 +87,7 @@ variable "security_groups" {
   type        = "list"
 
   default = [
-    "ssh-tcp",
+    "sg-00000000000000000",
   ]
 }
 
@@ -116,6 +115,13 @@ variable "tags" {
     client     = "TESTCLIENT"
     costcenter = "TESTCOMPANY"
   }
+}
+
+variable "extra_tags" {
+  description = "Tags used across all resources that can be tagged"
+  type        = "map"
+
+  default = {}
 }
 
 variable "kms" {
@@ -158,13 +164,27 @@ variable "consul_bk" {
   }
 }
 
+variable "consul_bk_ports" {
+  description = "Ports required to run Consul Backend"
+  type        = "map"
+
+  default = {
+    server_rpc_port  = "7300"
+    serf_lan_port = "7301"
+    serf_wan_port = "7302"
+    http_port = "-1"
+    https_port = "7501"
+    dns_port = "7600"
+  }
+}
+
 variable "consul_sd" {
   default = {
     root_name         = "/"
     root_size         = "50"
     root_type         = "gp2"
     security_group    = ""
-    ami               = "ami-0aa91bebc77bc2b35"
+    ami               = "ami-0000000000000000a"
     size              = "t2.micro"
     health_check_type = "EC2"
     backup            = false
@@ -178,6 +198,8 @@ variable "consul_sd" {
     tlslistener       = false
     enterprise        = false
     enablesyslog      = false
+    masterkey         = "1111111111111111111111=="
+    agentkey          = "2222222222222222222222=="
     ui                = true
     count             = 0
     max_size          = 3
@@ -192,7 +214,7 @@ variable "vault" {
     root_size         = "50"
     root_type         = "gp2"
     security_group    = ""
-    ami               = "ami-07c91505b3faa872e"
+    ami               = "ami-0000000000000000b"
     size              = "t2.micro"
     health_check_type = "EC2"
     backup            = false

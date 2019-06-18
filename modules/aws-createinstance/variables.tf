@@ -1,5 +1,7 @@
 variable "os_user" {}
-variable "ssh_public_key" {}
+variable "user_data" {
+  default = "template/user_data.sh"
+}
 variable "key_name" {}
 variable "hostname" {}
 variable "security_groups" {}
@@ -7,9 +9,9 @@ variable "security_groups" {}
 # variable "azurename_prefix" {}
 variable "subnet_id" {}
 
-# variable "subnet_ids" {
-#   default = {}
-# }
+variable "consul_bk_ports" {
+  default = {}
+}
 variable "region" {}
 
 variable "tags" {
@@ -27,4 +29,3 @@ variable "environment" {}
 # variable "network_resource_group_name" {}
 # variable "network_security_group_name" {}
 # variable "network_security_group_id" {}
-
