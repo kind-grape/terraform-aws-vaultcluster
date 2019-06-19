@@ -18,6 +18,6 @@ resource "aws_instance" "default" {
   tags = {
     Name   = "${var.hostname}${count.index}"
     client = "${var.tags["client"]}"
-    auto_join = "${var.tags["auto_join"]}"
+    auto_join = "${replace(var.tags["auto_join"], "AUTOJOIN", var.serverinfo["role"])}"
   }
 }

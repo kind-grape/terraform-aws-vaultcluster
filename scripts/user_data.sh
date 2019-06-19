@@ -34,7 +34,7 @@ _EOF_
 export -f create_config
 
 {% if role == 'consulbk' %}
-create_config > /tmp/consul-ansible/boostrap.yml
+create_config > /tmp/consul-ansible/bootsrap.yml
 {% else %}
 
 {% endif %}
