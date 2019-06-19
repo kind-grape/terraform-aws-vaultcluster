@@ -1,9 +1,10 @@
 #!/bin/bash -x
 set -x
+role="${role}"
 
+if [ "$role" == "cslbk" ]; then
 function create_config {
 cat <<- _EOF_
-{% if role == 'consulbk' %}
 - hosts: tag_Name_consul_storage_novel_yak
   become: yes
   vars:
@@ -24,17 +25,17 @@ cat <<- _EOF_
 
   roles:
     - consul-agent
-{% else %}
-roles:
-  - vault-agent
-{% endif %}
 _EOF_
 }
 
 export -f create_config
 
-{% if role == 'consulbk' %}
-create_config > /tmp/consul-ansible/bootsrap.yml
-{% else %}
+create_config > /tmp/consul-ansible/bootstrap.yml
 
-{% endif %}
+elif [ "$role" == "cslsd" ]; then
+  echo "Need Consul Service Discovery Variables"
+elif [ "$role" == "vault" ]; then
+  echo "Need Vault Variables"
+else
+  echo "You suck at role association"
+fi

@@ -8,14 +8,20 @@ output "nsg_consulbk_name" {
 output "nsg_consulbk_id" {
   value = "${module.consulbk_sg.this_security_group_id}"
 }
+
+# output "consul_bk_user_data" {
+#   value = "${module.consul_bk_user_data.user_data}"
+# }
+
 #
 # output "consulbk_srv_names" {
 #   value = ["${module.consul_backend.server_names}"]
 # }
 
-output "consulbk_srv_ids" {
-  value = ["${module.consul_bk.server_ids}"]
-}
+# output "consulbk_srv_ids" {
+#   value = ["${module.consul_bk.server_ids}"]
+# }
+
 #
 # output "consulbk_status" {
 #   value = "${module.consul_backend.status}"
@@ -24,21 +30,21 @@ output "consulbk_srv_ids" {
 # #######################################################
 # ## Consul SD outputs
 # #######################################################
-output "nsg_consulsd_name" {
-  value = "${module.consulsd_sg.this_security_group_name}"
-}
-
-output "nsg_consulsd_id" {
-  value = "${module.consulsd_sg.this_security_group_id}"
-}
+# output "nsg_consulsd_name" {
+#   value = "${module.consulsd_sg.this_security_group_name}"
+# }
+#
+# output "nsg_consulsd_id" {
+#   value = "${module.consulsd_sg.this_security_group_id}"
+# }
 
 # output "consulsd_srv_names" {
 #   value = ["${module.consul_sd.server_names}"]
 # }
 
-output "consulsd_srv_ids" {
-  value = ["${module.consul_sd.server_ids}"]
-}
+# output "consulsd_srv_ids" {
+#   value = ["${module.consul_sd.server_ids}"]
+# }
 
 # output "consulsd_status" {
 #   value = "${module.consul_sd.status}"
@@ -54,14 +60,16 @@ output "nsg_vault_name" {
 output "nsg_vault_id" {
   value = "${module.vault_sg.this_security_group_id}"
 }
+
 #
 # output "vault_srv_names" {
 #   value = ["${module.vault.server_names}"]
 # }
 #
-output "vault_srv_ids" {
-  value = ["${module.vault.server_ids}"]
-}
+# output "vault_srv_ids" {
+#   value = ["${module.vault.server_ids}"]
+# }
+
 #
 # output "vault_status" {
 #   value = "${module.vault.status}"
@@ -76,4 +84,8 @@ output "kms_arn" {
 
 output "kms_id" {
   value = "${module.kms.kms_id}"
+}
+
+output "kms_iam_instance_profile" {
+  value = "${module.kms.iam_instance_profile}"
 }

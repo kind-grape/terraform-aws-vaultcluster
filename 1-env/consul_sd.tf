@@ -16,16 +16,38 @@ module "consulsd_sg" {
   }
 }
 
-module "consul_sd" {
-  source          = "../modules/aws-createinstance"
+module "consul_sd_user_data" {
+  source          = "../modules/aws-hashi_user_data"
+  user_data       = "${var.user_data}"
   region          = "${var.region}"
-  user_data       = "${module.hashi_user_data.user_data}"
-  security_groups = "${module.consulsd_sg.this_security_group_id}"
-  subnet_id       = "${var.subnet_id}"
-  environment     = "${var.environment}"
-  os_user         = "${var.os_user}"
-  key_name        = "${var.key_name}"
+  ports           = "${var.ports}"
   tags            = "${var.tags}"
   serverinfo      = "${var.consul_sd}"
-  hostname        = "${lower(var.tags["client"])}-${var.consul_sd["role"]}-srv"
 }
+
+module "consul_sd" {
+  source               = "../modules/aws-asg"
+  # region               = "${var.region}"
+  user_data            = "${module.consul_sd_user_data.user_data}"
+  security_groups      = ["${module.consulsd_sg.this_security_group_id}"]
+  iam_instance_profile = "${module.kms.iam_instance_profile}"
+  subnet_id            = ["${var.subnet_id}"]
+  key_name             = "${var.key_name}"
+  tags                 = "${var.tags}"
+  serverinfo           = "${var.consul_sd}"
+  cluster_name         = "${lower(var.tags["client"])}-${var.consul_sd["role"]}"
+}
+
+# module "consul_sd" {
+#   source          = "../modules/aws-createinstance"
+#   region          = "${var.region}"
+#   user_data       = "${module.hashi_user_data.user_data}"
+#   security_groups = "${module.consulsd_sg.this_security_group_id}"
+#   subnet_id       = ["${var.subnet_id}"]
+#   environment     = "${var.environment}"
+#   os_user         = "${var.os_user}"
+#   key_name        = "${var.key_name}"
+#   tags            = "${var.tags}"
+#   serverinfo      = "${var.consul_sd}"
+#   hostname        = "${lower(var.tags["client"])}-${var.consul_sd["role"]}-srv"
+# }

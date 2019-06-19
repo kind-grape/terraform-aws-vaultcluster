@@ -16,25 +16,38 @@ module "consulbk_sg" {
   }
 }
 
-module "hashi_user_data" {
+module "consul_bk_user_data" {
   source          = "../modules/aws-hashi_user_data"
   user_data       = "${var.user_data}"
   region          = "${var.region}"
-  consul_bk_ports = "${var.consul_bk_ports}"
+  ports           = "${var.ports}"
   tags            = "${var.tags}"
   serverinfo      = "${var.consul_bk}"
 }
 
+# module "consul_bk" {
+#   source          = "../modules/aws-createinstance"
+#   region          = "${var.region}"
+#   user_data       = "${module.hashi_user_data.user_data}"
+#   security_groups = "${module.consulbk_sg.this_security_group_id}"
+#   subnet_id       = "${var.subnet_id}"
+#   environment     = "${var.environment}"
+#   os_user         = "${var.os_user}"
+#   key_name        = "${var.key_name}"
+#   tags            = "${var.tags}"
+#   serverinfo      = "${var.consul_bk}"
+#   hostname        = "${lower(var.tags["client"])}-${var.consul_bk["role"]}-srv"
+# }
+
 module "consul_bk" {
-  source          = "../modules/aws-createinstance"
-  region          = "${var.region}"
-  user_data       = "${module.hashi_user_data.user_data}"
-  security_groups = "${module.consulbk_sg.this_security_group_id}"
-  subnet_id       = "${var.subnet_id}"
-  environment     = "${var.environment}"
-  os_user         = "${var.os_user}"
-  key_name        = "${var.key_name}"
-  tags            = "${var.tags}"
-  serverinfo      = "${var.consul_bk}"
-  hostname        = "${lower(var.tags["client"])}-${var.consul_bk["role"]}-srv"
+  source               = "../modules/aws-asg"
+  # region               = "${var.region}"
+  user_data            = "${module.consul_bk_user_data.user_data}"
+  security_groups      = ["${module.consulbk_sg.this_security_group_id}"]
+  iam_instance_profile = "${module.kms.iam_instance_profile}"
+  subnet_id            = ["${var.subnet_id}"]
+  key_name             = "${var.key_name}"
+  tags                 = "${var.tags}"
+  serverinfo           = "${var.consul_bk}"
+  cluster_name         = "${lower(var.tags["client"])}-${var.consul_bk["role"]}"
 }

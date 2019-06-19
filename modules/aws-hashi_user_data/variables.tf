@@ -1,6 +1,6 @@
 variable "user_data" {}
 
-variable "consul_bk_ports" {
+variable "ports" {
   default = {}
 }
 variable "region" {}

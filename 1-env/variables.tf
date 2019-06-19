@@ -25,7 +25,7 @@ variable "os_user" {
 
 variable "user_data" {
   description = "Variable place holder for rendered User Data scripts"
-  default = "../scripts/user_data.sh"
+  default     = "../scripts/user_data.sh"
 }
 
 # variable "ssh_public_key_location" {
@@ -48,8 +48,7 @@ variable "key_name" {
 
 variable "subnet_id" {
   description = "Subnet where servers will reside"
-  type        = "string"
-  default     = "subnet-0000000000000000e"
+  default     = ["subnet-0000000000000000e"]
 }
 
 variable "vpc_id" {
@@ -119,25 +118,26 @@ variable "tags" {
   default = {
     client     = "TESTCLIENT"
     costcenter = "TESTCOMPANY"
+    auto_join  = "AUTOJOIN"
   }
 }
 
 variable "vault_extra_tags" {
   description = "Tags used across all resources that can be tagged"
   type        = "map"
-  default = {}
+  default     = {}
 }
 
 variable "consul_bk_extra_tags" {
   description = "Tags used across all resources that can be tagged"
   type        = "map"
-  default = {}
+  default     = {}
 }
 
 variable "consul_sd_extra_tags" {
   description = "Tags used across all resources that can be tagged"
   type        = "map"
-  default = {}
+  default     = {}
 }
 
 variable "kms" {
@@ -149,6 +149,11 @@ variable "kms" {
     key_deletion_window       = "30"
   }
 }
+
+# variable "availability_zones" {
+#   description = "A list AZs the Consul cluster will be deployed into"
+#   type        = "list"
+# }
 
 variable "consul_bk" {
   description = "Default values for an instance"
@@ -176,23 +181,33 @@ variable "consul_bk" {
     enablesyslog      = false
     ui                = true
     count             = 0
-    max_size          = 3
+    desired_capacity  = 1
+    max_size          = 1
     min_size          = 0
     startindex        = 0
   }
 }
 
-variable "consul_bk_ports" {
+variable "ports" {
   description = "Ports required to run Consul Backend"
   type        = "map"
 
   default = {
-    server_rpc_port  = "7300"
-    serf_lan_port = "7301"
-    serf_wan_port = "7302"
-    http_port = "-1"
-    https_port = "7501"
-    dns_port = "7600"
+    consulbk_server_rpc_port = "7300"
+    consulbk_serf_lan_port   = "7301"
+    consulbk_serf_wan_port   = "7302"
+    consulbk_http_port       = "-1"
+    consulbk_https_port      = "7501"
+    consulbk_dns_port        = "7600"
+    consulsd_server_rpc_port = "8300"
+    consulsd_serf_lan_port   = "8301"
+    consulsd_serf_wan_port   = "8302"
+    consulsd_http_port       = "-1"
+    consulsd_https_port      = "8501"
+    consulsd_dns_port        = "8600"
+    vault_server_tcp_port     = "8200"
+    vault_http_port         = "8201"
+    vault_https_port          = "8202"
   }
 }
 
@@ -220,7 +235,8 @@ variable "consul_sd" {
     agentkey          = "2222222222222222222222=="
     ui                = true
     count             = 0
-    max_size          = 3
+    desired_capacity  = 1
+    max_size          = 1
     min_size          = 0
     startindex        = 0
   }
@@ -246,9 +262,11 @@ variable "vault" {
     tlslistener       = false
     enterprise        = false
     enablesyslog      = false
+    masterkey         = "1111111111111111111111=="
     ui                = true
     count             = 0
-    max_size          = 3
+    desired_capacity  = 1
+    max_size          = 1
     min_size          = 0
     startindex        = 0
   }

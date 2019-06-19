@@ -9,6 +9,7 @@ variable "subnet_id" {}
 variable "consul_bk_ports" {
   default = {}
 }
+
 variable "region" {}
 
 variable "tags" {
