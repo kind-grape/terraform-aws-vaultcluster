@@ -5,7 +5,7 @@ role="${role}"
 if [ "$role" == "cslbk" ]; then
 function create_config {
 cat <<- _EOF_
-- hosts: tag_Name_consul_storage_novel_yak
+- hosts: localhost
   become: yes
   vars:
     consul_bootstrap_expect: ${consul_bootstrap_expect}
@@ -30,8 +30,8 @@ _EOF_
 
 export -f create_config
 
-create_config > /tmp/consul-ansible/bootstrap.yml
-
+create_config > /etc/ansible/bootstrap.yml
+# ansible-playbook bootstrap.yml
 elif [ "$role" == "cslsd" ]; then
   echo "Need Consul Service Discovery Variables"
 elif [ "$role" == "vault" ]; then
