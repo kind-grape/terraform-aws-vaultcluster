@@ -1,0 +1,20 @@
+- hosts: tag_Name_consul_storage_novel_yak
+  become: yes
+  vars:
+    consul_bootstrap_expect: 3
+    consul_join_tag_key: ConsulClusterJoin
+    consul_join_tag_value: ihm-prod-vault-consul-storage
+    consul_join_region: us-east-1
+    consul_agent_role: server
+    consul_server_rpc_port: 7300
+    consul_serf_lan_port: 7301
+    consul_serf_wan_port: 7302
+    consul_http_port: -1
+    consul_https_port: 7501
+    consul_dns_port: 7600
+    consul_encryption_key: 8I7P6mGEnnfN5bR2rO5guQ==
+    consul_agent_policy_name: consul-agent-0
+    consul_application_policy_name: vault-agent-0
+
+  roles:
+    - consul-agent

@@ -2,7 +2,7 @@
 **/.terraform*
 
 
-**/packer/
+# **/packer/
 **varfiles/
 
 # .tfstate files
@@ -15,6 +15,7 @@
 # Other files that should not be kept
 id_rsa*
 *.json
+*.zip
 
 crash.log
 blah.txt

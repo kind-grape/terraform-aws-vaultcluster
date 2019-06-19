@@ -1,0 +1,39 @@
+{
+  "variables": {
+    "app_name": "consul-or-vault",
+    "version": "1.0.0",
+    "region": "us-east-1",
+    "vpc_id": "vpc-0000000000000000a",
+    "subnet_id": "subnet-0000000000000000b",
+    "ssh_username": "ec2-user"
+    "source_ami_name": "amzn2-ami-hvm-2.0.20190508-x86_64-gp2",
+    "source_ami_owner": "amazon",
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "{{user `region`}}",
+    "vpc_id": "{{ user `vpc_id`}}",
+    "subnet_id": "{{ user `subnet_id`}}",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "{{user `source_ami_name`}}",
+        "root-device-type": "ebs"
+      },
+      "owners": ["{{user `source_ami_owner`}}"]
+    },
+    "instance_type": "t2.micro",
+    "ssh_username": "{{ user `ssh_username` }}",
+    "ami_name": "amz2-{{user `app_name`}}-ent-{{user `version`}}-{{timestamp}}"
+  }],
+  "provisioners": [{
+    "type": "ansible",
+    "playbook_file": "./install.yml",
+    "extra_arguments": [
+      "--extra-vars", "version={{user `version`}} app={{user `app_name`}}"
+    ],
+    "ansible_env_vars": [
+      "ANSIBLE_RETRY_FILES_ENABLED=no"
+    ]
+  }]
+}
