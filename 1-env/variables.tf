@@ -23,6 +23,11 @@ variable "os_user" {
   default     = "ec2-user"
 }
 
+variable "user_data" {
+  description = "Variable place holder for rendered User Data scripts"
+  default = "../scripts/user_data.sh"
+}
+
 # variable "ssh_public_key_location" {
 #   description = "Public Key location from within Terraform"
 #   type        = "string"
@@ -129,6 +134,12 @@ variable "consul_bk_extra_tags" {
   default = {}
 }
 
+variable "consul_sd_extra_tags" {
+  description = "Tags used across all resources that can be tagged"
+  type        = "map"
+  default = {}
+}
+
 variable "kms" {
   description = "Secrets Vault Values"
   type        = "map"
@@ -157,6 +168,8 @@ variable "consul_bk" {
     ports             = "8300,8301,8302,8500,8600,7300,7301,7302,7500,7600"
     ingress_rules     = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
     listening_port    = "7500"
+    masterkey         = "1111111111111111111111=="
+    agentkey          = "2222222222222222222222=="
     autojoin          = false
     tlslistener       = false
     enterprise        = false

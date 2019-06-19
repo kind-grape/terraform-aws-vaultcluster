@@ -19,6 +19,7 @@ module "consulsd_sg" {
 module "consul_sd" {
   source          = "../modules/aws-createinstance"
   region          = "${var.region}"
+  user_data       = "${module.hashi_user_data.user_data}"
   security_groups = "${module.consulsd_sg.this_security_group_id}"
   subnet_id       = "${var.subnet_id}"
   environment     = "${var.environment}"

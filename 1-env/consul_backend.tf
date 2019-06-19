@@ -16,19 +16,25 @@ module "consulbk_sg" {
   }
 }
 
-locals {
-  consul_bk_extra_tags = "${map("auto_join", var.consul_bk["role"])}"
+module "hashi_user_data" {
+  source          = "../modules/aws-hashi_user_data"
+  user_data       = "${var.user_data}"
+  region          = "${var.region}"
+  consul_bk_ports = "${var.consul_bk_ports}"
+  tags            = "${var.tags}"
+  serverinfo      = "${var.consul_bk}"
 }
 
 module "consul_bk" {
   source          = "../modules/aws-createinstance"
   region          = "${var.region}"
+  user_data       = "${module.hashi_user_data.user_data}"
   security_groups = "${module.consulbk_sg.this_security_group_id}"
   subnet_id       = "${var.subnet_id}"
   environment     = "${var.environment}"
   os_user         = "${var.os_user}"
   key_name        = "${var.key_name}"
-  tags            = "${merge(var.tags, var.consul_bk_extra_tags)}"
+  tags            = "${var.tags}"
   serverinfo      = "${var.consul_bk}"
   hostname        = "${lower(var.tags["client"])}-${var.consul_bk["role"]}-srv"
 }
