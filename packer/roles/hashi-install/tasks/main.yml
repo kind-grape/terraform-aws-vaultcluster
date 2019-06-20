@@ -50,6 +50,11 @@
 - name: Create TLS directory
   file: path="/etc/{{ app }}.d/tls" state=directory owner="{{ app }}" group="{{ app }}"
 
+# - name: Create TLS Certificates
+#   command: /usr/local/bin/consul tls cert create -server
+#   chdir: /etc/{{ app }}.d/tls
+#   with_items:
+
 - name: "Set permissions on /etc/{{ app }}.d"
   file: path="/etc/{{ app }}.d" mode=0700 recurse=yes
 

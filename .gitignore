@@ -4,6 +4,7 @@
 
 # **/packer/
 **varfiles/
+**certs/
 
 # .tfstate files
 *.tfstate
@@ -16,6 +17,7 @@
 id_rsa*
 *.json
 *.zip
+*.pem
 
 crash.log
 blah.txt
