@@ -1,12 +1,12 @@
 # #######################################################
 # ## Consul Backend outputs
 # #######################################################
-output "nsg_consulbk_name" {
-  value = "${module.consulbk_sg.this_security_group_name}"
+output "nsg_consul_storage_name" {
+  value = "${module.consul_storage_sg.this_security_group_name}"
 }
 
-output "nsg_consulbk_id" {
-  value = "${module.consulbk_sg.this_security_group_id}"
+output "nsg_consul_storage_id" {
+  value = "${module.consul_storage_sg.this_security_group_id}"
 }
 
 # output "consul_bk_user_data" {

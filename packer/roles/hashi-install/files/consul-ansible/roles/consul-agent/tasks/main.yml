@@ -76,35 +76,6 @@
     group: '{{consul_group}}'
     mode: 0660
 
-- name: Configure iptables
-  iptables:
-    chain: INPUT
-    protocol: "{{ item.protocol }}"
-    destination_port: "{{ item.destination_port }}"
-    jump: ACCEPT
-    ctstate: NEW
-    action: append
-    comment: "{{ item.comment }}"
-  with_items:
-    - { protocol: "tcp", destination_port: "{{ consul_server_rpc_port }}", comment: "Consul RPC traffic" }
-    - { protocol: "tcp", destination_port: "{{ consul_serf_lan_port }}", comment: "Consul LAN Serf traffic" }
-    - { protocol: "udp", destination_port: "{{ consul_serf_lan_port }}", comment: "Consul LAN Serf traffic" }
-    - { protocol: "tcp", destination_port: "{{ consul_serf_wan_port }}", comment: "Consul WAN Serf traffic" }
-    - { protocol: "udp", destination_port: "{{ consul_serf_wan_port }}", comment: "Consul WAN Serf traffic" }
-    - { protocol: "tcp", destination_port: "{{ consul_http_port }}", comment: "Consul API HTTP traffic" }
-    - { protocol: "tcp", destination_port: "{{ consul_https_port }}", comment: "Consul API HTTPS traffic" }
-    - { protocol: "tcp", destination_port: "{{ consul_dns_port }}", comment: "Consul DNS Server traffic" }
-    - { protocol: "udp", destination_port: "{{ consul_dns_port }}", comment: "Consul DNS Server traffic" }
-  when:
-    - item.destination_port != -1
-  register: iptables
-
-- name: Save iptables
-  command: "service iptables save"
-  args:
-    warn: false
-  when: iptables is changed
-
 - name: Set Consul environment variables
   copy:
     dest: /etc/profile.d/99-consul-env.sh

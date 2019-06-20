@@ -1,13 +1,13 @@
-module "consulbk_sg" {
+module "consul_storage_sg" {
   source = "../modules/aws-security_group"
-  create = "${var.consul_bk["count"] >= 1 ? true : false}"
+  create = "${var.consul_storage["count"] >= 1 ? true : false}"
 
   name        = "consulbk_sg"
   description = "Security group consul backend"
   vpc_id      = "${var.vpc_id}"                 # or use ${var.vpc_id} if there is an already defined network
 
   ingress_cidr_blocks = ["${var.mgmt_subnets}"]
-  ingress_rules       = ["${split(",", var.consul_bk["ingress_rules"])}", "${var.ingress_rules}"]
+  ingress_rules       = ["${split(",", var.consul_storage["ingress_rules"])}", "${var.ingress_rules}"]
   egress_rules        = ["all-all"]
 
   tags = {
@@ -16,38 +16,23 @@ module "consulbk_sg" {
   }
 }
 
-module "consul_bk_user_data" {
+module "consul_storage_user_data" {
   source          = "../modules/aws-hashi_user_data"
   user_data       = "${var.user_data}"
   region          = "${var.region}"
   ports           = "${var.ports}"
   tags            = "${var.tags}"
-  serverinfo      = "${var.consul_bk}"
+  serverinfo      = "${var.consul_storage}"
 }
 
-# module "consul_bk" {
-#   source          = "../modules/aws-createinstance"
-#   region          = "${var.region}"
-#   user_data       = "${module.hashi_user_data.user_data}"
-#   security_groups = "${module.consulbk_sg.this_security_group_id}"
-#   subnet_id       = "${var.subnet_id}"
-#   environment     = "${var.environment}"
-#   os_user         = "${var.os_user}"
-#   key_name        = "${var.key_name}"
-#   tags            = "${var.tags}"
-#   serverinfo      = "${var.consul_bk}"
-#   hostname        = "${lower(var.tags["client"])}-${var.consul_bk["role"]}-srv"
-# }
-
-module "consul_bk" {
+module "consul_storage" {
   source               = "../modules/aws-asg"
-  # region               = "${var.region}"
-  user_data            = "${module.consul_bk_user_data.user_data}"
-  security_groups      = ["${module.consulbk_sg.this_security_group_id}"]
+  user_data            = "${module.consul_storage_user_data.user_data}"
+  security_groups      = ["${module.consul_storage_sg.this_security_group_id}"]
   iam_instance_profile = "${module.kms.iam_instance_profile}"
   subnet_id            = ["${var.subnet_id}"]
   key_name             = "${var.key_name}"
   tags                 = "${var.tags}"
-  serverinfo           = "${var.consul_bk}"
-  cluster_name         = "${lower(var.tags["client"])}-${var.consul_bk["role"]}"
+  serverinfo           = "${var.consul_storage}"
+  cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.consul_storage["role"]}"
 }

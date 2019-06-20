@@ -27,7 +27,6 @@ module "vault_user_data" {
 
 module "vault" {
   source               = "../modules/aws-asg"
-  # region               = "${var.region}"
   user_data            = "${module.vault_user_data.user_data}"
   security_groups      = ["${module.vault_sg.this_security_group_id}"]
   iam_instance_profile = "${module.kms.iam_instance_profile}"
@@ -35,19 +34,5 @@ module "vault" {
   key_name             = "${var.key_name}"
   tags                 = "${var.tags}"
   serverinfo           = "${var.vault}"
-  cluster_name         = "${lower(var.tags["client"])}-${var.vault["role"]}"
+  cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.vault["role"]}"
 }
-
-# module "vault" {
-#   source          = "../modules/aws-createinstance"
-#   region          = "${var.region}"
-#   user_data       = "${module.hashi_user_data.user_data}"
-#   security_groups = "${module.vault_sg.this_security_group_id}"
-#   subnet_id       = ["${var.subnet_id}"]
-#   environment     = "${var.environment}"
-#   os_user         = "${var.os_user}"
-#   key_name        = "${var.key_name}"
-#   tags            = "${merge(var.tags, var.vault_extra_tags)}"
-#   serverinfo      = "${var.vault}"
-#   hostname        = "${lower(var.tags["client"])}-${var.vault["role"]}-srv"
-# }

@@ -1,0 +1,48 @@
+- name: "Copy {{ item }} archive"
+  copy: src="{{ item }}" dest="/tmp"
+  with_items:
+    - "{{ app }}-enterprise_{{ version }}+prem_linux_amd64.zip"
+
+- name: "Copy {{ app }} ansible directory"
+  copy: src="{{ item }}" dest="/etc/{{ app }}-ansible/"
+  with_items:
+    ['{{ app }}-ansible/host_vars','{{ app }}-ansible/roles','{{ app }}-ansible/ansible.cfg','{{ app }}-ansible/hosts','{{ app }}-ansible/ec2.ini','{{ app }}-ansible/ec2.py']
+
+- name: "Unarchive {{ app }}"
+  unarchive:
+    src: "/tmp/{{ app }}-enterprise_{{ version }}+prem_linux_amd64.zip"
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    remote_src: yes
+
+- name: Setup autocompletion
+  copy:
+    content: complete -C "/usr/local/bin/{{ app }}" "{{ app }}"
+    dest: "/etc/profile.d/99-{{ app }}-completion.sh"
+    mode: 0644
+
+- name: "Create {{ app }} user"
+  user:
+    name: "{{ app }}"
+    system: yes
+    shell: /bin/false
+    createhome: yes
+    home: "/etc/{{ app }}.d"
+
+- name: Create TLS directory
+  file: path="/etc/{{ app }}.d/tls" state=directory owner="{{ app }}" group="{{ app }}"
+
+- name: "Set permissions on /etc/{{ app }}.d"
+  file: path="/etc/{{ app }}.d" mode=0700 recurse=yes
+
+- name: Create data directory
+  file: path="/var/lib/{{ app }}" state=directory
+
+- name: "Set permissions on /var/lib/{{ app }}"
+  file: path="/var/lib/{{ app }}" owner="{{ app }}" group="{{ app }}" mode=0700
+
+- name: Install systemd unit
+  template:
+    src: "lib/systemd/system/{{ app }}.service.j2"
+    dest: "/lib/systemd/system/{{ app }}.service"

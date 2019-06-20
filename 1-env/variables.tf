@@ -10,7 +10,7 @@ variable "bucket" {
 
 variable "environment" {
   description = "Environment name used to distinguish unique variables and remote state seggregation"
-  default     = "env"
+  default     = "dev"
 }
 
 variable "region" {
@@ -128,7 +128,7 @@ variable "vault_extra_tags" {
   default     = {}
 }
 
-variable "consul_bk_extra_tags" {
+variable "consul_storage_extra_tags" {
   description = "Tags used across all resources that can be tagged"
   type        = "map"
   default     = {}
@@ -147,44 +147,6 @@ variable "kms" {
   default = {
     iam_instance_profile_path = "/"  # standard or premium
     key_deletion_window       = "30"
-  }
-}
-
-# variable "availability_zones" {
-#   description = "A list AZs the Consul cluster will be deployed into"
-#   type        = "list"
-# }
-
-variable "consul_bk" {
-  description = "Default values for an instance"
-
-  default = {
-    root_name         = "/"
-    root_size         = "50"
-    root_type         = "gp2"
-    security_group    = ""
-    ami               = "ami-0000000000000000a"
-    size              = "t2.micro"
-    health_check_type = "EC2"
-    backup            = false
-    role              = "cslbk"
-    datacenter        = "vault"
-    datacenter_consul = "csl"
-    ports             = "8300,8301,8302,8500,8600,7300,7301,7302,7500,7600"
-    ingress_rules     = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
-    listening_port    = "7500"
-    masterkey         = "1111111111111111111111=="
-    agentkey          = "2222222222222222222222=="
-    autojoin          = false
-    tlslistener       = false
-    enterprise        = false
-    enablesyslog      = false
-    ui                = true
-    count             = 0
-    desired_capacity  = 1
-    max_size          = 1
-    min_size          = 0
-    startindex        = 0
   }
 }
 
@@ -208,6 +170,39 @@ variable "ports" {
     vault_server_tcp_port     = "8200"
     vault_http_port         = "8201"
     vault_https_port          = "8202"
+  }
+}
+
+variable "consul_storage" {
+  description = "Default values for an instance"
+
+  default = {
+    root_name         = "/"
+    root_size         = "50"
+    root_type         = "gp2"
+    security_group    = ""
+    ami               = "ami-0000000000000000a"
+    size              = "t2.micro"
+    health_check_type = "EC2"
+    backup            = false
+    role              = "cslstore"
+    datacenter        = "vault"
+    datacenter_consul = "csl"
+    ports             = "8300,8301,8302,8500,8600,7300,7301,7302,7500,7600"
+    ingress_rules     = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
+    listening_port    = "7500"
+    masterkey         = "1111111111111111111111=="
+    agentkey          = "2222222222222222222222=="
+    autojoin          = false
+    tlslistener       = false
+    enterprise        = false
+    enablesyslog      = false
+    ui                = true
+    count             = 0
+    desired_capacity  = 1
+    max_size          = 1
+    min_size          = 0
+    startindex        = 0
   }
 }
 

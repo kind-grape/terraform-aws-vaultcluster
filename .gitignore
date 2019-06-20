@@ -18,6 +18,7 @@ id_rsa*
 *.json
 *.zip
 *.pem
+*.sh
 
 crash.log
 blah.txt
