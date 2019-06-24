@@ -184,7 +184,7 @@ variable "consul_storage" {
     ami               = "ami-0000000000000000a"
     size              = "t2.micro"
     health_check_type = "EC2"
-    backup            = false
+    server            = true
     role              = "cslstore"
     datacenter        = "vault"
     datacenter_consul = "csl"
@@ -215,7 +215,7 @@ variable "consul_sd" {
     ami               = "ami-0000000000000000a"
     size              = "t2.micro"
     health_check_type = "EC2"
-    backup            = false
+    server            = true
     role              = "cslsd"
     datacenter        = "vault"
     datacenter_consul = "csl"
@@ -246,7 +246,7 @@ variable "vault" {
     ami               = "ami-0000000000000000b"
     size              = "t2.micro"
     health_check_type = "EC2"
-    backup            = false
+    server            = false
     role              = "vault"
     datacenter        = "vault"
     datacenter_consul = "csl"

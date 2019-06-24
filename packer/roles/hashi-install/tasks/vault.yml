@@ -1,76 +1,65 @@
-- name: "Copy {{ item }} archive"
-  copy: src="{{ item }}" dest="/tmp"
-  with_items:
-    - "vault-enterprise_{{ version }}+prem_linux_amd64.zip"
-    - "consul-enterprise_{{ consul_version }}+prem_linux_amd64.zip"
+- name: Copy vault archive
+  copy:
+    src: "vault-enterprise_{{ vault_version }}+prem_linux_amd64.zip"
+    dest: "/tmp/vault-enterprise_{{ vault_version }}+prem_linux_amd64.zip"
 
-- name: "Copy consul ansible directory"
-  copy: src="{{ item }}" dest="/etc/consul-ansible/"
-  with_items:
-    ['consul-ansible/host_vars','consul-ansible/roles','consul-ansible/ansible.cfg','consul-ansible/hosts','consul-ansible/ec2.ini','consul-ansible/ec2.py']
-
-- name: "Copy consul ansible directory"
-  copy: src="{{ item }}" dest="/etc/vault-ansible/"
-  with_items:
-    ['vault-ansible/host_vars','vault-ansible/roles','vault-ansible/ansible.cfg','vault-ansible/hosts','vault-ansible/ec2.ini','vault-ansible/ec2.py']
-
-- name: "Unarchive {{ item }}"
+- name: Unarchive vault
   unarchive:
-    src: {{ item }}
+    src: "/tmp/vault-enterprise_{{ vault_version }}+prem_linux_amd64.zip"
     dest: /usr/local/bin
-    copy: no
     owner: root
     group: root
-  with_fileglob: '/tmp/*prem_linux_amd64.zip'
+    remote_src: yes
+
+- name: "Copy vault ansible directory"
+  copy: src="{{ item }}" dest="/etc/vault-ansible/"
+  with_items:
+    - "vault-ansible/host_vars"
+    - "vault-ansible/roles"
+    - "vault-ansible/ansible.cfg"
+    - "vault-ansible/hosts"
+    - "vault-ansible/ec2.ini"
+    - "vault-ansible/ec2.py"
 
 - name: Setup autocompletion
   copy:
-    content: complete -C "/usr/local/bin/{{ item }}" "{{ item }}"
-    dest: "/etc/profile.d/99-{{ item }}-completion.sh"
+    content: complete -C "/usr/local/bin/vault" "vault"
+    dest: "/etc/profile.d/99-vault-completion.sh"
     mode: 0644
-  with_items:
-    - vault
-    - consul
 
-- name: "Create {{ item }} user"
+- name: Create vault user
   user:
-    name: "{{ item }}"
+    name: vault
     system: yes
     shell: /bin/false
-    createhome: yes
-    home: "/etc/{{ item }}.d"
-  with_items:
-    - vault
-    - consul
+    home: /etc/vault.d
+    createhome: no
+    groups: consul
+    append: yes
 
 - name: Create TLS directory
-  file: path="/etc/{{ item }}.d/tls" state=directory owner="{{ item }}" group="{{ item }}"
-  with_items:
-    - vault
-    - consul
-
-- name: "Set permissions on /etc/{{ item }}.d"
-  file: path="/etc/{{ item }}.d" mode=0700 recurse=yes
-  with_items:
-    - vault
-    - consul
+  file:
+    path: /etc/vault.d/tls
+    state: directory
+    owner: vault
+    group: vault
+    mode: '0700'
 
 - name: Create data directory
-  file: path="/var/lib/{{ item }}" state=directory
-  with_items:
-    - vault
-    - consul
+  file:
+    path: /var/lib/vault
+    state: directory
+    owner: vault
+    group: vault
+    mode: '0700'
 
-- name: "Set permissions on /var/lib/{{ item }}"
-  file: path="/var/lib/{{ item }}" owner="{{ item }}" group="{{ item }}" mode=0700
-  with_items:
-    - vault
-    - consul
+- name: Create symbolic link
+  file:
+    src: "/usr/local/bin/vault"
+    dest: "/bin/vault"
+    state: link
 
-- name: "Install systemd {{ item }} unit"
+- name: Install systemd unit
   template:
-    src: "lib/systemd/system/{{ item }}.service.j2"
-    dest: "/lib/systemd/system/{{ item }}.service"
-  with_items:
-    - vault
-    - consul
+    src: lib/systemd/system/vault.service.j2
+    dest: /lib/systemd/system/vault.service

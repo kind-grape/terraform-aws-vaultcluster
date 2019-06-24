@@ -1,0 +1,15 @@
+## ACL
+primary_datacenter = "{{ consul_datacenter }}"
+
+acl = {
+  enabled                  = true
+  default_policy           = "deny"
+  enable_token_persistence = true
+
+  tokens {
+  {% if consul_agent_is_server %}
+    master = "{{ consul_acl_master_token }}"
+  {% endif %}
+    ## AGENT_TOKEN_PLACEHOLDER ##
+  }
+}

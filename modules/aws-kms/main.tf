@@ -10,6 +10,14 @@ data "aws_iam_policy_document" "instance_role" {
   }
 }
 
+data "aws_iam_policy_document" "policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["ec2:DescribeInstances","ssm:*"]
+    resources = ["*"]
+  }
+}
+
 resource "aws_iam_role" "instance_role" {
   name               = "${var.name_prefix}-kms-role"
   tags               = "${var.tags}"
@@ -18,6 +26,12 @@ resource "aws_iam_role" "instance_role" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_iam_role_policy" "instance_role" {
+  name   = "consul-server-${var.name_prefix}"
+  role   = "${aws_iam_role.instance_role.id}"
+  policy = "${data.aws_iam_policy_document.policy.json}"
 }
 
 resource "aws_kms_key" "key" {
@@ -63,23 +77,22 @@ resource "aws_iam_instance_profile" "instance_profile" {
 ####################################################
 
 
-// resource "aws_iam_role" "role" {
-//   name = "${var.name}-kms-role"
-//   tags = "${var.tags}"
-//
-//   assume_role_policy = <<EOF
-// {
-//   "Version": "2012-10-17",
-//   "Statement": [
-//     {
-//       "Action": "sts:AssumeRole",
-//       "Principal": {
-//         "Service": "lambda.amazonaws.com"
-//       },
-//       "Effect": "Allow",
-//       "Sid": ""
-//     }
-//   ]
-// }
-// EOF
-// }
+# resource "aws_iam_role" "role" {
+#  name = "${var.name}-kms-role"
+#  tags = "${var.tags}"
+#  assume_role_policy = <<EOF
+# {
+#  "Version": "2012-10-17",
+#  "Statement": [
+#    {
+#      "Action": "sts:AssumeRole",
+#      "Principal": {
+#        "Service": "lambda.amazonaws.com"
+#      },
+#      "Effect": "Allow",
+#      "Sid": ""
+#    }
+#  ]
+# }
+# EOF
+# }

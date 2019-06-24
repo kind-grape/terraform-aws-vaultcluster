@@ -49,7 +49,7 @@ resource "aws_autoscaling_group" "consul_asg" {
         ),
         map(
           "key", "auto_join",
-          "value", "${replace(var.tags["auto_join"], "AUTOJOIN", var.serverinfo["role"])}",
+          "value", "${replace(var.tags["auto_join"], "AUTOJOIN", var.serverinfo["datacenter"])}",
           "propagate_at_launch", true
         )
       ),

@@ -10,14 +10,11 @@
 
 - name: Install dependencies
   yum:
-    name: ['unzip', 'jq', 'awscli', 'ansible']
+    name: ['unzip', 'jq', 'awscli', 'ansible', 'python2-boto3']
     state: present
     update_cache: true
 
-- name: "Install Vault Role"
-  include_tasks: vault.yml
-  when: {{ app }} == 'vault'
+- include: consul.yml
 
-- name: "Install Consul Role"
-  include_tasks: consul.yml
-  when: {{ app }} == 'consul'
+- include: vault.yml
+  when: app == "vault"

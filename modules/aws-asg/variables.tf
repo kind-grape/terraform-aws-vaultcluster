@@ -20,23 +20,6 @@ variable "serverinfo" {
 variable "iam_instance_profile" {}
 variable "user_data" {}
 
-# variable "security_groups" {}
-
-# variable "availability_zones" {
-#   description = "A list AZs the Consul cluster will be deployed into"
-#   type        = "list"
-# }
-
-# variable "vpc_id" {
-#   description = "The ID of the VPC this will be provisioned in"
-#   type        = "string"
-# }
-
-# variable "aws_region" {
-#   description = "The region the Consul cluster will be deployed in"
-#   type        = "string"
-# }
-
 variable "security_groups" {
   description = "A list of security groups to attach to instances in the Consul cluster beyond the standard Consul ones"
   type        = "list"

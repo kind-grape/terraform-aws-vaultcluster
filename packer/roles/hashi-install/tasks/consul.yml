@@ -1,48 +1,67 @@
-- name: "Copy {{ item }} archive"
-  copy: src="{{ item }}" dest="/tmp"
-  with_items:
-    - "{{ app }}-enterprise_{{ version }}+prem_linux_amd64.zip"
+- name: Copy consul archive
+  copy:
+    src: "consul-enterprise_{{ consul_version }}+prem_linux_amd64.zip"
+    dest: "/tmp/consul-enterprise_{{ consul_version }}+prem_linux_amd64.zip"
 
-- name: "Copy {{ app }} ansible directory"
-  copy: src="{{ item }}" dest="/etc/{{ app }}-ansible/"
-  with_items:
-    ['{{ app }}-ansible/host_vars','{{ app }}-ansible/roles','{{ app }}-ansible/ansible.cfg','{{ app }}-ansible/hosts','{{ app }}-ansible/ec2.ini','{{ app }}-ansible/ec2.py']
-
-- name: "Unarchive {{ app }}"
+- name: Unarchive consul
   unarchive:
-    src: "/tmp/{{ app }}-enterprise_{{ version }}+prem_linux_amd64.zip"
+    src: "/tmp/consul-enterprise_{{ consul_version }}+prem_linux_amd64.zip"
     dest: /usr/local/bin
     owner: root
     group: root
     remote_src: yes
 
+- name: "Copy Consul ansible directory"
+  copy: src="{{ item }}" dest="/etc/consul-ansible/"
+  with_items:
+    - "consul-ansible/host_vars"
+    - "consul-ansible/roles"
+    - "consul-ansible/ansible.cfg"
+    - "consul-ansible/hosts"
+    - "consul-ansible/ec2.ini"
+    - "consul-ansible/ec2.py"
+
 - name: Setup autocompletion
   copy:
-    content: complete -C "/usr/local/bin/{{ app }}" "{{ app }}"
-    dest: "/etc/profile.d/99-{{ app }}-completion.sh"
+    content: complete -C "/usr/local/bin/consul" "consul"
+    dest: /etc/profile.d/99-consul-completion.sh
     mode: 0644
 
-- name: "Create {{ app }} user"
+- name: Create consul user
   user:
-    name: "{{ app }}"
+    name: consul
     system: yes
     shell: /bin/false
-    createhome: yes
-    home: "/etc/{{ app }}.d"
+    home: /etc/consul.d
+    createhome: no
+    append: yes
 
-- name: Create TLS directory
-  file: path="/etc/{{ app }}.d/tls" state=directory owner="{{ app }}" group="{{ app }}"
+- name: Create configuration and TLS directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: consul
+    group: consul
+    mode: '0750'
+  with_items:
+    - /etc/consul.d
+    - /etc/consul.d/tls
 
-- name: "Set permissions on /etc/{{ app }}.d"
-  file: path="/etc/{{ app }}.d" mode=0700 recurse=yes
+- name: Create symbolic link
+  file:
+    src: "/usr/local/bin/consul"
+    dest: "/bin/consul"
+    state: link
 
 - name: Create data directory
-  file: path="/var/lib/{{ app }}" state=directory
-
-- name: "Set permissions on /var/lib/{{ app }}"
-  file: path="/var/lib/{{ app }}" owner="{{ app }}" group="{{ app }}" mode=0700
+  file:
+    path: /var/lib/consul
+    state: directory
+    owner: consul
+    group: consul
+    mode: '0700'
 
 - name: Install systemd unit
   template:
-    src: "lib/systemd/system/{{ app }}.service.j2"
-    dest: "/lib/systemd/system/{{ app }}.service"
+    src: lib/systemd/system/consul.service.j2
+    dest: /lib/systemd/system/consul.service

@@ -1,0 +1,4 @@
+vault_datacenter: dc1
+consul_server_rpc_port: 8200
+consul_http_port: 8500
+consul_https_port: 8501

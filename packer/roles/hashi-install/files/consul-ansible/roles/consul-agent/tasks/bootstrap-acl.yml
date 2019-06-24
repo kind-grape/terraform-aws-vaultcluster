@@ -1,0 +1,200 @@
+- name: Generate ACL master token
+  command: "echo {{ ansible_date_time.iso8601_micro | to_uuid }}"
+  register: consul_acl_master_token_keygen
+  run_once: true
+
+- name: Register ACL master token for Ansible plays
+  set_fact:
+    consul_acl_master_token: "{{ consul_acl_master_token_keygen.stdout }}"
+
+- name: Archive ACL master token
+  copy:
+    content: "{{ consul_acl_master_token }}"
+    dest: /etc/consul.d/tokens/master
+    owner: consul
+    group: consul
+    mode: 0600
+
+- name: Archive ACL master token to parameter store
+  aws_ssm_parameter_store:
+    string_type: "SecureString"
+    name: "consul-{{ consul_join_tag_value }}-acl-master"
+    value: "{{ consul_acl_master_token }}"
+    description: "Consul Storage Server master ACL token"
+    region: "{{ ansible_ec2_placement_region }}"
+  run_once: yes
+
+- name: Add ACL configuration
+  template:
+    src: etc/consul.d/acl.hcl.j2
+    dest: '{{consul_config_path}}/acl.hcl'
+    owner: '{{consul_user}}'
+    group: '{{consul_group}}'
+    mode: 0660
+
+- name: Restart Consul
+  service: name=consul state=restarted
+
+- name: Wait and check for serf port
+  wait_for:
+    port: "{{ consul_serf_lan_port }}"
+    delay: 6
+
+- name: Create agent, appliction ACL policies and tokens
+  block:
+  - name: Write Consul agent ACL policy
+    set_fact:
+      agent_policy: |
+        agent_prefix "" {
+          policy = "write"
+        }
+        node_prefix "" {
+          policy = "write"
+        }
+        service_prefix "" {
+          policy = "read"
+        }
+  - name: Make Consul agent ACL policy machine-readable
+    set_fact:
+      agent_policy_api_value: "{{
+        agent_policy |
+          regex_replace('\n', ' ') |
+          regex_replace('\"', '\\\"') |
+          regex_replace('\\s+', ' ')
+      }}"
+
+  - name: Write Consul agent ACL policy to Consul
+    uri:
+      body_format: json
+      body: |
+        {
+          "Name": "{{ consul_agent_policy_name }}",
+          "Description": "Consul agent token",
+          "Rules": "{{ agent_policy_api_value }}"
+        }
+      method: PUT
+      url: https://127.0.0.1:7501/v1/acl/policy
+      headers:
+        X-Consul-Token: "{{ consul_acl_master_token }}"
+      validate_certs: no
+
+  - name: Create agent token
+    uri:
+      body_format: json
+      body: |
+        {
+          "Description": "Agent token",
+          "Policies": [{"Name": "{{ consul_agent_policy_name }}"}],
+          "Local": false
+        }
+      method: PUT
+      url: https://127.0.0.1:7501/v1/acl/token
+      headers:
+        X-Consul-Token: "{{ consul_acl_master_token }}"
+      validate_certs: no
+      return_content: yes
+    register: agent_token
+
+  - name: Write application ACL policy for Vault
+    set_fact:
+      application_policy: |
+        node_prefix "" {
+          policy = "write"
+        }
+        service "vault" {
+          policy = "write"
+        }
+        agent_prefix "" {
+          policy = "write"
+        }
+        key_prefix "vault/" {
+          policy = "write"
+        }
+        session_prefix "" {
+          policy = "write"
+        }
+  - name: Make application ACL policy machine-readable
+    set_fact:
+      application_policy_api_value: "{{
+        application_policy |
+          regex_replace('\n', ' ') |
+          regex_replace('\"', '\\\"') |
+          regex_replace('\\s+', ' ')
+      }}"
+
+  - name: Write application ACL policy to Consul
+    uri:
+      body_format: json
+      body: |
+        {
+          "Name": "{{ consul_application_policy_name }}",
+          "Description": "Vault token",
+          "Rules": "{{ application_policy_api_value }}"
+        }
+      method: PUT
+      url: https://127.0.0.1:7501/v1/acl/policy
+      headers:
+        X-Consul-Token: "{{ consul_acl_master_token }}"
+      validate_certs: no
+
+  - name: Create application token
+    uri:
+      body_format: json
+      body: |
+        {
+          "Description": "Vault token",
+          "Policies": [{"Name": "{{ consul_application_policy_name }}"}],
+          "Local": false
+        }
+      method: PUT
+      url: https://127.0.0.1:7501/v1/acl/token
+      headers:
+        X-Consul-Token: "{{ consul_acl_master_token }}"
+      validate_certs: no
+      return_content: yes
+    register: vault_token
+
+  run_once: yes
+
+- name: Replace ACL token placeholder in Consul config
+  lineinfile:
+    path: /etc/consul.d/acl.hcl
+    regexp: "## AGENT_TOKEN_PLACEHOLDER ##"
+    line: "    agent = \"{{ agent_token.json.SecretID }}\""
+
+- name: Archive ACL agent token
+  copy:
+    content: "{{ agent_token.json.SecretID }}"
+    dest: /etc/consul.d/tokens/agent
+    owner: consul
+    group: consul
+    mode: 0640
+
+- name: Archive ACL agent token to parameter store
+  aws_ssm_parameter_store:
+    string_type: "SecureString"
+    name: "consul-{{ consul_join_tag_value }}-client"
+    value: "{{ consul_acl_master_token }}"
+    description: "Consul Storage Server client agent ACL token"
+    region: "{{ ansible_ec2_placement_region }}"
+  run_once: yes
+
+- name: Archive ACL Vault application token
+  copy:
+    content: "{{ vault_token.json.SecretID }}"
+    dest: /etc/consul.d/tokens/vault
+    owner: consul
+    group: consul
+    mode: 0640
+
+- name: Archive ACL Vault token to parameter store
+  aws_ssm_parameter_store:
+    string_type: "SecureString"
+    name: "consul-{{ consul_join_tag_value }}-vault"
+    value: "{{ consul_acl_master_token }}"
+    description: "Consul Storage Server vault application ACL token"
+    region: "{{ ansible_ec2_placement_region }}"
+  run_once: yes
+
+- name: Restart Consul
+  service: name=consul state=restarted
