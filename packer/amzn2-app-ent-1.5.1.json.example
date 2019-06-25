@@ -1,7 +1,8 @@
 {
   "variables": {
     "app_name": "consul-or-vault",
-    "version": "1.0.0",
+    "vault_version": "1.0.0",
+    "consul_version": "1.0.0",
     "region": "us-east-1",
     "vpc_id": "vpc-0000000000000000a",
     "subnet_id": "subnet-0000000000000000b",
@@ -30,7 +31,7 @@
     "type": "ansible",
     "playbook_file": "./install.yml",
     "extra_arguments": [
-      "--extra-vars", "version={{user `version`}} app={{user `app_name`}}"
+      "--extra-vars", "vault_version={{user `vault_version`}} consul_version={{user `consul_version`}} app={{user `app_name`}}"
     ],
     "ansible_env_vars": [
       "ANSIBLE_RETRY_FILES_ENABLED=no"

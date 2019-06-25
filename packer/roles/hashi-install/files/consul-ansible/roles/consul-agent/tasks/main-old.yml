@@ -59,7 +59,7 @@
     owner: '{{consul_user}}'
     group: '{{consul_group}}'
     mode: 0660
-    
+
 - name: Set Consul environment variables
   copy:
     dest: /etc/profile.d/99-consul-env.sh
@@ -88,8 +88,6 @@
     owner: consul
     group: consul
     mode: 0600
-
-# TODO: Use consul-storage as service name
 
 - name: Add Script verify
   copy:

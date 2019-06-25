@@ -71,6 +71,14 @@
       export CONSUL_CLIENT_KEY=/etc/consul.d/tls/dc1-client-consul-0-key.pem
       {% endif %}
 
+- name: Add Script verify
+  copy:
+    src: "consulup.sh"
+    dest: "/bin/consulup"
+    owner: consul
+    group: consul
+    mode: 0751
+
 - name: Run server agent tasks
   block:
   - name: Start and enable Consul for leadership election
@@ -85,6 +93,8 @@
     import_tasks: bootstrap-acl.yml
   when: consul_agent_is_server | bool
 
+- name: Verify Leader has been elected
+  command: "/bin/consulup"
 
 - name: Run client agent tasks
   block:
