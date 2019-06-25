@@ -32,6 +32,38 @@ cat <<- _EOF_
 _EOF_
 }
 
+function create_vault_config {
+cat <<- _EOF_
+- hosts: localhost
+  become: yes
+  vars:
+    consul_bootstrap_expect: ${consul_bootstrap_expect}
+    consul_datacenter: ${consul_datacenter}
+    consul_join_tag_key: auto_join
+    consul_join_tag_value: ${consul_join_tag_value}
+    consul_join_region: ${consul_join_region}
+    consul_agent_role: server
+    consul_agent_is_server: ${consul_agent_is_server}
+    consul_server_rpc_port: ${consul_server_rpc_port}
+    consul_serf_lan_port: ${consul_serf_lan_port}
+    consul_serf_wan_port: ${consul_serf_wan_port}
+    consul_http_port: ${consul_http_port}
+    consul_https_port: ${consul_https_port}
+    consul_dns_port: ${consul_dns_port}
+    consul_encryption_key: ${consul_encryption_key}
+    consul_agent_policy_name: consul-agent
+    consul_application_policy_name: vault-agent
+    consul_config_path: /etc/consul.d
+    consul_user: consul
+    consul_group: consul
+
+  roles:
+    - consul-agent
+_EOF_
+}
+
+    # - vault-agent
+
 function create_cert {
 cat <<- _EOF_
 -----BEGIN CERTIFICATE-----
@@ -128,40 +160,26 @@ _EOF_
 
 export -f create_consul_config; export -f create_cert; export -f create_cert_client; export -f create_cert_client_key; export -f create_cert_server; export -f create_cert_server_key
 
-if [ "$role" == "cslstore" ]; then
+cert_dir="/etc/consul-ansible/roles/consul-agent/files/etc/consul.d/tls"
+create_cert > $cert_dir/consul-agent-ca.pem
+create_cert_client > $cert_dir/dc1-client-consul-0.pem
+create_cert_client_key > $cert_dir/dc1-client-consul-0-key.pem
+create_cert_server > $cert_dir/dc1-server-consul-0.pem
+create_cert_server_key > $cert_dir/dc1-server-consul-0-key.pem
+
+cp $cert_dir/consul-agent-ca.pem /etc/pki/ca-trust/source/anchors/
+update-ca-trust enable; update-ca-trust extract
+
+if [ "$role" == "cslstore" || "$role" == "cslsd" ]; then
   app="consul"
-  cert_dir="/etc/$app-ansible/roles/$app-agent/files/etc/$app.d/tls"
-  create_cert > $cert_dir/$app-agent-ca.pem
-  create_cert_client > $cert_dir/dc1-client-$app-0.pem
-  create_cert_client_key > $cert_dir/dc1-client-$app-0-key.pem
-  create_cert_server > $cert_dir/dc1-server-$app-0.pem
-  create_cert_server_key > $cert_dir/dc1-server-$app-0-key.pem
 
-# cp /etc/consul.d/tls/consul-agent-ca.pem /etc/pki/ca-trust/source/anchors/
-# cp /etc/consul.d/tls/dc1-client-consul-0.pem /etc/pki/ca-trust/source/anchors/
-  cp $cert_dir/$app-agent-ca.pem /etc/pki/ca-trust/source/anchors/
-  update-ca-trust enable; update-ca-trust extract
-
-  create_consul_config > /etc/$app-ansible/bootstrap.yml
-  ansible-playbook /etc/$app-ansible/bootstrap.yml
-elif [ "$role" == "cslsd" ]; then
-  app="consul"
-  cert_dir="/etc/$app-ansible/roles/$app-agent/files/etc/$app.d/tls"
-  create_cert > $cert_dir/$app-agent-ca.pem
-  create_cert_client > $cert_dir/dc1-client-$app-0.pem
-  create_cert_client_key > $cert_dir/dc1-client-$app-0-key.pem
-  create_cert_server > $cert_dir/dc1-server-$app-0.pem
-  create_cert_server_key > $cert_dir/dc1-server-$app-0-key.pem
-
-  cp $cert_dir/$app-agent-ca.pem /etc/pki/ca-trust/source/anchors/
-  update-ca-trust enable; update-ca-trust extract
-
-  create_consul_config > /etc/$app-ansible/bootstrap.yml
-  ansible-playbook /etc/$app-ansible/bootstrap.yml
+  create_consul_config > /etc/ansible/bootstrap.yml
+  # ansible-playbook /etc/ansible/bootstrap.yml
 elif [ "$role" == "vault" ]; then
   app="vault"
-  create_vault_config > /etc/$app-ansible/bootstrap.yml
-  ansible-playbook /etc/$app-ansible/bootstrap.yml
+
+  create_vault_config > /etc/ansible/bootstrap.yml
+  # ansible-playbook /etc/ansible/bootstrap.yml
 else
   echo "You suck at role association"
 fi

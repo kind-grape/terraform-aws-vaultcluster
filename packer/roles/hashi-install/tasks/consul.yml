@@ -12,7 +12,7 @@
     remote_src: yes
 
 - name: "Copy Consul ansible directory"
-  copy: src="{{ item }}" dest="/etc/consul-ansible/"
+  copy: src="{{ item }}" dest="/etc/ansible/"
   with_items:
     - "consul-ansible/host_vars"
     - "consul-ansible/roles"

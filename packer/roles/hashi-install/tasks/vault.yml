@@ -12,7 +12,7 @@
     remote_src: yes
 
 - name: "Copy vault ansible directory"
-  copy: src="{{ item }}" dest="/etc/vault-ansible/"
+  copy: src="{{ item }}" dest="/etc/ansible/"
   with_items:
     - "vault-ansible/host_vars"
     - "vault-ansible/roles"

@@ -89,12 +89,16 @@
       port: "{{ consul_serf_lan_port }}"
       delay: 6
 
+  - name: Verify Leader has been elected
+    command: "/bin/consulup"
+
   - name: Boostrap ACL system
     import_tasks: bootstrap-acl.yml
   when: consul_agent_is_server | bool
 
 - name: Verify Leader has been elected
   command: "/bin/consulup"
+  # register: consul_leader
 
 - name: Run client agent tasks
   block:
@@ -130,4 +134,6 @@
     - name: Restart Consul
       service: name=consul state=restarted
 
-  when: not (consul_agent_is_server | bool)
+  when:
+    - not (consul_agent_is_server | bool)
+    # - consul_leader | bool
