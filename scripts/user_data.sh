@@ -170,7 +170,7 @@ create_cert_server_key > $cert_dir/dc1-server-consul-0-key.pem
 cp $cert_dir/consul-agent-ca.pem /etc/pki/ca-trust/source/anchors/
 update-ca-trust enable; update-ca-trust extract
 
-if [ "$role" == "cslstore" || "$role" == "cslsd" ]; then
+if [ "$role" == "cslstore" ] || [ "$role" == "cslsd" ]; then
   app="consul"
 
   create_consul_config > /etc/ansible/bootstrap.yml

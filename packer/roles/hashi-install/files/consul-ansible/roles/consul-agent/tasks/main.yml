@@ -84,21 +84,44 @@
   - name: Start and enable Consul for leadership election
     service: name=consul enabled=yes state=started
 
+  - name: Get Leader
+    uri:
+      url: https://127.0.0.1:7501/v1/status/leader
+      return_content: yes
+      validate_certs: no
+    register: consul_leader
+
+  - name: Get leader IP
+    shell: echo {{ consul_leader.content }} | cut -f1 -d":"
+    register: consul_leader_ip
+    run_once: true
+  #
+  - name: Set Consul Leader IP
+    set_fact:
+      consul_leader: "{{ consul_leader_ip.stdout }}"
+
+  - debug:
+    msg: Derived IP {{consul_leader}} local IP {{ansible_default_ipv4.address}}
+
+  # - name: Archive initial leader IP
+  #   aws_ssm_parameter_store:
+  #     string_type: "SecureString"
+  #     name: "consul-leader"
+  #     value: "{{ consul_leader_ip }}"
+  #     description: "Consul Leader IP"
+  #     region: "{{ ansible_ec2_placement_region }}"
+  #   run_once: yes
+
   - name: Wait and check for serf port
     wait_for:
       port: "{{ consul_serf_lan_port }}"
       delay: 6
 
-  - name: Verify Leader has been elected
-    command: "/bin/consulup"
-
   - name: Boostrap ACL system
     import_tasks: bootstrap-acl.yml
-  when: consul_agent_is_server | bool
+    when: ansible_default_ipv4.address == consul_leader
 
-- name: Verify Leader has been elected
-  command: "/bin/consulup"
-  # register: consul_leader
+  when: consul_agent_is_server | bool
 
 - name: Run client agent tasks
   block:

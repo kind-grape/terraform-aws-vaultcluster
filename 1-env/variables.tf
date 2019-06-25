@@ -189,7 +189,7 @@ variable "consul_storage" {
     datacenter        = "vault"
     datacenter_consul = "csl"
     ports             = "8300,8301,8302,8500,8600,7300,7301,7302,7500,7600"
-    ingress_rules     = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
+    ingress_rules     = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-webuis-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
     listening_port    = "7500"
     masterkey         = "1111111111111111111111=="
     agentkey          = "2222222222222222222222=="
@@ -220,7 +220,7 @@ variable "consul_sd" {
     datacenter        = "vault"
     datacenter_consul = "csl"
     ports             = "8300,8301,8302,8500,8600,7300,7301,7302,7500,7600"
-    ingress_rules     = "consul-tcp,consul-cli-rpc-tcp,consul-webui-tcp,consul-dns-tcp,consul-dns-udp,consul-serf-lan-tcp,consul-serf-lan-udp,consul-serf-wan-tcp,consul-serf-wan-udp"
+    ingress_rules     = "consul-tcp,consul-cli-rpc-tcp,consul-webui-tcp,consul-webuis-tcp,consul-dns-tcp,consul-dns-udp,consul-serf-lan-tcp,consul-serf-lan-udp,consul-serf-wan-tcp,consul-serf-wan-udp"
     listening_port    = "8500"
     autojoin          = false
     tlslistener       = false

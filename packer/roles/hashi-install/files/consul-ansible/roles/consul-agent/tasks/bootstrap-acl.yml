@@ -1,3 +1,7 @@
+# - name: Fetch client agent token from parameter store
+#       shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-client | jq -r '.Parameter | .Value'"
+#       register: client_agent_token_cmd
+
 - name: Generate ACL master token
   command: "echo {{ ansible_date_time.iso8601_micro | to_uuid }}"
   register: consul_acl_master_token_keygen
