@@ -15,7 +15,7 @@
   copy: src="{{ item }}" dest="/etc/ansible/"
   with_items:
     - "consul-ansible/host_vars"
-    - "consul-ansible/roles"
+    - "consul-ansible/roles/consul-agent"
     - "consul-ansible/ansible.cfg"
     - "consul-ansible/hosts"
     - "consul-ansible/ec2.ini"
