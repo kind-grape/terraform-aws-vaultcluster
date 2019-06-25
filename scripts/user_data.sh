@@ -160,7 +160,7 @@ _EOF_
 
 export -f create_consul_config; export -f create_cert; export -f create_cert_client; export -f create_cert_client_key; export -f create_cert_server; export -f create_cert_server_key
 
-cert_dir="/etc/consul-ansible/roles/consul-agent/files/etc/consul.d/tls"
+cert_dir="/etc/ansible/roles/consul-agent/files/etc/consul.d/tls"
 create_cert > $cert_dir/consul-agent-ca.pem
 create_cert_client > $cert_dir/dc1-client-consul-0.pem
 create_cert_client_key > $cert_dir/dc1-client-consul-0-key.pem

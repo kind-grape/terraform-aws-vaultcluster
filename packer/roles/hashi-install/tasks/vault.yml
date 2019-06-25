@@ -37,14 +37,20 @@
     createhome: no
     groups: consul
     append: yes
+    groups:
+      - hashi
+      - vault
 
-- name: Create TLS directory
+- name: Create configuration and TLS directories
   file:
-    path: /etc/vault.d/tls
+    path: "{{ item }}"
     state: directory
     owner: vault
-    group: vault
-    mode: '0700'
+    group: hashi
+    mode: '0740'
+  with_items:
+    - /etc/vault.d
+    - /etc/vault.d/tls
 
 - name: Create data directory
   file:

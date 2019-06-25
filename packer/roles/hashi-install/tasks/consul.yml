@@ -35,13 +35,16 @@
     home: /etc/consul.d
     createhome: no
     append: yes
+    groups:
+      - hashi
+      - consul
 
 - name: Create configuration and TLS directories
   file:
     path: "{{ item }}"
     state: directory
     owner: consul
-    group: consul
+    group: hashi
     mode: '0750'
   with_items:
     - /etc/consul.d
