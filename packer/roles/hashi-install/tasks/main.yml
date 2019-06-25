@@ -14,11 +14,6 @@
     state: present
     update_cache: true
 
-- name: Ensure group "hashi" exists
-  group:
-    name: hashi
-    state: present
-
 - include: consul.yml
 
 - include: vault.yml

@@ -27,6 +27,11 @@
     dest: /etc/profile.d/99-consul-completion.sh
     mode: 0644
 
+- name: Ensure group "hashi" exists
+  group:
+    name: hashi
+    state: present
+
 - name: Create consul user
   user:
     name: consul
@@ -35,9 +40,7 @@
     home: /etc/consul.d
     createhome: no
     append: yes
-    groups:
-      - hashi
-      - consul
+    groups: hashi
 
 - name: Create configuration and TLS directories
   file:

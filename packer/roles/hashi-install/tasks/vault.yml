@@ -28,6 +28,11 @@
     dest: "/etc/profile.d/99-vault-completion.sh"
     mode: 0644
 
+- name: Ensure group "hashi" exists
+  group:
+    name: hashi
+    state: present
+
 - name: Create vault user
   user:
     name: vault
@@ -37,9 +42,7 @@
     createhome: no
     groups: consul
     append: yes
-    groups:
-      - hashi
-      - vault
+    groups: hashi
 
 - name: Create configuration and TLS directories
   file:
