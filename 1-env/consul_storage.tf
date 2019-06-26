@@ -17,12 +17,13 @@ module "consul_storage_sg" {
 }
 
 module "consul_storage_user_data" {
-  source          = "../modules/aws-hashi_user_data"
-  user_data       = "${var.user_data}"
-  region          = "${var.region}"
-  ports           = "${var.ports}"
-  tags            = "${var.tags}"
-  serverinfo      = "${var.consul_storage}"
+  source     = "../modules/aws-hashi_user_data"
+  user_data  = "${var.user_data}"
+  kms_key_id = "${module.kms.kms_id}"
+  region     = "${var.region}"
+  ports      = "${var.ports}"
+  tags       = "${var.tags}"
+  serverinfo = "${var.consul_storage}"
 }
 
 module "consul_storage" {

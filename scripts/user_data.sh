@@ -56,6 +56,9 @@ cat <<- _EOF_
     consul_config_path: /etc/consul.d
     consul_user: consul
     consul_group: consul
+    vault_api_port: ${vault_api_port}
+    vault_cluster_port: ${vault_cluster_port}
+    vault_kms_key_id: ${vault_kms_key_id}
 
   roles:
     - consul-agent

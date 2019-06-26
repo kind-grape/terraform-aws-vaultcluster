@@ -17,12 +17,13 @@ module "vault_sg" {
 }
 
 module "vault_user_data" {
-  source          = "../modules/aws-hashi_user_data"
-  user_data       = "${var.user_data}"
-  region          = "${var.region}"
-  ports           = "${var.ports}"
-  tags            = "${var.tags}"
-  serverinfo      = "${var.vault}"
+  source     = "../modules/aws-hashi_user_data"
+  user_data  = "${var.user_data}"
+  kms_key_id = "${module.kms.kms_id}"
+  region     = "${var.region}"
+  ports      = "${var.ports}"
+  tags       = "${var.tags}"
+  serverinfo = "${var.vault}"
 }
 
 module "vault" {

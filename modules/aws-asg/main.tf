@@ -7,7 +7,7 @@ resource "aws_placement_group" "consul_asg" {
 
 resource "aws_launch_configuration" "consul_instance_asg" {
   count                = "${var.serverinfo["count"] >= 1 ? var.serverinfo["count"] : 0}"
-  name                  = "${var.cluster_name}-asg-cfg"
+  name                 = "${var.cluster_name}-asg-cfg"
   image_id             = "${var.serverinfo["ami"]}"
   instance_type        = "${var.serverinfo["size"]}"
   iam_instance_profile = "${var.iam_instance_profile}"

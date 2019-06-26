@@ -161,9 +161,8 @@ variable "ports" {
     consulsd_http_port       = "-1"
     consulsd_https_port      = "8501"
     consulsd_dns_port        = "8600"
-    vault_server_tcp_port     = "8200"
-    vault_http_port         = "8201"
-    vault_https_port          = "8202"
+    vault_api_port           = "8200"
+    vault_cluster_port       = "8201"
   }
 }
 
