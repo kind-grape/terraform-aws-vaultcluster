@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "instance_role" {
 data "aws_iam_policy_document" "policy" {
   statement {
     effect  = "Allow"
-    actions = ["ec2:DescribeInstances","ssm:PutParameter"]
+    actions = ["ec2:DescribeInstances","ssm:PutParameter","ssm:UpdateInstanceInformation"]
     resources = ["*"]
   }
 }
@@ -65,7 +65,7 @@ resource "aws_kms_grant" "grant" {
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
-  name_prefix = "${var.name_prefix}"
+  name        = "${var.name_prefix}-iam"
   path        = "${var.kmsinfo["iam_instance_profile_path"]}"
   role        = "${aws_iam_role.instance_role.name}"
 

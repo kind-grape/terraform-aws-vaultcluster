@@ -4,7 +4,7 @@ module "consulsd_sg" {
 
   name        = "consulsd_sg"
   description = "Security group consul service discovery"
-  vpc_id      = "${var.vpc_id}"                           # or use ${var.vpc_id} if there is an already defined network
+  vpc_id      = "${var.vpc_id}"
 
   ingress_cidr_blocks = ["${var.mgmt_subnets}"]
   ingress_rules       = ["${split(",", var.consul_sd["ingress_rules"])}", "${var.ingress_rules}"]

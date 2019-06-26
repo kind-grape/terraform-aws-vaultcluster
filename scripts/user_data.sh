@@ -174,7 +174,7 @@ if [ "$role" == "cslstore" ] || [ "$role" == "cslsd" ]; then
   app="consul"
 
   create_consul_config > /etc/ansible/bootstrap.yml
-  # ansible-playbook /etc/ansible/bootstrap.yml
+  ansible-playbook /etc/ansible/bootstrap.yml
 elif [ "$role" == "vault" ]; then
   app="vault"
 

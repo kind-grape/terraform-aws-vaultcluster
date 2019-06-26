@@ -28,12 +28,6 @@ variable "user_data" {
   default     = "../scripts/user_data.sh"
 }
 
-# variable "ssh_public_key_location" {
-#   description = "Public Key location from within Terraform"
-#   type        = "string"
-#   default     = "../varfiles/id_rsa.pub"
-# }
-
 variable "address_space" {
   description = "Default Supernet that all networks reside within"
   type        = "string"

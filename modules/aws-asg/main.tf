@@ -7,18 +7,23 @@ resource "aws_placement_group" "consul_asg" {
 
 resource "aws_launch_configuration" "consul_instance_asg" {
   count                = "${var.serverinfo["count"] >= 1 ? var.serverinfo["count"] : 0}"
-  name_prefix          = "${var.cluster_name}"
+  name                  = "${var.cluster_name}-asg-cfg"
   image_id             = "${var.serverinfo["ami"]}"
   instance_type        = "${var.serverinfo["size"]}"
   iam_instance_profile = "${var.iam_instance_profile}"
   security_groups      = ["${var.security_groups}"]
   key_name             = "${var.key_name}"
   user_data            = "${var.user_data}"
+
+  ## In place to allow auto scale group to not destroy when incrementing the desired capacity
+  lifecycle {
+    ignore_changes = ["user_data"]
+  }
 }
 
 resource "aws_autoscaling_group" "consul_asg" {
   count                = "${var.serverinfo["count"] >= 1 ? var.serverinfo["count"] : 0}"
-  name_prefix          = "${var.cluster_name}"
+  name                 = "${var.cluster_name}-asg"
   launch_configuration = "${aws_launch_configuration.consul_instance_asg.name}"
   availability_zones   = ["${data.aws_availability_zones.available.id}"]
   vpc_zone_identifier  = "${var.subnet_id}"

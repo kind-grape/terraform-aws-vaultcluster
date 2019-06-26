@@ -4,7 +4,7 @@ module "consul_storage_sg" {
 
   name        = "consulbk_sg"
   description = "Security group consul backend"
-  vpc_id      = "${var.vpc_id}"                 # or use ${var.vpc_id} if there is an already defined network
+  vpc_id      = "${var.vpc_id}"
 
   ingress_cidr_blocks = ["${var.mgmt_subnets}"]
   ingress_rules       = ["${split(",", var.consul_storage["ingress_rules"])}", "${var.ingress_rules}"]
@@ -34,5 +34,5 @@ module "consul_storage" {
   key_name             = "${var.key_name}"
   tags                 = "${var.tags}"
   serverinfo           = "${var.consul_storage}"
-  cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.consul_storage["role"]}"
+  cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.consul_storage["role"]}"
 }

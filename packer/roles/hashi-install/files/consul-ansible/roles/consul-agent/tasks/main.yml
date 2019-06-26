@@ -84,24 +84,24 @@
   - name: Start and enable Consul for leadership election
     service: name=consul enabled=yes state=started
 
-  - name: Get Leader
-    uri:
-      url: https://127.0.0.1:7501/v1/status/leader
-      return_content: yes
-      validate_certs: no
-    register: consul_leader
-
-  - name: Get leader IP
-    shell: echo {{ consul_leader.content }} | cut -f1 -d":"
-    register: consul_leader_ip
-    run_once: true
+  # - name: Get Leader
+  #   uri:
+  #     url: https://127.0.0.1:7501/v1/status/leader
+  #     return_content: yes
+  #     validate_certs: no
+  #   register: consul_leader
   #
-  - name: Set Consul Leader IP
-    set_fact:
-      consul_leader: "{{ consul_leader_ip.stdout }}"
-
-  - debug:
-    msg: Derived IP {{consul_leader}} local IP {{ansible_default_ipv4.address}}
+  # - name: Get leader IP
+  #   shell: echo {{ consul_leader.content }} | cut -f1 -d":"
+  #   register: consul_leader_ip
+  #   run_once: true
+  # #
+  # - name: Set Consul Leader IP
+  #   set_fact:
+  #     consul_leader: "{{ consul_leader_ip.stdout }}"
+  #
+  # - debug:
+  #     msg: Derived IP {{consul_leader}} local IP {{ansible_default_ipv4.address}}
 
   # - name: Archive initial leader IP
   #   aws_ssm_parameter_store:
@@ -119,7 +119,7 @@
 
   - name: Boostrap ACL system
     import_tasks: bootstrap-acl.yml
-    when: ansible_default_ipv4.address == consul_leader
+    # when: ansible_default_ipv4.address == consul_leader
 
   when: consul_agent_is_server | bool
 
@@ -159,4 +159,3 @@
 
   when:
     - not (consul_agent_is_server | bool)
-    # - consul_leader | bool

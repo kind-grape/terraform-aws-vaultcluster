@@ -4,7 +4,7 @@ module "vault_sg" {
 
   name        = "vault_sg"
   description = "Security group vault"
-  vpc_id      = "${var.vpc_id}"        # or use ${var.vpc_id} if there is an already defined network
+  vpc_id      = "${var.vpc_id}"
 
   ingress_cidr_blocks = ["${var.mgmt_subnets}"]
   ingress_rules       = ["${split(",", var.vault["ingress_rules"])}", "${var.ingress_rules}"]
@@ -27,7 +27,7 @@ module "vault_user_data" {
 
 module "vault" {
   source               = "../modules/aws-asg"
-  user_data            = "${module.vault_user_data.user_data}"
+  user_data            = "${module.consul_sd_user_data.user_data}"
   security_groups      = ["${module.vault_sg.this_security_group_id}"]
   iam_instance_profile = "${module.kms.iam_instance_profile}"
   subnet_id            = ["${var.subnet_id}"]
