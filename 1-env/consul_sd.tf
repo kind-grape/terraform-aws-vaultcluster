@@ -35,5 +35,5 @@ module "consul_sd" {
   key_name             = "${var.key_name}"
   tags                 = "${var.tags}"
   serverinfo           = "${var.consul_sd}"
-  cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.consul_sd["role"]}"
+  cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.consul_sd["role"]}"
 }

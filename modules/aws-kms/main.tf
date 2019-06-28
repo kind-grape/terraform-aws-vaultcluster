@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "instance_role" {
 data "aws_iam_policy_document" "policy" {
   statement {
     effect    = "Allow"
-    actions   = ["ec2:DescribeInstances", "ssm:PutParameter", "ssm:UpdateInstanceInformation"]
+    actions   = ["ec2:DescribeInstances", "ssm:DescribeParameters", "ssm:GetParameter", "ssm:PutParameter", "ssm:UpdateInstanceInformation", "ssm:ListAssociations", "ec2messages:GetMessages", "ssm:ListInstanceAssociations"]
     resources = ["*"]
   }
 }
@@ -73,27 +73,3 @@ resource "aws_iam_instance_profile" "instance_profile" {
     create_before_destroy = true
   }
 }
-
-####################################################
-
-
-# resource "aws_iam_role" "role" {
-#  name = "${var.name}-kms-role"
-#  tags = "${var.tags}"
-#  assume_role_policy = <<EOF
-# {
-#  "Version": "2012-10-17",
-#  "Statement": [
-#    {
-#      "Action": "sts:AssumeRole",
-#      "Principal": {
-#        "Service": "lambda.amazonaws.com"
-#      },
-#      "Effect": "Allow",
-#      "Sid": ""
-#    }
-#  ]
-# }
-# EOF
-# }
-

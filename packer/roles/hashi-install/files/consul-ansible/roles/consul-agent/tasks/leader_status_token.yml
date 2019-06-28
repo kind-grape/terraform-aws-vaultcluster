@@ -1,0 +1,17 @@
+- block:
+
+      - name: Get Leader Status
+        shell: export CONSUL_HTTP_TOKEN=$(cat /etc/consul.d/tokens/master); consul info | grep "leader =" | awk '{print $3}'
+        register: consul_leader_token_bool
+        # until: consul_leader_bool.stdout != ""
+        # retries: 120
+        # delay: 2
+        # ignore_errors: yes
+
+      - name: Set Consul Leader Status
+        set_fact: consul_leader="{{ consul_leader_token_bool.stdout }}"
+        register: consul_leader
+
+      - name: Show Consul Leader
+        debug:
+          var: consul_leader

@@ -1,18 +1,4 @@
-- name: Import EPEL GPG key
-  rpm_key:
-    key: http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
-    state: present
-
-- name: Install EPEL 7
-  yum:
-    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    state: present
-
-- name: Install dependencies
-  yum:
-    name: ['unzip', 'jq', 'awscli', 'ansible', 'python2-boto3']
-    state: present
-    update_cache: true
+- include: common.yml
 
 - include: consul.yml
 

@@ -1,0 +1,44 @@
+- name: Running server agent tasks
+  block:
+
+  - name: Fetch master server token from parameter store
+    shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-master | jq -r '.Parameter | .Value'"
+    register: consul_acl_master_token
+    until: consul_acl_master_token.stdout != ""
+    retries: 120
+    delay: 2
+    ignore_errors: yes
+
+  - name: Set Master Service Token
+    set_fact:
+      consul_acl_master_token: "{{ consul_acl_master_token.stdout }}"
+
+  - name: Show Master Key
+    debug:
+      var: consul_acl_master_token
+
+  - name: Archive ACL master token
+    copy:
+      content: "{{ consul_acl_master_token }}"
+      dest: /etc/consul.d/tokens/master
+      owner: consul
+      group: consul
+      mode: 0600
+
+  - name: Add ACL configuration
+    template:
+      src: etc/consul.d/acl.hcl.j2
+      dest: '{{consul_config_path}}/acl.hcl'
+      owner: '{{consul_user}}'
+      group: '{{consul_group}}'
+      mode: 0660
+    register: consul_acl_config
+
+  - name: Restart Consul
+    service: name=consul state=restarted
+    when: consul_acl_config.changed
+
+  - name: Wait and check for serf port
+    wait_for:
+      port: "{{ consul_serf_lan_port }}"
+      delay: 6

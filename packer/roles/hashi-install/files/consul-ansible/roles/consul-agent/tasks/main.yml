@@ -1,161 +1,34 @@
-- name: Gather instance metadata
-  ec2_metadata_facts:
+- name: Perform Common Tasks
+  import_tasks: common.yml
 
-- name: Enable TLS if HTTPS port enabled
-  set_fact:
-    consul_tls_enabled: "{{ (consul_https_port != -1) | ternary(True, False) }}"
+- name: Run leader detection and tasks
+  import_tasks: leader.yml
+  when:
+    - consul_agent_is_server | bool
 
-- name: Set API endpoint to HTTP or HTTPS
-  set_fact:
-    consul_api_protocol: "{{ consul_tls_enabled | ternary('https', 'http') }}"
-    consul_api_port: "{{ consul_tls_enabled | ternary(consul_https_port, consul_http_port) }}"
-
-- name: Install CA certificate
-  copy:
-    src: etc/consul.d/tls/consul-agent-ca.pem
-    dest: /etc/consul.d/tls/consul-agent-ca.pem
-    owner: consul
-    group: consul
-    mode: 0440
-  with_items:
-    - consul-agent-ca.pem
-
-- name: Install client certificate and key
-  copy:
-    src: "etc/consul.d/tls/{{ item }}"
-    dest: "/etc/consul.d/tls/{{ item }}"
-    owner: consul
-    group: consul
-    mode: 0440
-  with_items:
-    - dc1-client-consul-0.pem
-    - dc1-client-consul-0-key.pem
-
-- name: Install server certificate and key
-  copy:
-    src: "etc/consul.d/tls/{{ item }}"
-    dest: "/etc/consul.d/tls/{{ item }}"
-    owner: consul
-    group: consul
-    mode: 0400
-  with_items:
-    - dc1-server-consul-0.pem
-    - dc1-server-consul-0-key.pem
-  when: consul_agent_is_server | bool
-
-- name: Create protected directory for ACL tokens
-  file:
-    path: /etc/consul.d/tokens
-    state: directory
-    owner: consul
-    group: consul
-    mode: 0700
-
-- name: Configure Consul agent
-  template:
-    src: etc/consul.d/consul.hcl.j2
-    dest: '{{consul_config_path}}/consul.hcl'
-    owner: '{{consul_user}}'
-    group: '{{consul_group}}'
-    mode: 0660
-
-- name: Set Consul environment variables
-  copy:
-    dest: /etc/profile.d/99-consul-env.sh
-    mode: 0644
-    content: |
-      export CONSUL_HTTP_ADDR={{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}
-      {% if consul_tls_enabled %}
-      export CONSUL_CACERT=/etc/consul.d/tls/consul-agent-ca.pem
-      export CONSUL_CLIENT_CERT=/etc/consul.d/tls/dc1-client-consul-0.pem
-      export CONSUL_CLIENT_KEY=/etc/consul.d/tls/dc1-client-consul-0-key.pem
-      {% endif %}
-
-- name: Add Script verify
-  copy:
-    src: "consulup.sh"
-    dest: "/bin/consulup"
-    owner: consul
-    group: consul
-    mode: 0751
+- name: Create Master Token
+  import_tasks: master-token.yml
+  when:
+    - consul_leader_bool.stdout == 'true'
+    - not master_token_file.stat.exists | bool
 
 - name: Run server agent tasks
-  block:
-  - name: Start and enable Consul for leadership election
-    service: name=consul enabled=yes state=started
+  import_tasks: server.yml
+  when:
+    - consul_agent_is_server | bool
 
-  # - name: Get Leader
-  #   uri:
-  #     url: https://127.0.0.1:7501/v1/status/leader
-  #     return_content: yes
-  #     validate_certs: no
-  #   register: consul_leader
-  #
-  # - name: Get leader IP
-  #   shell: echo {{ consul_leader.content }} | cut -f1 -d":"
-  #   register: consul_leader_ip
-  #   run_once: true
-  # #
-  # - name: Set Consul Leader IP
-  #   set_fact:
-  #     consul_leader: "{{ consul_leader_ip.stdout }}"
-  #
-  # - debug:
-  #     msg: Derived IP {{consul_leader}} local IP {{ansible_default_ipv4.address}}
+- name: Run leader detection
+  import_tasks: leader_status_token.yml
+  when:
+    - consul_agent_is_server | bool
 
-  # - name: Archive initial leader IP
-  #   aws_ssm_parameter_store:
-  #     string_type: "SecureString"
-  #     name: "consul-leader"
-  #     value: "{{ consul_leader_ip }}"
-  #     description: "Consul Leader IP"
-  #     region: "{{ ansible_ec2_placement_region }}"
-  #   run_once: yes
-
-  - name: Wait and check for serf port
-    wait_for:
-      port: "{{ consul_serf_lan_port }}"
-      delay: 6
-
-  - name: Boostrap ACL system
-    import_tasks: bootstrap-acl.yml
-    # when: ansible_default_ipv4.address == consul_leader
-
-  when: consul_agent_is_server | bool
+- name: Run bootstrap tasks
+  import_tasks: bootstrap-acl.yml
+  when:
+    - consul_leader_token_bool.stdout == 'true'
+    - consul_agent_is_server | bool
 
 - name: Run client agent tasks
-  block:
-    - name: Fetch client agent token from parameter store
-      shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-client | jq -r '.Parameter | .Value'"
-      register: client_agent_token_cmd
-
-    - set_fact:
-        client_agent_token: "{{ client_agent_token_cmd.stdout }}"
-
-    - name: Archive ACL agent token
-      copy:
-        content: "{{ client_agent_token }}"
-        dest: /etc/consul.d/tokens/agent
-        owner: consul
-        group: consul
-        mode: 0640
-
-    - name: Add ACL configuration
-      template:
-        src: etc/consul.d/acl.hcl.j2
-        dest: '{{consul_config_path}}/acl.hcl'
-        owner: '{{consul_user}}'
-        group: '{{consul_group}}'
-        mode: 0660
-
-    - name: Replace ACL token placeholder in Consul config
-      lineinfile:
-        path: /etc/consul.d/acl.hcl
-        regexp: "## AGENT_TOKEN_PLACEHOLDER ##"
-        line: "    agent = \"{{ client_agent_token }}\""
-
-    - name: Restart Consul
-      service: name=consul state=restarted
-
+  import_tasks: agent.yml
   when:
     - not (consul_agent_is_server | bool)

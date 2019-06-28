@@ -1,0 +1,5 @@
+- name: Get Leader Address
+  import_tasks: leader_address.yml
+
+- name: Get Leader Status
+  import_tasks: leader_status.yml

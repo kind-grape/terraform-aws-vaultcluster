@@ -28,12 +28,12 @@ module "vault_user_data" {
 
 module "vault" {
   source               = "../modules/aws-asg"
-  user_data            = "${module.consul_sd_user_data.user_data}"
+  user_data            = "${module.vault_user_data.user_data}"
   security_groups      = ["${module.vault_sg.this_security_group_id}"]
   iam_instance_profile = "${module.kms.iam_instance_profile}"
   subnet_id            = ["${var.subnet_id}"]
   key_name             = "${var.key_name}"
   tags                 = "${var.tags}"
   serverinfo           = "${var.vault}"
-  cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.vault["role"]}"
+  cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.vault["role"]}"
 }

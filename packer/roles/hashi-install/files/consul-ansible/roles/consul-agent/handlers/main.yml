@@ -1,2 +1,7 @@
 ---
 # handlers file for consul-agent
+- name: restart consul
+  service:
+    name: consul
+    state: restarted
+  listen: 'restart consul'

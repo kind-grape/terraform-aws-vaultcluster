@@ -1,0 +1,21 @@
+- block:
+
+    - name: Get Leader Address
+      uri:
+        method: GET
+        url: https://127.0.0.1:7501/v1/status/leader
+        validate_certs: no
+        return_content: yes
+      register: consul_leader_address
+      until: consul_leader_address.json != ""
+      retries: 120
+      delay: 2
+      ignore_errors: yes
+
+    - name: Set Consul Leader Address
+      set_fact: consul_leader_addr="{{ consul_leader_address.json }}"
+      register: consul_leader_addr
+
+    - name: Show Consul Leader Address
+      debug:
+        var: consul_leader_addr

@@ -64,8 +64,17 @@ cat <<- _EOF_
     - consul-agent
 _EOF_
 }
+# - vault-agent
 
-    # - vault-agent
+if [ "$role" == "cslstore" ] || [ "$role" == "cslsd" ]; then
+  export -f create_consul_config
+  create_consul_config > /etc/ansible/bootstrap.yml
+elif [ "$role" == "vault" ]; then
+  export -f create_vault_config
+  create_vault_config > /etc/ansible/bootstrap.yml
+else
+  echo "You suck at role association"
+fi
 
 function create_cert {
 cat <<- _EOF_
@@ -161,7 +170,7 @@ jyuUkAbpPf83A0p9UI1ZKpUjmycZGnhZDA==
 _EOF_
 }
 
-export -f create_consul_config; export -f create_cert; export -f create_cert_client; export -f create_cert_client_key; export -f create_cert_server; export -f create_cert_server_key
+export -f create_cert; export -f create_cert_client; export -f create_cert_client_key; export -f create_cert_server; export -f create_cert_server_key
 
 cert_dir="/etc/ansible/roles/consul-agent/files/etc/consul.d/tls"
 create_cert > $cert_dir/consul-agent-ca.pem
@@ -173,16 +182,4 @@ create_cert_server_key > $cert_dir/dc1-server-consul-0-key.pem
 cp $cert_dir/consul-agent-ca.pem /etc/pki/ca-trust/source/anchors/
 update-ca-trust enable; update-ca-trust extract
 
-if [ "$role" == "cslstore" ] || [ "$role" == "cslsd" ]; then
-  app="consul"
-
-  create_consul_config > /etc/ansible/bootstrap.yml
-  ansible-playbook /etc/ansible/bootstrap.yml
-elif [ "$role" == "vault" ]; then
-  app="vault"
-
-  create_vault_config > /etc/ansible/bootstrap.yml
-  # ansible-playbook /etc/ansible/bootstrap.yml
-else
-  echo "You suck at role association"
-fi
+# ansible-playbook /etc/ansible/bootstrap.yml
