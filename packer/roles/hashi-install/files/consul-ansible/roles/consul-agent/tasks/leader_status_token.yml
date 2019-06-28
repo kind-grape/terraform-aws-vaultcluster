@@ -1,7 +1,9 @@
 - block:
 
       - name: Get Leader Status
-        shell: export CONSUL_HTTP_TOKEN=$(cat /etc/consul.d/tokens/master); consul info | grep "leader =" | awk '{print $3}'
+        shell: |
+          export CONSUL_HTTP_TOKEN=$(cat /etc/consul.d/tokens/master)
+          consul info | grep "leader =" | awk '{print $3}'
         register: consul_leader_token_bool
 
       - name: Set Consul Leader Status

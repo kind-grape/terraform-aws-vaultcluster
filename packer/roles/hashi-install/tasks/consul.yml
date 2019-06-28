@@ -40,7 +40,7 @@
     home: /etc/consul.d
     createhome: no
     append: yes
-    groups: hashi
+    groups: consul,hashi
 
 - name: Create configuration and TLS directories
   file:

@@ -2,10 +2,13 @@
 set -x
 role="${role}"
 
+sudo usermod -a -G consul ec2-user
+
 function create_consul_config {
 cat <<- _EOF_
 - hosts: localhost
   become: yes
+  become_user: root
   vars:
     consul_bootstrap_expect: ${consul_bootstrap_expect}
     consul_datacenter: ${consul_datacenter}
@@ -36,6 +39,7 @@ function create_vault_config {
 cat <<- _EOF_
 - hosts: localhost
   become: yes
+  become_user: root
   vars:
     consul_bootstrap_expect: ${consul_bootstrap_expect}
     consul_datacenter: ${consul_datacenter}

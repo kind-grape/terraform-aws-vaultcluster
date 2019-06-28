@@ -1,6 +1,12 @@
 - name: Gather instance metadata
   ec2_metadata_facts:
 
+- name: adding existing user ec2-user to consul and hashi groups
+  user:
+    name: 'ec2-user'
+    groups: consul,hashi
+    append: yes
+
 - name: Check for master token
   stat:
     path: /etc/consul.d/tokens/master
@@ -82,7 +88,7 @@
 - name: Set Consul environment variables
   copy:
     dest: /etc/profile.d/99-consul-env.sh
-    mode: 0644
+    mode: 0755
     content: |
       export CONSUL_HTTP_ADDR={{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}
       {% if consul_tls_enabled %}

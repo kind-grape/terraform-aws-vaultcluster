@@ -39,9 +39,8 @@
     shell: /bin/false
     home: /etc/vault.d
     createhome: no
-    groups: consul
+    groups: consul,hashi
     append: yes
-    groups: hashi
 
 - name: Create configuration and TLS directories
   file:

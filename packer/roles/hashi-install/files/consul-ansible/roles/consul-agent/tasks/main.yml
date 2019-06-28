@@ -9,6 +9,9 @@
 - debug:
     var: consul_agent_is_server
 
+- debug:
+    var: consul_leader_bool
+
 - name: Create Master Token
   import_tasks: token-master.yml
   when:

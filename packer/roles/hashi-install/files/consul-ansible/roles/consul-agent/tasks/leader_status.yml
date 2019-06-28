@@ -1,7 +1,9 @@
 - block:
 
       - name: Get Leader Status
-        shell: consul info | grep "leader =" | awk '{print $3}'
+        shell: |
+          . /etc/profile.d/99-consul-env.sh
+          consul info | grep "leader =" | awk '{print $3}'
         register: consul_leader_bool
 
       - name: Set Consul Leader Status
