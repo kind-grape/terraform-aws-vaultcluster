@@ -2,10 +2,14 @@
   block:
     - name: Fetch client agent token from parameter store
       shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-client | jq -r '.Parameter | .Value'"
-      register: client_agent_token_cmd
+      register: client_agent_token
+      until: client_agent_token.stdout != ""
+      retries: 120
+      delay: 2
+      ignore_errors: yes
 
     - set_fact:
-        client_agent_token: "{{ client_agent_token_cmd.stdout }}"
+        client_agent_token: "{{ client_agent_token.stdout }}"
 
     - name: Archive ACL agent token
       copy:
@@ -22,13 +26,13 @@
         owner: '{{consul_user}}'
         group: '{{consul_group}}'
         mode: 0660
-
+        
     - name: Replace ACL token placeholder in Consul config
       lineinfile:
         path: /etc/consul.d/acl.hcl
         regexp: "## AGENT_TOKEN_PLACEHOLDER ##"
         line: "    agent = \"{{ client_agent_token }}\""
-        register: consul_agent_config
+      register: consul_agent_config
 
     - name: Restart Consul
       service: name=consul state=restarted

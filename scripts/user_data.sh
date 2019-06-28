@@ -62,9 +62,9 @@ cat <<- _EOF_
 
   roles:
     - consul-agent
+    - vault-agent
 _EOF_
 }
-# - vault-agent
 
 if [ "$role" == "cslstore" ] || [ "$role" == "cslsd" ]; then
   export -f create_consul_config
@@ -182,4 +182,4 @@ create_cert_server_key > $cert_dir/dc1-server-consul-0-key.pem
 cp $cert_dir/consul-agent-ca.pem /etc/pki/ca-trust/source/anchors/
 update-ca-trust enable; update-ca-trust extract
 
-# ansible-playbook /etc/ansible/bootstrap.yml
+ansible-playbook /etc/ansible/bootstrap.yml

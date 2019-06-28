@@ -35,9 +35,6 @@
       X-Consul-Token: "{{ consul_acl_master_token }}"
     validate_certs: no
   register: consul_agent_token_write
-  # until: consul_agent_token_write.status == "200"
-  # retries: 120
-  # delay: 2
 
 - name: Create agent token
   uri:
@@ -58,6 +55,7 @@
 
 - name: Show Agent Token
   debug:
+    verbosity: 2
     var: agent_token
 
 - name: Archive ACL agent token
@@ -72,7 +70,7 @@
   aws_ssm_parameter_store:
     string_type: "SecureString"
     name: "consul-{{ consul_join_tag_value }}-client"
-    value: "{{ consul_acl_master_token }}"
+    value: "{{ agent_token.json.SecretID }}"
     description: "Consul Storage Server client agent ACL token"
     region: "{{ ansible_ec2_placement_region }}"
   run_once: yes

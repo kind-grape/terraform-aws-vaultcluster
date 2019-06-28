@@ -19,3 +19,4 @@
     - name: Show Consul Leader Address
       debug:
         var: consul_leader_addr
+        verbosity: 2

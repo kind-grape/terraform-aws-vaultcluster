@@ -76,7 +76,7 @@
   aws_ssm_parameter_store:
     string_type: "SecureString"
     name: "consul-{{ consul_join_tag_value }}-vault"
-    value: "{{ consul_acl_master_token }}"
+    value: "{{ vault_token.json.SecretID }}"
     description: "Consul Storage Server vault application ACL token"
     region: "{{ ansible_ec2_placement_region }}"
   run_once: yes

@@ -6,8 +6,11 @@
   when:
     - consul_agent_is_server | bool
 
+- debug:
+    var: consul_agent_is_server
+
 - name: Create Master Token
-  import_tasks: master-token.yml
+  import_tasks: token-master.yml
   when:
     - consul_leader_bool.stdout == 'true'
     - not master_token_file.stat.exists | bool
@@ -28,7 +31,10 @@
     - consul_leader_token_bool.stdout == 'true'
     - consul_agent_is_server | bool
 
+- name: Write Tokens to File System
+  import_tasks: token-write.yml
+  when:
+    - consul_leader_token_bool.stdout == 'false'
+
 - name: Run client agent tasks
   import_tasks: agent.yml
-  when:
-    - not (consul_agent_is_server | bool)

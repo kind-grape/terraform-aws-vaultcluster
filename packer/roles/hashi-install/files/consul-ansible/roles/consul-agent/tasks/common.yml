@@ -1,6 +1,5 @@
 - name: Gather instance metadata
   ec2_metadata_facts:
-  no_log: true
 
 - name: Check for master token
   stat:
