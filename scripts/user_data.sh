@@ -62,7 +62,7 @@ cat <<- _EOF_
 
   roles:
     - consul-agent
-    - vault-agent
+    # - vault-agent
 _EOF_
 }
 

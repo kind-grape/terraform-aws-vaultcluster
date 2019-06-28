@@ -13,7 +13,7 @@
   import_tasks: token-master.yml
   when:
     - consul_leader_bool.stdout == 'true'
-    - not master_token_file.stat.exists | bool
+    # - not master_token_file.stat.exists | bool
 
 - name: Run server agent tasks
   import_tasks: server.yml
