@@ -2,6 +2,7 @@
 
       - name: Get Leader Status
         shell: |
+          . /etc/profile.d/99-consul-env.sh
           export CONSUL_HTTP_TOKEN=$(cat /etc/consul.d/tokens/master)
           consul info | grep "leader =" | awk '{print $3}'
         register: consul_leader_token_bool
