@@ -25,7 +25,7 @@
     },
     "instance_type": "t2.micro",
     "ssh_username": "{{ user `ssh_username` }}",
-    "ami_name": "amz2-{{user `app_name`}}-ent-{{user `version`}}-{{timestamp}}"
+    "ami_name": "amz2-{{user `app_name`}}-ent-{{user `consul_version`}}-{{timestamp}}"
   }],
   "provisioners": [{
     "type": "ansible",

@@ -1,3 +1,4 @@
 * text=auto
 *.sh -crlf
+*.sh.example -crlf
 *.tf -crlf
