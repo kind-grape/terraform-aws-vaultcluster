@@ -13,6 +13,9 @@
 # .tfvars files
 *.tfvars
 
+# Ignore Backend Files
+backend.tf
+
 # Other files that should not be kept
 id_rsa*
 *.json
