@@ -1,0 +1,55 @@
+## For Remote State - Must already be created
+bucket                    = "terraform-state-bucket"
+backend                   = "s3"
+
+## Pre-created using a different step
+vpc_id                    = "vpc-0a11a111ad1b11abe"
+subnet_id                 = ["subnet-0f11ea1cdc1fe111c"]
+
+
+environment               = "dev"
+region                    = "ca-central-1"
+
+routing_mode              = "GLOBAL"
+
+## Common Key used for all machines
+key_name                  = "EXAMPLEKEY"
+
+## What can access the systems
+mgmt_subnets = [
+  "1.1.1.1/32",
+  "2.2.2.2/32",
+  "172.21.1.0/24",
+  "172.21.2.0/24"
+]
+
+tags = {
+  client                  = "CLIENT"
+  costcenter              = "CLIENTAWS"
+  auto_join               = "AUTOJOIN"
+}
+
+kms = {
+  key_deletion_window     = "10"
+}
+
+consul_storage = {
+  count             = 1
+  ami               = "ami-111111111111111f0"
+  masterkey         = "12345abcdABCD11112222=="
+  root_size         = "10"
+  server            = true
+  desired_capacity  = 3
+  max_size          = 5
+  min_size          = 0
+}
+
+vault = {
+  count             = 0
+  ami               = "ami-111111111111111f1"
+  masterkey         = "12345abcdABCD11114444=="
+  root_size         = "10"
+  desired_capacity  = 1
+  max_size          = 1
+  min_size          = 0
+}

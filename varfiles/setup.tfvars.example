@@ -1,0 +1,24 @@
+bucket                    = "terraform-state-bucket"
+backend                   = "s3"
+
+environment               = "setup"
+region                    = "ca-central-1"
+
+routing_mode              = "GLOBAL"
+
+mgmt_subnets              = [
+  "1.1.1.1/32",
+  "2.2.2.2/32",
+  "172.21.1.0/24",
+  "172.21.2.0/24"
+]
+
+ingress_rules             = [
+  "https-443-tcp",
+  "ssh-tcp"
+]
+
+tags = {
+  client                  = "CLIENT"
+  costcenter              = "CLIENTAWS"
+}
