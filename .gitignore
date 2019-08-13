@@ -21,6 +21,7 @@ id_rsa*
 *.zip
 *.pem
 *.sh
+!update_groups.sh
 
 crash.log
 blah.txt
