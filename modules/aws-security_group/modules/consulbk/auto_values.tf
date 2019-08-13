@@ -6,7 +6,7 @@
 variable "auto_ingress_rules" {
   description = "List of ingress rules to add automatically"
   type        = "list"
-  default     = ["squid-proxy-tcp"]
+  default     = ["consulbk-tcp", "consulbk-cli-rpc-tcp", "consulbk-webui-tcp", "consulbk-dns-tcp", "consulbk-dns-udp", "consulbk-serf-lan-tcp", "consulbk-serf-lan-udp", "consulbk-serf-wan-tcp", "consulbk-serf-wan-udp"]
 }
 
 variable "auto_ingress_with_self" {

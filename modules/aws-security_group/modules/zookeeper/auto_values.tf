@@ -12,10 +12,7 @@ variable "auto_ingress_rules" {
 variable "auto_ingress_with_self" {
   description = "List of maps defining ingress rules with self to add automatically"
   type        = "list"
-
-  default = [{
-    "rule" = "all-all"
-  }]
+  default     = [{ "rule" = "all-all" }]
 }
 
 variable "auto_egress_rules" {
@@ -75,3 +72,4 @@ variable "auto_number_of_computed_egress_with_self" {
   description = "Number of computed egress rules to create where 'self' is defined"
   default     = 0
 }
+
