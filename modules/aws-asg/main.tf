@@ -6,7 +6,7 @@ resource "aws_placement_group" "consul_asg" {
 }
 
 resource "aws_launch_configuration" "consul_instance_asg" {
-  count                = "${var.serverinfo["count"] >= 1 ? var.serverinfo["count"] : 0}"
+  count                = "${var.serverinfo["count"] >= 1 ? 1 : 0}"
   name                 = "${var.cluster_name}-asg-cfg"
   image_id             = "${var.serverinfo["ami"]}"
   instance_type        = "${var.serverinfo["size"]}"
@@ -22,7 +22,7 @@ resource "aws_launch_configuration" "consul_instance_asg" {
 }
 
 resource "aws_autoscaling_group" "consul_asg" {
-  count                = "${var.serverinfo["count"] >= 1 ? var.serverinfo["count"] : 0}"
+  count                = "${var.serverinfo["count"] >= 1 ? 1 : 0}"
   name                 = "${var.cluster_name}-asg"
   launch_configuration = "${aws_launch_configuration.consul_instance_asg.name}"
   availability_zones   = ["${data.aws_availability_zones.available.id}"]
