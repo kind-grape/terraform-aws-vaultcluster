@@ -1,0 +1,23 @@
+# - name: Install CA certificates
+#   copy:
+#     src: etc/vault.d/tls/{{ item }}
+#     dest: /etc/vault.d/tls/{{ item }}
+#     owner: vault
+#     group: vault
+#     mode: 0440
+#   with_items:
+#     - vault-agent-ca.pem
+#   no_log: true
+
+- name: Configure Vault Configuration
+  template:
+    src: etc/vault.d/vault.hcl.j2
+    dest: '/etc/vault.d/vault.hcl'
+    owner: 'vault'
+    group: 'vault'
+    mode: 0660
+  register: vault_config
+
+- name: Restart Consul
+  service: name=vault state=restarted
+  when: vault_config.changed

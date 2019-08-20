@@ -28,6 +28,7 @@ module "consul_sd_user_data" {
 
 module "consul_sd" {
   source               = "../modules/aws-asg"
+  ami                 = "${data.aws_ami.consul.id}"
   user_data            = "${module.consul_sd_user_data.user_data}"
   security_groups      = ["${module.consulsd_sg.this_security_group_id}"]
   iam_instance_profile = "${module.kms.iam_instance_profile}"

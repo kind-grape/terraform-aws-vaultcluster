@@ -30,6 +30,11 @@ variable "tags" {
   default = {}
 }
 
+variable "ami" {
+  description = "Default AMI to use"
+  default     = "ami-0000000000000000a"
+}
+
 variable "additional_tags" {
   description = "A list of maps to add tags to scaling group and instances"
   type        = "list"

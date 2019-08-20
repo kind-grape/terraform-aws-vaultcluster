@@ -2,7 +2,7 @@ data "aws_availability_zones" "available" {}
 
 module "vpc" {
   source  = "../modules/aws-vpc"
-  version = "1.66.0"
+  # version = "1.66.0"
 
   name = "${lower(var.tags["client"])}-network"
   cidr = "${var.address_space}"

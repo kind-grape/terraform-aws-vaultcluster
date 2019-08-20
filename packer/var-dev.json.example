@@ -1,0 +1,10 @@
+{
+    "region": "ca-central-1",
+    "vpc_id": "vpc-0000000000000000a",
+    "subnet_id": "subnet-0000000000000000b",
+    "source_ami_name": "amzn2-ami-hvm-2.0.20190508-x86_64-gp2",
+    "source_ami_owner": "amazon",
+    "consul_version": "1.0.0",
+    "vault_version": "1.0.0",
+    "instance_type": "t2.micro"
+}

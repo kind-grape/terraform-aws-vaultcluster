@@ -1,0 +1,8 @@
+- name: Gather instance metadata
+  ec2_metadata_facts:
+
+- name: adding existing user ec2-user to consul and hashi groups
+  user:
+    name: 'ec2-user'
+    groups: consul,vault
+    append: yes

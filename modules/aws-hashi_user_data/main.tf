@@ -18,5 +18,22 @@ data "template_file" "user_data" {
     vault_api_port          = "${var.ports["vault_api_port"]}"
     vault_cluster_port      = "${var.ports["vault_cluster_port"]}"
     vault_kms_key_id        = "${var.kms_key_id}"
+    server_cert             = "${file(var.server_cert)}"
+    server_key              = "${file(var.server_key)}"
+    client_cert             = "${file(var.client_cert)}"
+    client_key              = "${file(var.client_key)}"
+    root_cert               = "${file(var.root_cert)}"
+  }
+}
+
+data "template_cloudinit_config" "user_data" {
+  gzip          = true
+  base64_encode = true
+
+  # Main cloud-config configuration file.
+  part {
+    filename     = "init.cfg"
+    content_type = "text/cloud-config"
+    content      = "${data.template_file.user_data.rendered}"
   }
 }

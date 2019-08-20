@@ -1,0 +1,24 @@
+ui           = true
+api_addr     = "https://{{ ansible_ec2_local_ipv4 }}:8200"
+{# cluster_addr = "https://$cluster_address:8201" #}
+
+storage "consul" {
+  address = "127.0.0.1:7500"
+  path    = "/vault"
+  token   = "{{ vault_agent_token }}"
+}
+
+listener "tcp" {
+  address     = "127.0.0.1:8200"
+  tls_disable = true
+}
+
+telemetry {
+  statsite_address = "127.0.0.1:8125"
+  disable_hostname = true
+}
+
+seal "awskms" {
+  region     = "{{ consul_join_region }}"
+  kms_key_id = "{{ vault_kms_key_id }}"
+}

@@ -8,11 +8,12 @@ resource "aws_placement_group" "consul_asg" {
 resource "aws_launch_configuration" "consul_instance_asg" {
   count                = "${var.serverinfo["count"] >= 1 ? 1 : 0}"
   name                 = "${var.cluster_name}-asg-cfg"
-  image_id             = "${var.serverinfo["ami"]}"
+  image_id             = "${var.ami}"
   instance_type        = "${var.serverinfo["size"]}"
   iam_instance_profile = "${var.iam_instance_profile}"
   security_groups      = ["${var.security_groups}"]
   key_name             = "${var.key_name}"
+  # user_data_base64  = "${base64encode(var.user_data)}"
   user_data            = "${var.user_data}"
 
   ## In place to allow auto scale group to not destroy when incrementing the desired capacity

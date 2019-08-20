@@ -1,7 +1,7 @@
-- name: Copy vault archive
-  copy:
-    src: "vault-enterprise_{{ vault_version }}+prem_linux_amd64.zip"
-    dest: "/tmp/vault-enterprise_{{ vault_version }}+prem_linux_amd64.zip"
+# - name: Copy vault archive
+#   copy:
+#     src: "vault-enterprise_{{ vault_version }}+prem_linux_amd64.zip"
+#     dest: "/tmp/vault-enterprise_{{ vault_version }}+prem_linux_amd64.zip"
 
 - name: Unarchive vault
   unarchive:
@@ -39,7 +39,7 @@
     shell: /bin/false
     home: /etc/vault.d
     createhome: no
-    groups: consul,hashi
+    groups: consul
     append: yes
 
 - name: Create configuration and TLS directories
@@ -47,7 +47,7 @@
     path: "{{ item }}"
     state: directory
     owner: vault
-    group: hashi
+    group: consul
     mode: '0740'
   with_items:
     - /etc/vault.d

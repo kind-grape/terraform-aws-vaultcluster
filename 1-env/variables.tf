@@ -51,6 +51,12 @@ variable "vpc_id" {
   default     = "vpc-0000000000000000e"
 }
 
+variable "ami_owner_account" {
+  description = "Account that owns the AMI used"
+  type        = "string"
+  default     = "123456789111"
+}
+
 variable "subnets" {
   description = "public and private subnets"
   type        = "map"
@@ -178,6 +184,7 @@ variable "consul_storage" {
     size              = "t2.micro"
     health_check_type = "EC2"
     server            = true
+    version           = "1.5.1"
     role              = "cslstore"
     datacenter        = "vault"
     datacenter_consul = "csl"
@@ -209,6 +216,7 @@ variable "consul_sd" {
     size              = "t2.micro"
     health_check_type = "EC2"
     server            = true
+    version           = "1.5.1"
     role              = "cslsd"
     datacenter        = "vault"
     datacenter_consul = "csl"
@@ -240,6 +248,7 @@ variable "vault" {
     size              = "t2.micro"
     health_check_type = "EC2"
     server            = false
+    version           = "1.1.3"
     role              = "vault"
     datacenter        = "vault"
     datacenter_consul = "csl"
