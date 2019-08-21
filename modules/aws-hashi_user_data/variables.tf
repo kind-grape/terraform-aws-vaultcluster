@@ -30,3 +30,13 @@ variable "client_key" {
 variable "root_cert" {
   default = "../certs/consul-agent-ca.pem"
 }
+
+variable "unseal_cloud" {
+    description = "Cloud acronym used for vault config to enable auto-unseal"
+    default = "awskms"
+}
+
+variable "vault_telemetry" {
+    description = "enable/disable vault telemetry"
+    default = false
+}

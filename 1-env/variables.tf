@@ -184,6 +184,7 @@ variable "consul_storage" {
     size              = "t2.micro"
     health_check_type = "EC2"
     server            = true
+    https             = false
     version           = "1.5.1"
     role              = "cslstore"
     datacenter        = "vault"
@@ -197,7 +198,7 @@ variable "consul_storage" {
     tlslistener       = false
     enterprise        = false
     enablesyslog      = false
-    ui                = true
+    ui                = false
     count             = 0
     desired_capacity  = 1
     max_size          = 1
@@ -216,6 +217,7 @@ variable "consul_sd" {
     size              = "t2.micro"
     health_check_type = "EC2"
     server            = true
+    https             = false
     version           = "1.5.1"
     role              = "cslsd"
     datacenter        = "vault"
@@ -229,7 +231,7 @@ variable "consul_sd" {
     enablesyslog      = false
     masterkey         = "1111111111111111111111=="
     agentkey          = "2222222222222222222222=="
-    ui                = true
+    ui                = false
     count             = 0
     desired_capacity  = 1
     max_size          = 1
@@ -248,6 +250,8 @@ variable "vault" {
     size              = "t2.micro"
     health_check_type = "EC2"
     server            = false
+    telemetry         = false
+    https             = false
     version           = "1.1.3"
     role              = "vault"
     datacenter        = "vault"
@@ -260,7 +264,7 @@ variable "vault" {
     enterprise        = false
     enablesyslog      = false
     masterkey         = "1111111111111111111111=="
-    ui                = true
+    ui                = false
     count             = 0
     desired_capacity  = 1
     max_size          = 1

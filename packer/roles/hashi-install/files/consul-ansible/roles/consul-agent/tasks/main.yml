@@ -15,8 +15,8 @@
 - name: Create Master Token
   import_tasks: token-master.yml
   when:
+    - consul_agent_is_server | bool
     - consul_leader_bool.stdout == 'true'
-    # - not master_token_file.stat.exists | bool
 
 - name: Run server agent tasks
   import_tasks: server.yml
@@ -31,12 +31,13 @@
 - name: Run bootstrap tasks
   import_tasks: bootstrap-acl.yml
   when:
-    - consul_leader_token_bool.stdout == 'true'
     - consul_agent_is_server | bool
+    - consul_leader_token_bool.stdout == 'true'
 
 - name: Write Tokens to File System
   import_tasks: token-write.yml
   when:
+    - consul_agent_is_server | bool
     - consul_leader_token_bool.stdout == 'false'
 
 - name: Run client agent tasks

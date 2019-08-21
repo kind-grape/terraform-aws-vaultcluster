@@ -18,6 +18,6 @@
     mode: 0660
   register: vault_config
 
-- name: Restart Consul
+- name: Restart Vault
   service: name=vault state=restarted
   when: vault_config.changed

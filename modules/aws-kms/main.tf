@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "instance_role" {
 data "aws_iam_policy_document" "policy" {
   statement {
     effect    = "Allow"
-    actions   = ["ec2:DescribeInstances", "ssm:DescribeParameters", "ssm:GetParameter", "ssm:PutParameter", "ssm:UpdateInstanceInformation", "ssm:ListAssociations", "ec2messages:GetMessages", "ssm:ListInstanceAssociations"]
+    actions   = ["ec2:DescribeInstances", "ssm:DescribeParameters", "ssm:GetParameter", "ssm:PutParameter", "ssm:UpdateInstanceInformation", "ssm:ListAssociations", "ec2messages:GetMessages", "ssm:ListInstanceAssociations", "kms:DescribeKey"]
     resources = ["*"]
   }
 }
@@ -57,7 +57,7 @@ resource "aws_kms_grant" "grant" {
   name              = "${var.name_prefix}-kms-grant"
   key_id            = "${aws_kms_key.key.key_id}"
   grantee_principal = "${aws_iam_role.instance_role.arn}"
-  operations        = ["Encrypt", "Decrypt", "GenerateDataKey"]
+  operations        = ["Encrypt", "Decrypt", "GenerateDataKey", "DescribeKey"]
 
   lifecycle {
     create_before_destroy = true

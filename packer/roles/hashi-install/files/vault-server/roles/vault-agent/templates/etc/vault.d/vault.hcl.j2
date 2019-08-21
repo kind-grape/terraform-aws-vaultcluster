@@ -1,10 +1,10 @@
 ui           = true
 plugin_directory = "/etc/vault.d/plugin"
 api_addr     = "https://{{ ansible_ec2_local_ipv4 }}:8200"
-{# cluster_addr = "https://$cluster_address:8201" #}
+# cluster_addr = "https://$cluster_address:8201"
 
 storage "consul" {
-{% if consul_agent_is_server %}
+{% if consul_https_enabled %}
   address = "127.0.0.1:{{ consul_https_port }}"
   scheme  = "https"
 {% else %}
@@ -19,21 +19,16 @@ listener "tcp" {
   tls_disable = true
 }
 
+{% if vault_telemtry_enabled %}
 telemetry {
   statsite_address = "127.0.0.1:8125"
   disable_hostname = true
 }
+{% endif %}
 
+{% if unseal_cloud %}
 seal "awskms" {
   region     = "{{ consul_join_region }}"
   kms_key_id = "{{ vault_kms_key_id }}"
 }
-
-
-{% if consul_agent_is_server %}
-cert_file              = "/etc/consul.d/tls/dc1-server-consul-0.pem"
-key_file               = "/etc/consul.d/tls/dc1-server-consul-0-key.pem"
-{% else %}
-cert_file              = "/etc/consul.d/tls/dc1-client-consul-0.pem"
-key_file               = "/etc/consul.d/tls/dc1-client-consul-0-key.pem"
 {% endif %}
