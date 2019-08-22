@@ -5,6 +5,7 @@ backend                   = "s3"
 ## Pre-created using a different step
 vpc_id                    = "vpc-0a11a111ad1b11abe"
 subnet_id                 = ["subnet-0f11ea1cdc1fe111c"]
+ami_owner_account         = "111222333444"
 
 
 environment               = "dev"
@@ -39,6 +40,7 @@ consul_storage = {
   masterkey         = "12345abcdABCD11112222=="
   root_size         = "10"
   server            = true
+  ui                = true
   desired_capacity  = 3
   max_size          = 5
   min_size          = 0
@@ -49,6 +51,8 @@ vault = {
   ami               = "ami-111111111111111f1"
   masterkey         = "12345abcdABCD11114444=="
   root_size         = "10"
+  https             = true
+  ui                = true
   desired_capacity  = 1
   max_size          = 1
   min_size          = 0

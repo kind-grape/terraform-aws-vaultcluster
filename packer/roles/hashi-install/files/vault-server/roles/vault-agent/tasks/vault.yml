@@ -9,16 +9,6 @@
 #     - vault-agent-ca.pem
 #   no_log: true
 
-- name: Show Vault Telemetry
-  debug:
-    verbosity: 2
-    var: vault_telemtry_enabled
-
-- name: Show Vault Unseal Cloud
-  debug:
-    verbosity: 2
-    var: unseal_cloud
-
 - name: Configure Vault Configuration
   template:
     src: etc/vault.d/vault.hcl.j2

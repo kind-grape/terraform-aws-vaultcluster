@@ -28,7 +28,7 @@ module "vault_user_data" {
 
 module "vault" {
   source               = "../modules/aws-asg"
-  ami                 = "${data.aws_ami.vault.id}"
+  ami                  = "${data.aws_ami.vault.id}"
   user_data            = "${module.vault_user_data.user_data}"
   security_groups      = ["${module.vault_sg.this_security_group_id}"]
   iam_instance_profile = "${module.kms.iam_instance_profile}"
