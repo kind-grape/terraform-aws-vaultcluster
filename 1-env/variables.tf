@@ -23,10 +23,10 @@ variable "os_user" {
   default     = "ec2-user"
 }
 
-variable "user_data" {
-  description = "Variable place holder for rendered User Data scripts"
-  default     = "../scripts/user_data.sh"
-}
+# variable "user_data" {
+#   description = "Variable place holder for rendered User Data scripts"
+#   default     = "../scripts/user_data.sh"
+# }
 
 variable "address_space" {
   description = "Default Supernet that all networks reside within"
@@ -37,12 +37,11 @@ variable "address_space" {
 variable "key_name" {
   description = "Default Key Name for server access"
   type        = "string"
-  default     = "default"
 }
 
 variable "subnet_id" {
   description = "Subnet where servers will reside"
-  default     = ["subnet-0000000000000000e"]
+  type = "list"
 }
 
 variable "vpc_id" {
@@ -89,10 +88,7 @@ variable "ingress_rules" {
 variable "security_groups" {
   description = "Default Security Group IDs"
   type        = "list"
-
-  default = [
-    "sg-00000000000000000",
-  ]
+  default = ["sg-00000000000000000"]
 }
 
 variable "mgmt_subnets" {
@@ -114,12 +110,6 @@ variable depends_on {
 variable "tags" {
   description = "Tags used across all resources that can be tagged"
   type        = "map"
-
-  default = {
-    client     = "TESTCLIENT"
-    costcenter = "TESTCOMPANY"
-    auto_join  = "AUTOJOIN"
-  }
 }
 
 variable "vault_extra_tags" {
@@ -150,27 +140,27 @@ variable "kms" {
   }
 }
 
-variable "ports" {
-  description = "Ports required to run Consul Backend"
-  type        = "map"
-
-  default = {
-    consulbk_server_rpc_port = "7300"
-    consulbk_serf_lan_port   = "7301"
-    consulbk_serf_wan_port   = "7302"
-    consulbk_http_port       = "-1"
-    consulbk_https_port      = "7501"
-    consulbk_dns_port        = "7600"
-    consulsd_server_rpc_port = "8300"
-    consulsd_serf_lan_port   = "8301"
-    consulsd_serf_wan_port   = "8302"
-    consulsd_http_port       = "-1"
-    consulsd_https_port      = "8501"
-    consulsd_dns_port        = "8600"
-    vault_api_port           = "8200"
-    vault_cluster_port       = "8201"
-  }
-}
+# variable "ports" {
+#   description = "Ports required to run Consul Backend"
+#   # type        = "map"
+#   #
+#   # default = {
+#   #   consulbk_server_rpc_port = "7300"
+#   #   consulbk_serf_lan_port   = "7301"
+#   #   consulbk_serf_wan_port   = "7302"
+#   #   consulbk_http_port       = "-1"
+#   #   consulbk_https_port      = "7501"
+#   #   consulbk_dns_port        = "7600"
+#   #   consulsd_server_rpc_port = "8300"
+#   #   consulsd_serf_lan_port   = "8301"
+#   #   consulsd_serf_wan_port   = "8302"
+#   #   consulsd_http_port       = "-1"
+#   #   consulsd_https_port      = "8501"
+#   #   consulsd_dns_port        = "8600"
+#   #   vault_api_port           = "8200"
+#   #   vault_cluster_port       = "8201"
+#   # }
+# }
 
 variable "consul_storage" {
   description = "Default values for an instance"

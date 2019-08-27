@@ -1,0 +1,87 @@
+- name: Fetch Root Cert from parameter store
+  shell: |
+    aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul_tls_ca_bundle | jq -r '.Parameter | .Value'
+  register: consul_tls_ca_bundle
+  until: consul_tls_ca_bundle.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- name: Fetch Client Cert from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul_client_tls_cert | jq -r '.Parameter | .Value'"
+  register: consul_client_tls_cert
+  until: consul_client_tls_cert.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- name: Fetch Client Cert Key from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul_client_tls_key | jq -r '.Parameter | .Value'"
+  register: consul_client_tls_key
+  until: consul_client_tls_key.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- name: Fetch Server Cert from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul_server_tls_cert | jq -r '.Parameter | .Value'"
+  register: consul_server_tls_cert
+  until: consul_server_tls_cert.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- name: Fetch Server Cert Key from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul_server_tls_key | jq -r '.Parameter | .Value'"
+  register: consul_server_tls_key
+  until: consul_server_tls_key.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- name: Install CA certificate
+  copy:
+    content: "{{ consul_tls_ca_bundle.stdout }}"
+    dest: /etc/consul.d/tls/consul_tls_ca_bundle
+    owner: consul
+    group: consul
+    mode: 0440
+  # no_log: true
+
+- name: Install client certificate
+  copy:
+    content: "{{ consul_client_tls_cert.stdout }}"
+    dest: "/etc/consul.d/tls/consul_client_tls_cert"
+    owner: consul
+    group: consul
+    mode: 0440
+    # no_log: true
+
+- name: Install client certificate key
+  copy:
+    content: "{{ consul_client_tls_key.stdout }}"
+    dest: "/etc/consul.d/tls/consul_client_tls_key"
+    owner: consul
+    group: consul
+    mode: 0440
+    # no_log: true
+
+- name: Install server certificate
+  copy:
+    content: "{{ consul_server_tls_cert.stdout }}"
+    dest: "/etc/consul.d/tls/consul_server_tls_cert"
+    owner: consul
+    group: consul
+    mode: 0400
+  # no_log: true
+  when: consul_agent_is_server | bool
+
+- name: Install server certificate key
+  copy:
+    content: "{{ consul_server_tls_key.stdout }}"
+    dest: "/etc/consul.d/tls/consul_server_tls_key"
+    owner: consul
+    group: consul
+    mode: 0400
+  # no_log: true
+  when: consul_agent_is_server | bool

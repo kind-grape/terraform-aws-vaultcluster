@@ -6,11 +6,12 @@ variable "cluster_name" {
 variable "key_name" {
   description = "The AWS ssh key to use to build instances in the Consul cluster"
   type        = "string"
+  default     = "default"
 }
 
 variable "subnet_id" {
-  description = "A list private subnet IDs the Consul cluster will be deployed into"
-  type        = "list"
+  description = "Subnet where servers will reside"
+  default     = ["subnet-0000000000000000e"]
 }
 
 variable "serverinfo" {
@@ -18,16 +19,27 @@ variable "serverinfo" {
 }
 
 variable "iam_instance_profile" {}
-variable "user_data" {}
+
+variable "user_data" {
+  description = "Variable place holder for rendered User Data scripts"
+  default     = "../scripts/user_data.sh"
+}
 
 variable "security_groups" {
-  description = "A list of security groups to attach to instances in the Consul cluster beyond the standard Consul ones"
+  description = "Default Security Group IDs"
   type        = "list"
-  default     = []
+  default = ["sg-00000000000000000"]
 }
 
 variable "tags" {
-  default = {}
+  description = "Tags used across all resources that can be tagged"
+  type        = "map"
+
+  default = {
+    client     = "TESTCLIENT"
+    costcenter = "TESTCOMPANY"
+    auto_join  = "AUTOJOIN"
+  }
 }
 
 variable "ami" {

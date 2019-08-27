@@ -1,4 +1,38 @@
 # #######################################################
+# ## SSM outputs
+# #######################################################
+output "consul_server_master_token" {
+  value = "${module.ssm_data.consul_server_master_token}"
+}
+
+# output "ssm_kms_key_id" {
+#   value = "${module.ssm_data.ssm_kms_key_id}"
+# }
+
+output "ssm_parameter_consul_gossip_encryption_key_id" {
+  value = "${module.ssm_data.ssm_parameter_consul_gossip_encryption_key_id}"
+}
+
+output "ssm_parameter_consul_tls_ca_bundle" {
+  value = "${module.ssm_data.ssm_parameter_consul_tls_ca_bundle}"
+}
+
+output "ssm_parameter_consul_server_tls_cert" {
+  value = "${module.ssm_data.ssm_parameter_consul_server_tls_cert}"
+}
+
+output "ssm_parameter_consul_server_tls_key" {
+  value = "${module.ssm_data.ssm_parameter_consul_server_tls_key}"
+}
+
+output "ssm_parameter_consul_client_tls_cert" {
+  value = "${module.ssm_data.ssm_parameter_consul_client_tls_cert}"
+}
+
+output "ssm_parameter_consul_client_tls_key" {
+  value = "${module.ssm_data.ssm_parameter_consul_client_tls_key}"
+}
+# #######################################################
 # ## Consul Backend outputs
 # #######################################################
 output "nsg_consul_storage_name" {

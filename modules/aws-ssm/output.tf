@@ -1,12 +1,12 @@
-output "consul_server_cluster_uuid" {
-  value = "${random_uuid.consul_master_key.result}"
+output "consul_server_master_token" {
+  value = "${aws_ssm_parameter.master_token.value}"
 }
 
-output "ssm_kms_key_id" {
-  value = "${aws_kms_key.ssm.key_id}"
-}
+# output "ssm_kms_key_id" {
+#   value = "${aws_kms_key.ssm.key_id}"
+# }
 
-output "ssm_parameter_consul_gossip_encryption_key" {
+output "ssm_parameter_consul_gossip_encryption_key_id" {
   value = "${aws_ssm_parameter.consul_gossip_encryption_key.id}"
 }
 

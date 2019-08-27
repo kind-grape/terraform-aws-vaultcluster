@@ -1,13 +1,12 @@
 - name: Perform Common Tasks
   import_tasks: common.yml
 
+
+
 - name: Run leader detection and tasks
   import_tasks: leader.yml
   when:
-    - consul_agent_is_server | bool
-
-- debug:
-    var: consul_agent_is_server
+    - consul_agent_is_server | not bool
 
 - debug:
     var: consul_leader_bool

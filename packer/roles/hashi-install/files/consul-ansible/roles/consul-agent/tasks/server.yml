@@ -28,9 +28,9 @@
   - name: Add ACL configuration
     template:
       src: etc/consul.d/acl.hcl.j2
-      dest: '{{consul_config_path}}/acl.hcl'
-      owner: '{{consul_user}}'
-      group: '{{consul_group}}'
+      dest: '/etc/consul.d//acl.hcl'
+      owner: 'consul'
+      group: 'consul'
       mode: 0660
     register: consul_acl_config
 

@@ -21,11 +21,6 @@ data "template_file" "user_data" {
     vault_telemtry_enabled  = "${var.vault_telemetry}"
     unseal_cloud            = "${var.unseal_cloud}"
     vault_kms_key_id        = "${var.kms_key_id}"
-    server_cert             = "${file(var.server_cert)}"
-    server_key              = "${file(var.server_key)}"
-    client_cert             = "${file(var.client_cert)}"
-    client_key              = "${file(var.client_key)}"
-    root_cert               = "${file(var.root_cert)}"
   }
 }
 

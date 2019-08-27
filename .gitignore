@@ -4,6 +4,7 @@
 
 # **/packer/
 **certs/
+**temp/
 
 # .tfstate files
 *.tfstate

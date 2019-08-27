@@ -6,6 +6,8 @@ variable "ssm_kms_key_rotate" {
   default = true
 }
 
+variable "key_id" {}
+
 variable "region" {
   description = "Region used to build all objects"
   default     = "ca-central-1"

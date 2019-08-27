@@ -39,14 +39,14 @@ enable_script_checks       = false
 enable_local_script_checks = false
 
 ## Encryption and TLS
-encrypt                = "{{ consul_encryption_key | default("bogus-token") }}"
-ca_file                = "/etc/consul.d/tls/consul-agent-ca.pem"
+encrypt                = "{{ consul_encryption_key.stdout | default("bogus-token") }}"
+ca_file                = "/etc/consul.d/tls/consul_tls_ca_bundle"
 {% if consul_agent_is_server %}
-cert_file              = "/etc/consul.d/tls/dc1-server-consul-0.pem"
-key_file               = "/etc/consul.d/tls/dc1-server-consul-0-key.pem"
+cert_file              = "/etc/consul.d/tls/consul_server_tls_cert"
+key_file               = "/etc/consul.d/tls/consul_server_tls_key"
 {% else %}
-cert_file              = "/etc/consul.d/tls/dc1-client-consul-0.pem"
-key_file               = "/etc/consul.d/tls/dc1-client-consul-0-key.pem"
+cert_file              = "/etc/consul.d/tls/consul_client_tls_cert"
+key_file               = "/etc/consul.d/tls/consul_client_tls_key"
 {% endif %}
 verify_incoming        = false
 verify_incoming_rpc    = true
