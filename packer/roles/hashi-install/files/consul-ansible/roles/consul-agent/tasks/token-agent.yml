@@ -69,7 +69,7 @@
 - name: Archive ACL agent token to parameter store
   aws_ssm_parameter_store:
     string_type: "SecureString"
-    name: "consul-{{ consul_join_tag_value }}-client"
+    name: "consul-{{ consul_join_tag_value }}-acl-agent"
     value: "{{ agent_token.json.SecretID }}"
     description: "Consul Storage Server client agent ACL token"
     region: "{{ ansible_ec2_placement_region }}"

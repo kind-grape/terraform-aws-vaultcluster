@@ -39,7 +39,7 @@ enable_script_checks       = false
 enable_local_script_checks = false
 
 ## Encryption and TLS
-encrypt                = "{{ consul_encryption_key.stdout | default("bogus-token") }}"
+encrypt                = "{{ consul_encryption_key | default("bogus-token") }}"
 ca_file                = "/etc/consul.d/tls/consul_tls_ca_bundle"
 {% if consul_agent_is_server %}
 cert_file              = "/etc/consul.d/tls/consul_server_tls_cert"

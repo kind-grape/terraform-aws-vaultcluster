@@ -13,10 +13,9 @@
       ignore_errors: yes
 
     - name: Set Consul Leader Address
-      set_fact: consul_leader_addr="{{ consul_leader_address.json }}"
-      register: consul_leader_addr
+      set_fact:
+        consul_leader_addr: "{{ consul_leader_address.json }}"
 
     - name: Show Consul Leader Address
       debug:
         var: consul_leader_addr
-        verbosity: 2

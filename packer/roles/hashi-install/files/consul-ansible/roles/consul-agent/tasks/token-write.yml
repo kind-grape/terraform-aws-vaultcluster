@@ -1,65 +1,61 @@
-- name: Writing Agent token to File System
-  block:
-  - name: Check for agent token
-    stat:
-      path: /etc/consul.d/tokens/agent
-    register: agent_token_file
-    ignore_errors: yes
+- name: Check for agent token
+  stat:
+    path: /etc/consul.d/tokens/agent
+  register: agent_token_file
+  ignore_errors: yes
 
-  - name: Fetch client agent token from parameter store
-    shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-client | jq -r '.Parameter | .Value'"
-    register: client_agent_token
-    until: client_agent_token.stdout != ""
-    retries: 120
-    delay: 2
-    ignore_errors: yes
+- name: Fetch client agent token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-client | jq -r '.Parameter | .Value'"
+  register: client_agent_token
+  until: client_agent_token.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
 
-  - set_fact:
-      client_agent_token: "{{ client_agent_token.stdout }}"
+- set_fact:
+    client_agent_token: "{{ client_agent_token.stdout }}"
 
-  - name: Archive ACL agent token
-    copy:
-      content: "{{ client_agent_token }}"
-      dest: /etc/consul.d/tokens/agent
-      owner: consul
-      group: consul
-      mode: 0640
-    when:
-      - not agent_token_file.stat.exists | bool
+- name: Archive ACL agent token
+  copy:
+    content: "{{ client_agent_token }}"
+    dest: /etc/consul.d/tokens/agent
+    owner: consul
+    group: consul
+    mode: 0640
+  when:
+    - not agent_token_file.stat.exists | bool
 
-  - name: Show Agent Token
-    debug:
-      verbosity: 2
-      var: client_agent_token
+- name: Show Agent Token
+  debug:
+    verbosity: 2
+    var: client_agent_token
 
-- name: Writing Vault token to File System
-  block:
-  - name: Check for vault token
-    stat:
-      path: /etc/consul.d/tokens/vault
-    register: vault_token_file
-    ignore_errors: yes
+- name: Check for vault token
+  stat:
+    path: /etc/consul.d/tokens/vault
+  register: vault_token_file
+  ignore_errors: yes
 
-  - name: Fetch client agent token from parameter store
-    shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-vault | jq -r '.Parameter | .Value'"
-    register: vault_agent_token
-    until: vault_agent_token.stdout != ""
-    retries: 120
-    delay: 2
-    ignore_errors: yes
+- name: Fetch client agent token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-vault | jq -r '.Parameter | .Value'"
+  register: vault_agent_token
+  until: vault_agent_token.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
 
-  - set_fact:
-      vault_agent_token: "{{ vault_agent_token.stdout }}"
+- set_fact:
+    vault_agent_token: "{{ vault_agent_token.stdout }}"
 
-  - name: Archive ACL agent token
-    copy:
-      content: "{{ vault_agent_token }}"
-      dest: /etc/consul.d/tokens/vault
-      owner: consul
-      group: consul
-      mode: 0640
-    when:
-      - not vault_token_file.stat.exists | bool
+- name: Archive ACL agent token
+  copy:
+    content: "{{ vault_agent_token }}"
+    dest: /etc/consul.d/tokens/vault
+    owner: consul
+    group: consul
+    mode: 0640
+  when:
+    - not vault_token_file.stat.exists | bool
 
 - name: Show Vault Token
   debug:

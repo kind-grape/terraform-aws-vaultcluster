@@ -1,25 +1,5 @@
-- name: Create agent, appliction ACL policies and tokens
-  block:
+- name: Create Agent Token
+  import_tasks: token-agent.yml
 
-  - name: Create Agent Token
-    import_tasks: token-agent.yml
-
-  - name: Create Vault Token
-    import_tasks: token-vault.yml
-
-  # - name: Fetch client agent token from parameter store
-  #   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-client | jq -r '.Parameter | .Value'"
-  #   register: client_agent_token_cmd
-  #
-  # - name: Set Client Agent Token
-  #   set_fact:
-  #     client_agent_token: "{{ client_agent_token_cmd.stdout }}"
-  #
-  # - name: Replace ACL token placeholder in Consul config
-  #   lineinfile:
-  #     path: /etc/consul.d/acl.hcl
-  #     regexp: "## AGENT_TOKEN_PLACEHOLDER ##"
-  #     line: "    agent = \"{{ client_agent_token }}\""
-  #
-  # - name: Restart Consul
-  #   service: name=consul state=restarted
+- name: Create Vault Token
+  import_tasks: token-vault.yml

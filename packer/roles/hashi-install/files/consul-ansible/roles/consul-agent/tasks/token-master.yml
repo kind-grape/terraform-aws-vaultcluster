@@ -1,38 +1,44 @@
-- block:
+- name: Fetch Master token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-master | jq -r '.Parameter | .Value'"
+  register: consul_acl_master_token
+  until: consul_acl_master_token.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
 
-    - name: Generate ACL master token
-      command: "echo {{ ansible_date_time.iso8601_micro | to_uuid }}"
-      register: consul_acl_master_token_keygen
-      run_once: true
+# - name: Generate ACL master token
+#   command: "echo {{ ansible_date_time.iso8601_micro | to_uuid }}"
+#   register: consul_acl_master_token_keygen
+#   run_once: true
 
-    - name: Register ACL master token for Ansible plays
-      set_fact:
-        consul_acl_master_token: "{{ consul_acl_master_token_keygen.stdout }}"
+- name: Register ACL master token for Ansible plays
+  set_fact:
+    consul_acl_master_token: "{{ consul_acl_master_token.stdout }}"
 
-    - name: Show Master Key
-      debug:
-        var: consul_acl_master_token
+- name: Show Master Key
+  debug:
+    var: consul_acl_master_token
 
-    - name: Archive ACL master token
-      copy:
-        content: "{{ consul_acl_master_token }}"
-        dest: /etc/consul.d/tokens/master
-        owner: consul
-        group: consul
-        mode: 0600
+- name: Archive ACL master token
+  copy:
+    content: "{{ consul_acl_master_token }}"
+    dest: /etc/consul.d/tokens/master
+    owner: consul
+    group: consul
+    mode: 0600
 
-    - name: Archive ACL master token to parameter store
-      aws_ssm_parameter_store:
-        string_type: "SecureString"
-        name: "consul-{{ consul_join_tag_value }}-acl-master"
-        value: "{{ consul_acl_master_token }}"
-        description: "Consul Storage Server master ACL token"
-        region: "{{ ansible_ec2_placement_region }}"
-      run_once: yes
-      register: consul_acl_master_token_ssm
+# - name: Archive ACL master token to parameter store
+#   aws_ssm_parameter_store:
+#     string_type: "SecureString"
+#     name: "consul-{{ consul_join_tag_value }}-acl-master"
+#     value: "{{ consul_acl_master_token }}"
+#     description: "Consul Storage Server master ACL token"
+#     region: "{{ ansible_ec2_placement_region }}"
+#   run_once: yes
+#   register: consul_acl_master_token_ssm
 
-    - name: Check for master token
-      stat:
-        path: /etc/consul.d/tokens/master
-      register: master_token_file
-      ignore_errors: yes
+- name: Check for master token
+  stat:
+    path: /etc/consul.d/tokens/master
+  register: master_token_file
+  ignore_errors: yes

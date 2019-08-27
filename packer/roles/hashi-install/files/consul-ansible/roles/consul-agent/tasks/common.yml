@@ -52,6 +52,9 @@
   delay: 2
   ignore_errors: yes
 
+- set_fact:
+    consul_encryption_key: "{{ consul_encryption_key.stdout }}"
+
 - name: Create protected directory for ACL tokens
   file:
     path: /etc/consul.d/tokens

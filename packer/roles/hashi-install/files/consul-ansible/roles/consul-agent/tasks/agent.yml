@@ -1,15 +1,12 @@
 - name: Running client agent tasks
   block:
     - name: Fetch client agent token from parameter store
-      shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-client | jq -r '.Parameter | .Value'"
+      shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-agent | jq -r '.Parameter | .Value'"
       register: client_agent_token
       until: client_agent_token.stdout != ""
       retries: 120
       delay: 2
       ignore_errors: yes
-
-    - set_fact:
-        client_agent_token: "{{ client_agent_token.stdout }}"
 
     - name: Archive ACL agent token
       copy:
@@ -22,11 +19,11 @@
     - name: Add ACL configuration
       template:
         src: etc/consul.d/acl.hcl.j2
-        dest: '{{consul_config_path}}/acl.hcl'
-        owner: '{{consul_user}}'
-        group: '{{consul_group}}'
+        dest: '/etc/consul.d/acl.hcl'
+        owner: 'consul'
+        group: 'consul'
         mode: 0660
-        
+
     - name: Replace ACL token placeholder in Consul config
       lineinfile:
         path: /etc/consul.d/acl.hcl
