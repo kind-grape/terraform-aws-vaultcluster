@@ -1,17 +1,15 @@
-- block:
+- name: Get Leader Status
+  shell: |
+    . /etc/profile.d/99-consul-env.sh
+    export CONSUL_HTTP_TOKEN=$(cat /etc/consul.d/tokens/master)
+    consul info | grep "leader =" | awk '{print $3}'
+  register: consul_leader_token_bool
 
-      - name: Get Leader Status
-        shell: |
-          . /etc/profile.d/99-consul-env.sh
-          export CONSUL_HTTP_TOKEN=$(cat /etc/consul.d/tokens/master)
-          consul info | grep "leader =" | awk '{print $3}'
-        register: consul_leader_token_bool
+- name: Set Consul Leader Status
+  set_fact:
+    consul_leader: "{{ consul_leader_token_bool.stdout }}"
 
-      - name: Set Consul Leader Status
-        set_fact:
-          consul_leader: "{{ consul_leader_token_bool.stdout }}"
-
-      - name: Show Consul Leader
-        debug:
-          verbosity: 2
-          var: consul_leader
+- name: Show Consul Leader - leader_status_token.yml
+  debug:
+    verbosity: 2
+    var: consul_leader

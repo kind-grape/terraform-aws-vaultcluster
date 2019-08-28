@@ -64,7 +64,7 @@
 - set_fact:
     vault_token: "{{ vault_token.json.SecretID }}"
 
-- name: Show Vault Token
+- name: Show Vault Token - token-vault.yml
   debug:
     var: vault_token
 

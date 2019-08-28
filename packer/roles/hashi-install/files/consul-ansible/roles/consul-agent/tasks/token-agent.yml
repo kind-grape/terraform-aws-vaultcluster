@@ -57,7 +57,7 @@
 - set_fact:
     agent_token: "{{ agent_token.json.SecretID }}"
 
-- name: Show Agent Token
+- name: Show Agent Token - token-agent.yml
   debug:
     var: agent_token
 

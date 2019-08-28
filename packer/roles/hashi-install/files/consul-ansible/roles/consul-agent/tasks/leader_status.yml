@@ -1,11 +1,9 @@
-- block:
+- name: Get Leader Status
+  shell: |
+    . /etc/profile.d/99-consul-env.sh
+    consul info | grep "leader =" | awk '{print $3}'
+  register: consul_leader_bool
 
-      - name: Get Leader Status
-        shell: |
-          . /etc/profile.d/99-consul-env.sh
-          consul info | grep "leader =" | awk '{print $3}'
-        register: consul_leader_bool
-
-      - name: Set Consul Leader Status
-        set_fact:
-          consul_leader: "{{ consul_leader_bool.stdout }}"
+- name: Set Consul Leader Status
+  set_fact:
+    consul_leader: "{{ consul_leader_bool.stdout }}"

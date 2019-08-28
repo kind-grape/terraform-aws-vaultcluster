@@ -31,32 +31,14 @@
 
 - set_fact: vault_agent_token="{{ vault_agent_token.stdout }}"
 
-- name: Archive ACL agent token
-  copy:
-    content: "{{ agent_token }}"
-    dest: /etc/consul.d/tokens/agent
-    owner: consul
-    group: consul
-    mode: 0640
-  when: client_agent_token != "REPLACEME"
-
-- name: Archive ACL Vault token
-  copy:
-    content: "{{ vault_token }}"
-    dest: /etc/consul.d/tokens/vault
-    owner: consul
-    group: consul
-    mode: 0640
-  when: vault_agent_token != "REPLACEME"
-
-- name: Show Master Token
+- name: Show Master Token - import_env.yml
   debug:
     var: consul_acl_master_token
 
-- name: Show Agent Token
+- name: Show Agent Token - import_env.yml
   debug:
     var: client_agent_token
 
-- name: Show Vault Token
+- name: Show Vault Token - import_env.yml
   debug:
     var: vault_agent_token

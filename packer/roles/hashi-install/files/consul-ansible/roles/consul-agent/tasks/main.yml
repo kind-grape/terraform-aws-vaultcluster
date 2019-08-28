@@ -9,10 +9,11 @@
   when:
     - consul_agent_is_server | bool
 
-- debug:
+- name: Show consul leader - main.yml
+  debug:
     var: consul_leader
 
-- name: Create Master Token
+- name: Master Token
   import_tasks: token-master.yml
   when:
     - consul_agent_is_server | bool
@@ -33,7 +34,6 @@
   when:
     - consul_agent_is_server | bool
     - consul_leader == true
-    # - (client_agent_token == "REPLACEME" and vault_agent_token == "REPLACEME")
 
 - name: Write Tokens to File System
   import_tasks: token-write.yml
