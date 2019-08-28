@@ -17,7 +17,10 @@ resource "aws_ssm_parameter" "master_token" {
   type   = "SecureString"
   value  = "${random_uuid.consul_master_key.result}"
   key_id = "${var.key_id}"
-  overwrite = true
+
+  lifecycle {
+    ignore_changes = ["value", "description", "key_id"]
+  }
 }
 
 resource "aws_ssm_parameter" "agent_token" {
@@ -26,6 +29,9 @@ resource "aws_ssm_parameter" "agent_token" {
   value  = "REPLACEME"
   key_id = "${var.key_id}"
   # overwrite = true
+  lifecycle {
+    ignore_changes = ["value", "description", "key_id"]
+  }
 }
 
 resource "aws_ssm_parameter" "vault_token" {
@@ -34,6 +40,10 @@ resource "aws_ssm_parameter" "vault_token" {
   value  = "REPLACEME"
   key_id = "${var.key_id}"
   # overwrite = true
+
+  lifecycle {
+    ignore_changes = ["value", "description", "key_id"]
+  }
 }
 
 resource "aws_ssm_parameter" "consul_gossip_encryption_key" {
