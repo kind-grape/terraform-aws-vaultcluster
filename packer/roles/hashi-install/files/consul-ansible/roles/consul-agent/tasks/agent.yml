@@ -1,41 +1,39 @@
-- name: Running client agent tasks
-  block:
-    - name: Fetch client agent token from parameter store
-      shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-agent | jq -r '.Parameter | .Value'"
-      register: client_agent_token
-      until: client_agent_token.stdout != ""
-      retries: 120
-      delay: 2
-      ignore_errors: yes
+# - name: Fetch client agent token from parameter store
+#   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-agent | jq -r '.Parameter | .Value'"
+#   register: client_agent_token
+#   until: client_agent_token.stdout != ""
+#   retries: 120
+#   delay: 2
+#   ignore_errors: yes
 
-    - name: Archive ACL agent token
-      copy:
-        content: "{{ client_agent_token }}"
-        dest: /etc/consul.d/tokens/agent
-        owner: consul
-        group: consul
-        mode: 0640
+- name: Archive ACL agent token
+  copy:
+    content: "{{ client_agent_token }}"
+    dest: /etc/consul.d/tokens/agent
+    owner: consul
+    group: consul
+    mode: 0640
 
-    - name: Add ACL configuration
-      template:
-        src: etc/consul.d/acl.hcl.j2
-        dest: '/etc/consul.d/acl.hcl'
-        owner: 'consul'
-        group: 'consul'
-        mode: 0660
+- name: Add ACL configuration
+  template:
+    src: etc/consul.d/acl.hcl.j2
+    dest: '/etc/consul.d/acl.hcl'
+    owner: 'consul'
+    group: 'consul'
+    mode: 0660
 
-    - name: Replace ACL token placeholder in Consul config
-      lineinfile:
-        path: /etc/consul.d/acl.hcl
-        regexp: "## AGENT_TOKEN_PLACEHOLDER ##"
-        line: "    agent = \"{{ client_agent_token }}\""
-      register: consul_agent_config
+- name: Replace ACL token placeholder in Consul config
+  lineinfile:
+    path: /etc/consul.d/acl.hcl
+    regexp: "## AGENT_TOKEN_PLACEHOLDER ##"
+    line: "    agent = \"{{ client_agent_token }}\""
+  register: consul_agent_config
 
-    - name: Restart Consul
-      service: name=consul state=restarted
-      when: consul_agent_config.changed
+- name: Restart Consul
+  service: name=consul state=restarted
+  when: consul_agent_config.changed
 
-    - name: Wait and check for serf port
-      wait_for:
-        port: "{{ consul_serf_lan_port }}"
-        delay: 6
+- name: Wait and check for serf port
+  wait_for:
+    port: "{{ consul_serf_lan_port }}"
+    delay: 6

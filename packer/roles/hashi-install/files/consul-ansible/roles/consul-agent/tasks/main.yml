@@ -1,6 +1,9 @@
 - name: Perform Common Tasks
   import_tasks: common.yml
 
+- name: Importing Variables to verify guards against
+  import_tasks: import_env.yml
+
 - name: Run leader detection and tasks
   import_tasks: leader.yml
   when:
@@ -30,6 +33,7 @@
   when:
     - consul_agent_is_server | bool
     - consul_leader == true
+    - (client_agent_token == "REPLACEME" and vault_agent_token == "REPLACEME")
 
 - name: Write Tokens to File System
   import_tasks: token-write.yml
@@ -39,3 +43,4 @@
 
 - name: Run client agent tasks
   import_tasks: agent.yml
+  when: client_agent_token != "REPLACEME"

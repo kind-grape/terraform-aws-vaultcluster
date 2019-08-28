@@ -1,0 +1,44 @@
+- name: Fetch Master token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-master | jq -r '.Parameter | .Value'"
+  register: consul_acl_master_token
+  until: consul_acl_master_token.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- name: Register ACL master token for Ansible plays
+  set_fact:
+    consul_acl_master_token: "{{ consul_acl_master_token.stdout }}"
+
+- name: Fetch client agent token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-agent | jq -r '.Parameter | .Value'"
+  register: client_agent_token
+  until: client_agent_token.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- name: Register ACL master token for Ansible plays
+  set_fact: client_agent_token="{{ client_agent_token.stdout }}"
+
+- name: Fetch client Vault token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-vault | jq -r '.Parameter | .Value'"
+  register: vault_agent_token
+  until: vault_agent_token.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- set_fact: vault_agent_token="{{ vault_agent_token.stdout }}"
+
+- name: Show Master Token
+  debug:
+    var: consul_acl_master_token
+
+- name: Show Agent Token
+  debug:
+    var: client_agent_token
+
+- name: Show Vault Token
+  debug:
+    var: vault_agent_token

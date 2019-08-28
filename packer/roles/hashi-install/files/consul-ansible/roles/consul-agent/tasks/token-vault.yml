@@ -61,8 +61,7 @@
   register: vault_token
   run_once: yes
 
-- set_fact:
-    vault_token: "{{ vault_token.stdout }}"
+- set_fact: vault_token="{{ vault_token.stdout }}"
 
 - name: Show Vault Token
   debug:
