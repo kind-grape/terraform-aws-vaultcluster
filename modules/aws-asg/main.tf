@@ -13,7 +13,6 @@ resource "aws_launch_configuration" "consul_instance_asg" {
   iam_instance_profile = "${var.iam_instance_profile}"
   security_groups      = ["${var.security_groups}"]
   key_name             = "${var.key_name}"
-  # user_data_base64  = "${base64encode(var.user_data)}"
   user_data            = "${var.user_data}"
 
   ## In place to allow auto scale group to not destroy when incrementing the desired capacity
