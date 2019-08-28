@@ -52,10 +52,13 @@
     validate_certs: no
     return_content: yes
   register: agent_token
+  run_once: yes
+
+- set_fact:
+    agent_token: "{{ agent_token.stdout }}"
 
 - name: Show Agent Token
   debug:
-    verbosity: 2
     var: agent_token
 
 - name: Archive ACL agent token
@@ -73,4 +76,5 @@
     value: "{{ agent_token.json.SecretID }}"
     description: "Consul Storage Server client agent ACL token"
     region: "{{ ansible_ec2_placement_region }}"
+    overwrite_value: "always"
   run_once: yes

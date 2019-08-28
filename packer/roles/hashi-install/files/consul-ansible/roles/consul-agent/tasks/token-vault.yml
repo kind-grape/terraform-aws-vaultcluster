@@ -59,6 +59,10 @@
     validate_certs: no
     return_content: yes
   register: vault_token
+  run_once: yes
+
+- set_fact:
+    vault_token: "{{ vault_token.stdout }}"
 
 - name: Show Vault Token
   debug:
@@ -79,4 +83,5 @@
     value: "{{ vault_token.json.SecretID }}"
     description: "Consul Storage Server vault application ACL token"
     region: "{{ ansible_ec2_placement_region }}"
+    overwrite_value: "always"
   run_once: yes
