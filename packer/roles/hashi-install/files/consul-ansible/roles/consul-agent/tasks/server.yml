@@ -1,15 +1,3 @@
-# - name: Fetch master server token from parameter store
-#   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-master | jq -r '.Parameter | .Value'"
-#   register: consul_acl_master_token
-#   until: consul_acl_master_token.stdout != ""
-#   retries: 120
-#   delay: 2
-#   ignore_errors: yes
-#
-# - name: Set Master Service Token - server.yml
-#   set_fact:
-#     consul_acl_master_token: "{{ consul_acl_master_token.stdout }}"
-
 - name: Show Master Key - server.yml
   debug:
     var: consul_acl_master_token

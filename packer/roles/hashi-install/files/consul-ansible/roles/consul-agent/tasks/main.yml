@@ -1,9 +1,6 @@
 - name: Perform Common Tasks
   import_tasks: common.yml
 
-- name: Importing Variables to verify guards against
-  import_tasks: import_env.yml
-
 - name: Run leader detection and tasks
   import_tasks: leader.yml
   when:
