@@ -61,7 +61,8 @@
   register: vault_token
   run_once: yes
 
-- set_fact: vault_token="{{ vault_token.stdout }}"
+- set_fact:
+    vault_token: "{{ vault_token.json.SecretID }}"
 
 - name: Show Vault Token
   debug:
@@ -69,7 +70,7 @@
 
 - name: Archive ACL Vault token
   copy:
-    content: "{{ vault_token.json.SecretID }}"
+    content: "{{ vault_token }}"
     dest: /etc/consul.d/tokens/vault
     owner: consul
     group: consul
@@ -79,7 +80,7 @@
   aws_ssm_parameter_store:
     string_type: "SecureString"
     name: "consul-{{ consul_join_tag_value }}-acl-vault"
-    value: "{{ vault_token.json.SecretID }}"
+    value: "{{ vault_token }}"
     description: "Consul Storage Server vault application ACL token"
     region: "{{ ansible_ec2_placement_region }}"
     overwrite_value: "always"

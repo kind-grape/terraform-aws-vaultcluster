@@ -54,7 +54,8 @@
   register: agent_token
   run_once: yes
 
-- set_fact: agent_token="{{ agent_token.stdout }}"
+- set_fact:
+    agent_token: "{{ agent_token.json.SecretID }}"
 
 - name: Show Agent Token
   debug:
@@ -62,7 +63,7 @@
 
 - name: Archive ACL agent token
   copy:
-    content: "{{ agent_token.json.SecretID }}"
+    content: "{{ agent_token }}"
     dest: /etc/consul.d/tokens/agent
     owner: consul
     group: consul
@@ -72,7 +73,7 @@
   aws_ssm_parameter_store:
     string_type: "SecureString"
     name: "consul-{{ consul_join_tag_value }}-acl-agent"
-    value: "{{ agent_token.json.SecretID }}"
+    value: "{{ agent_token }}"
     description: "Consul Storage Server client agent ACL token"
     region: "{{ ansible_ec2_placement_region }}"
     overwrite_value: "always"

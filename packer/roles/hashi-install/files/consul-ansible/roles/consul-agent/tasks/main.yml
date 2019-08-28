@@ -33,7 +33,7 @@
   when:
     - consul_agent_is_server | bool
     - consul_leader == true
-    - (client_agent_token == "REPLACEME" and vault_agent_token == "REPLACEME")
+    # - (client_agent_token == "REPLACEME" and vault_agent_token == "REPLACEME")
 
 - name: Write Tokens to File System
   import_tasks: token-write.yml

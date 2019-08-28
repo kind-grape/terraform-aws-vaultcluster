@@ -12,7 +12,8 @@
   delay: 2
   ignore_errors: yes
 
-- set_fact: client_agent_token="{{ client_agent_token.stdout }}"
+- set_fact:
+    client_agent_token: "{{ client_agent_token.stdout }}"
 
 - name: Archive ACL agent token
   copy:
@@ -43,7 +44,8 @@
   delay: 2
   ignore_errors: yes
 
-- set_fact: vault_agent_token="{{ vault_agent_token.stdout }}"
+- set_fact:
+    vault_agent_token: "{{ vault_agent_token.stdout }}"
 
 - name: Archive ACL agent token
   copy:

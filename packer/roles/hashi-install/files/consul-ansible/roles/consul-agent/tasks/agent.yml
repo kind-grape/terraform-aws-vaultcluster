@@ -6,13 +6,13 @@
 #   delay: 2
 #   ignore_errors: yes
 
-- name: Archive ACL agent token
-  copy:
-    content: "{{ client_agent_token }}"
-    dest: /etc/consul.d/tokens/agent
-    owner: consul
-    group: consul
-    mode: 0640
+# - name: Archive ACL agent token
+#   copy:
+#     content: "{{ client_agent_token }}"
+#     dest: /etc/consul.d/tokens/agent
+#     owner: consul
+#     group: consul
+#     mode: 0640
 
 - name: Add ACL configuration
   template:
