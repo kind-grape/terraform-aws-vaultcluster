@@ -6,3 +6,5 @@ consul_http_port: 8500
 consul_https_port: 8501
 consul_dns_port: 8600
 consul_grpc_port: -1
+consul_unbound: false
+consul_dnsmasq: true

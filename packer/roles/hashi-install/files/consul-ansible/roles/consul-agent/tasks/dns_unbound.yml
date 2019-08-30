@@ -1,0 +1,38 @@
+- name: Uninstall dnsmasq
+  yum: name=dnsmasq state=absent
+
+- name: Remove dnsmasq configuration
+  file: path="{{ item }}" state=absent
+  with_items:
+    - /etc/dnsmasq.conf
+    - /etc/dnsmasq.d
+
+- name: Install unbound
+  yum: name=unbound state=present
+
+- name: Configure unbound to resolve .consul TLD
+  copy:
+    dest: /etc/unbound/conf.d/consul.conf
+    content: |
+      server:
+        do-not-query-localhost: no
+        domain-insecure: "consul"
+
+      stub-zone:
+        name: "consul"
+        stub-addr: 127.0.0.1@{{ consul_dns_port }}
+    owner: root
+    group: unbound
+    mode: 0640
+
+- name: Restart unbound
+  service: name=unbound state=restarted
+
+- name: Update dhclient to use local unbound resolver
+  lineinfile:
+    line: prepend domain-name-servers 127.0.0.1;
+    path: /etc/dhcp/dhclient.conf
+
+# - name: restart-dhclient
+#   command: /bin/pkill dhclient; /sbin/dhclient
+# #     - command: /sbin/dhclient

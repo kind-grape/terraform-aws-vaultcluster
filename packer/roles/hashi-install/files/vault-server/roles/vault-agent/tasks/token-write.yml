@@ -1,7 +1,13 @@
+# - name: Check for vault token
+#   stat:
+#     path: /etc/consul.d/tokens/vault
+#   register: vault_token_file
+#   ignore_errors: yes
+
 - name: Fetch client agent token from parameter store - token-write.yml
   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-vault | jq -r '.Parameter | .Value'"
   register: vault_agent_token
-  until: vault_agent_token.stdout != ""
+  until: vault_agent_token.stdout != "REPLACEME"
   retries: 120
   delay: 2
   ignore_errors: yes
@@ -21,5 +27,3 @@
     owner: consul
     group: consul
     mode: 0640
-  when:
-    - not vault_token_file.stat.exists | bool

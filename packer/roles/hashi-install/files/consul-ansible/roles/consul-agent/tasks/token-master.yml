@@ -1,4 +1,15 @@
-- name: Show Master Key Then write to disk
+- name: Fetch Master token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-master | jq -r '.Parameter | .Value'"
+  register: consul_acl_master_token
+  until: consul_acl_master_token.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- name: Register ACL master token for Ansible plays
+  set_fact: consul_acl_master_token="{{ consul_acl_master_token.stdout }}"
+
+- name: Show Master Token
   debug:
     var: consul_acl_master_token
 
@@ -9,9 +20,4 @@
     owner: consul
     group: consul
     mode: 0600
-
-- name: Check for master token on filesystem
-  stat:
-    path: /etc/consul.d/tokens/master
-  register: master_token_file
-  ignore_errors: yes
+  when: master_token_file.stat.exists == False

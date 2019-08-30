@@ -11,5 +11,5 @@
 
 - name: Show Consul Leader - leader_status_token.yml
   debug:
-    verbosity: 2
+    # verbosity: 2
     var: consul_leader

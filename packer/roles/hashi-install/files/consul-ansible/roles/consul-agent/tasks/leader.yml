@@ -1,3 +1,8 @@
+- name: Wait and check for serf port - leader.yml
+  wait_for:
+    port: "{{ consul_serf_lan_port }}"
+    delay: 6
+
 - name: Get Leader Address
   import_tasks: leader_address.yml
 

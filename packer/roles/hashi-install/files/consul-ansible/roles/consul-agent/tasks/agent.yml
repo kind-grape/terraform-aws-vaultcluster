@@ -1,3 +1,5 @@
+- debug: msg="START - agent.yml"
+
 - name: Add ACL configuration
   template:
     src: etc/consul.d/acl.hcl.j2
@@ -21,3 +23,5 @@
   wait_for:
     port: "{{ consul_serf_lan_port }}"
     delay: 6
+
+- debug: msg="END - agent.yml"

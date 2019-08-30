@@ -1,8 +1,3 @@
-# - name: Copy consul archive
-#   copy:
-#     src: "consul-enterprise_{{ consul_version }}+prem_linux_amd64.zip"
-#     dest: "/tmp/consul-enterprise_{{ consul_version }}+prem_linux_amd64.zip"
-
 - name: Unarchive consul
   unarchive:
     src: "/tmp/consul-enterprise_{{ consul_version }}+prem_linux_amd64.zip"
@@ -27,11 +22,6 @@
     dest: /etc/profile.d/99-consul-completion.sh
     mode: 0644
 
-# - name: Ensure group "hashi" exists
-#   group:
-#     name: hashi
-#     state: present
-
 - name: Create consul user
   user:
     name: consul
@@ -40,7 +30,6 @@
     home: /etc/consul.d
     createhome: no
     append: yes
-    # groups: hashi
 
 - name: Create configuration and TLS directories
   file:

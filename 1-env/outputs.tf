@@ -32,6 +32,7 @@ output "ssm_parameter_consul_client_tls_cert" {
 output "ssm_parameter_consul_client_tls_key" {
   value = "${module.ssm_data.ssm_parameter_consul_client_tls_key}"
 }
+
 # #######################################################
 # ## Consul Backend outputs
 # #######################################################

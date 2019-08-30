@@ -5,5 +5,4 @@
   register: consul_leader_bool
 
 - name: Set Consul Leader Status
-  set_fact:
-    consul_leader: "{{ consul_leader_bool.stdout }}"
+  set_fact: consul_leader="{{ consul_leader_bool.stdout }}"

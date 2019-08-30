@@ -1,14 +1,18 @@
-- name: Show Master Key - server.yml
-  debug:
-    var: consul_acl_master_token
+- debug: msg="START - server.yml"
 
-- name: Archive ACL master token
-  copy:
-    content: "{{ consul_acl_master_token }}"
-    dest: /etc/consul.d/tokens/master
-    owner: consul
-    group: consul
-    mode: 0600
+- name: Master Token
+  import_tasks: token-master.yml
+  # when: master_token_file.stat.exists == False
+
+- name: Run leader detection and tasks
+  import_tasks: leader.yml
+
+- name: Show consul leader - main.yml
+  debug:
+    var: consul_leader
+
+- name: Run leader detection
+  import_tasks: leader_status_token.yml
 
 - name: Add ACL configuration
   template:
@@ -27,3 +31,16 @@
   wait_for:
     port: "{{ consul_serf_lan_port }}"
     delay: 6
+
+- name: Run bootstrap tasks
+  import_tasks: bootstrap-acl.yml
+  when:
+    - consul_leader == true
+    - agent_token_file.stat.exists == false
+    - vault_token_file.stat.exists == false
+
+- name: Write Tokens to File System
+  import_tasks: token-write.yml
+  when: consul_leader == false
+
+- debug: msg="END - server.yml"

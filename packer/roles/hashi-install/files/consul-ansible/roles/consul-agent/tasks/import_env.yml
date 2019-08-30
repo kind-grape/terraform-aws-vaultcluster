@@ -1,14 +1,44 @@
-- name: Fetch Master token from parameter store
-  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-master | jq -r '.Parameter | .Value'"
-  register: consul_acl_master_token
-  until: consul_acl_master_token.stdout != ""
-  retries: 120
-  delay: 2
+- debug: msg="START - import_env.yml"
+
+- name: Check for master token on filesystem
+  stat: path=/etc/consul.d/tokens/master
+  register: master_token_file
   ignore_errors: yes
 
-- name: Register ACL master token for Ansible plays
-  set_fact:
-    consul_acl_master_token: "{{ consul_acl_master_token.stdout }}"
+- name: Check for agent token on filesystem
+  stat: path=/etc/consul.d/tokens/agent
+  register: agent_token_file
+  ignore_errors: yes
+
+- name: Check for vault token on filesystem
+  stat: path=/etc/consul.d/tokens/vault
+  register: vault_token_file
+  ignore_errors: yes
+
+- name: Check for /etc/consul.d/tls/consul_tls_ca_bundle
+  stat: path=/etc/consul.d/tls/consul_tls_ca_bundle
+  register: stat_consul_tls_ca_bundle
+  ignore_errors: yes
+
+- name: Check for /etc/consul.d/tls/consul_client_tls_cert
+  local_action: stat path=/etc/consul.d/tls/consul_client_tls_cert
+  register: stat_consul_client_tls_cert
+  ignore_errors: yes
+
+- name: Check for /etc/consul.d/tls/consul_client_tls_key
+  local_action: stat path=/etc/consul.d/tls/consul_client_tls_key
+  register: stat_consul_client_tls_key
+  ignore_errors: yes
+
+- name: Check for /etc/consul.d/tls/consul_server_tls_cert
+  local_action: stat path=/etc/consul.d/tls/consul_server_tls_cert
+  register: stat_consul_server_tls_cert
+  ignore_errors: yes
+
+- name: Check for /etc/consul.d/tls/consul_server_tls_key
+  local_action: stat path=/etc/consul.d/tls/consul_server_tls_key
+  register: stat_consul_server_tls_key
+  ignore_errors: yes
 
 - name: Fetch client agent token from parameter store
   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-agent | jq -r '.Parameter | .Value'"
@@ -18,7 +48,7 @@
   delay: 2
   ignore_errors: yes
 
-- name: Register ACL master token for Ansible plays
+- name: Register ACL Agent token for Ansible plays
   set_fact: client_agent_token="{{ client_agent_token.stdout }}"
 
 - name: Fetch client Vault token from parameter store
@@ -31,14 +61,27 @@
 
 - set_fact: vault_agent_token="{{ vault_agent_token.stdout }}"
 
-- name: Show Master Token - import_env.yml
-  debug:
-    var: consul_acl_master_token
+- name: Fetch Gossip Encryption Key from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul_gossip_encryption_key | jq -r '.Parameter | .Value'"
+  register: consul_encryption_key
+  until: consul_encryption_key.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
 
-- name: Show Agent Token - import_env.yml
+- name: Register Gossip Encryption Key for Ansible plays
+  set_fact: consul_encryption_key="{{ consul_encryption_key.stdout }}"
+
+- name: Show Agent Token
   debug:
     var: client_agent_token
 
-- name: Show Vault Token - import_env.yml
+- name: Show Vault Token
   debug:
     var: vault_agent_token
+
+- name: Show Gossip Encryption Key
+  debug:
+    var: consul_encryption_key
+
+- debug: msg="END - import_env.yml"

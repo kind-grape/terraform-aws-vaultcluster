@@ -41,12 +41,12 @@
     group: consul
     mode: 0640
 
-- name: Show Vault Token token-write.yml
+- name: Show Vault Token - token-write.yml
   debug:
     var: vault_agent_token
     # verbosity: 2
 
-- name: Show Agent Token token-write.yml
+- name: Show Agent Token - token-write.yml
   debug:
     var: agent_token
     # verbosity: 2

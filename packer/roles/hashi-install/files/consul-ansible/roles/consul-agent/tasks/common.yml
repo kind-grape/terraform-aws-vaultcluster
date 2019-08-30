@@ -1,32 +1,27 @@
+- debug: msg="START - common.yml"
+
 - name: Gather instance metadata
   ec2_metadata_facts:
 
 - name: Importing Variables to verify guards against
   import_tasks: import_env.yml
 
+- name: Copying Certificates
+  import_tasks: certs.yml
+
+- name: Enable dnsmasq services
+  import_tasks: dns_dnsmasq.yml
+  when: consul_dnsmasq | bool
+
+- name: Enable unbound services
+  import_tasks: dns_unbound.yml
+  when: consul_unbound | bool
+
 - name: adding existing user ec2-user to consul and hashi groups
   user:
     name: 'ec2-user'
     groups: consul
     append: yes
-
-# - name: Check for master token
-#   stat:
-#     path: /etc/consul.d/tokens/master
-#   register: master_token_file
-#   ignore_errors: yes
-#
-# - name: Check for agent token
-#   stat:
-#     path: /etc/consul.d/tokens/agent
-#   register: agent_token_file
-#   ignore_errors: yes
-#
-# - name: Check for vault token
-#   stat:
-#     path: /etc/consul.d/tokens/vault
-#   register: vault_token_file
-#   ignore_errors: yes
 
 - name: Copy file with owner and permissions
   copy:
@@ -36,28 +31,6 @@
     group: root
     mode: '0750'
 
-- name: Enable TLS if HTTPS port enabled
-  set_fact: consul_tls_enabled="{{ (consul_https_port != -1) | ternary(True, False) }}"
-
-- name: Set API endpoint to HTTP or HTTPS
-  set_fact:
-    consul_api_protocol: "{{ consul_tls_enabled | ternary('https', 'http') }}"
-    consul_api_port: "{{ consul_tls_enabled | ternary(consul_https_port, consul_http_port) }}"
-
-- name: Copying Certificates
-  import_tasks: certs.yml
-
-- name: Fetch master server token from parameter store
-  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul_gossip_encryption_key | jq -r '.Parameter | .Value'"
-  register: consul_encryption_key
-  until: consul_encryption_key.stdout != ""
-  retries: 120
-  delay: 2
-  ignore_errors: yes
-
-- set_fact:
-    consul_encryption_key: "{{ consul_encryption_key.stdout }}"
-
 - name: Create protected directory for ACL tokens
   file:
     path: /etc/consul.d/tokens
@@ -65,6 +38,14 @@
     owner: consul
     group: consul
     mode: 0700
+
+- name: Enable TLS if HTTPS port enabled
+  set_fact: consul_tls_enabled="{{ (consul_https_port != -1) | ternary(True, False) }}"
+
+- name: Set API endpoint to HTTP or HTTPS
+  set_fact:
+    consul_api_protocol: "{{ consul_tls_enabled | ternary('https', 'http') }}"
+    consul_api_port: "{{ consul_tls_enabled | ternary(consul_https_port, consul_http_port) }}"
 
 - name: Set Consul environment variables
   copy:
@@ -90,3 +71,5 @@
 - name: Restart Consul
   service: name=consul state=restarted
   when: consul_config.changed
+
+- debug: msg="END - common.yml"
