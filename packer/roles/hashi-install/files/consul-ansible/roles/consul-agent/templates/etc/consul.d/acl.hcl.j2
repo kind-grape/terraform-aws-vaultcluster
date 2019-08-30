@@ -10,6 +10,6 @@ acl = {
   {% if consul_agent_is_server %}
     master = "{{ consul_acl_master_token }}"
   {% endif %}
-    ## AGENT_TOKEN_PLACEHOLDER ##
+    agent = "{{ client_agent_token }}"
   }
 }

@@ -8,4 +8,3 @@
 
 - name: Run client agent tasks
   import_tasks: agent.yml
-  when: client_agent_token != "REPLACEME"

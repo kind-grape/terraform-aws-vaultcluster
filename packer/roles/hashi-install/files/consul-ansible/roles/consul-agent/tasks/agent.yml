@@ -1,6 +1,12 @@
 - debug: msg="START - agent.yml"
 
-- name: Add ACL configuration
+# - name: Write Tokens to File System
+#   import_tasks: token-write.yml
+#   when:
+#     - agent_token_file.stat.exists == false
+#     - vault_token_file.stat.exists == false
+
+- name: Add ACL configuration - agent.yml
   template:
     src: etc/consul.d/acl.hcl.j2
     dest: '/etc/consul.d/acl.hcl'
@@ -8,12 +14,12 @@
     group: 'consul'
     mode: 0660
 
-- name: Replace ACL token placeholder in Consul config
-  lineinfile:
-    path: /etc/consul.d/acl.hcl
-    regexp: "## AGENT_TOKEN_PLACEHOLDER ##"
-    line: "    agent = \"{{ client_agent_token }}\""
-  register: consul_agent_config
+# - name: Replace ACL token placeholder in Consul config
+#   lineinfile:
+#     path: /etc/consul.d/acl.hcl
+#     regexp: "## AGENT_TOKEN_PLACEHOLDER ##"
+#     line: "    agent = \"{{ client_agent_token }}\""
+#   register: consul_agent_config
 
 - name: Restart Consul
   service: name=consul state=restarted

@@ -7,14 +7,14 @@
 - name: Run leader detection and tasks
   import_tasks: leader.yml
 
-- name: Show consul leader - main.yml
+- name: Show consul leader
   debug:
     var: consul_leader
 
 - name: Run leader detection
   import_tasks: leader_status_token.yml
 
-- name: Add ACL configuration
+- name: Add ACL configuration - server.yml
   template:
     src: etc/consul.d/acl.hcl.j2
     dest: '/etc/consul.d/acl.hcl'
@@ -23,7 +23,7 @@
     mode: 0660
   register: consul_acl_config
 
-- name: Restart Consul
+- name: Restart Consul - server.yml
   service: name=consul state=restarted
   when: consul_acl_config.changed
 
