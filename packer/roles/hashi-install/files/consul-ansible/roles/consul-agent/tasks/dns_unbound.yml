@@ -24,14 +24,16 @@
     owner: root
     group: unbound
     mode: 0640
+  register: unbound_config
 
 - name: Restart unbound
   service: name=unbound state=restarted
+  when: unbound_config.changed
 
 - name: Update dhclient to use local unbound resolver
   lineinfile:
-    line: prepend domain-name-servers 127.0.0.1;
     path: /etc/dhcp/dhclient.conf
+    line: prepend domain-name-servers 127.0.0.1;
 
 # - name: restart-dhclient
 #   command: /bin/pkill dhclient; /sbin/dhclient

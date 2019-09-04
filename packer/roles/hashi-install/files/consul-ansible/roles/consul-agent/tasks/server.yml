@@ -32,12 +32,22 @@
     port: "{{ consul_serf_lan_port }}"
     delay: 6
 
+- name: Check for agent token on filesystem
+  stat: path=/etc/consul.d/tokens/agent
+  register: agent_token_file
+  ignore_errors: yes
+
+- name: Check for vault token on filesystem
+  stat: path=/etc/consul.d/tokens/vault
+  register: vault_token_file
+  ignore_errors: yes
+
 - name: Run bootstrap tasks
   import_tasks: bootstrap-acl.yml
   when:
     - consul_leader == true
-    - agent_token_file.stat.exists == false
-    - vault_token_file.stat.exists == false
+    # - agent_token_file.stat.exists == false
+    # - vault_token_file.stat.exists == false
 
 - name: Write Tokens to File System
   import_tasks: token-write.yml

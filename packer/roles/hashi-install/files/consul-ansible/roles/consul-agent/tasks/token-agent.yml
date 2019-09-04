@@ -30,7 +30,7 @@
         "Rules": "{{ agent_policy_api_value }}"
       }
     method: PUT
-    url: {{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/acl/policy
+    url: "{{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/acl/policy"
     headers:
       X-Consul-Token: "{{ consul_acl_master_token }}"
     validate_certs: no
@@ -46,7 +46,7 @@
         "Local": false
       }
     method: PUT
-    url: {{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/acl/token
+    url: "{{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/acl/token"
     headers:
       X-Consul-Token: "{{ consul_acl_master_token }}"
     validate_certs: no
