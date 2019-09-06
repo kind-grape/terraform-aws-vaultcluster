@@ -1,20 +1,3 @@
-# - name: Install CA certificates
-#   copy:
-#     src: etc/vault.d/tls/{{ item }}
-#     dest: /etc/vault.d/tls/{{ item }}
-#     owner: vault
-#     group: vault
-#     mode: 0440
-#   with_items:
-#     - vault-agent-ca.pem
-#   no_log: true
-
-# - name: Add Trusted CA cert to OS
-#   shell: |
-#     cp /etc/consul.d/tls/consul_tls_ca_bundle /etc/pki/ca-trust/source/anchors/
-#     update-ca-trust
-#   register: consul_ca_trust
-
 - name: Show Vault Token
   debug:
     verbosity: "{{ debug_verbosity }}"

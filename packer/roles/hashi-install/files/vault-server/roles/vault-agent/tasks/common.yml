@@ -1,8 +1,15 @@
 - name: Gather instance metadata
   ec2_metadata_facts:
 
+- name: Importing Variables to verify guards against
+  import_tasks: import_env.yml
+
 - name: adding existing user ec2-user to consul and hashi groups
   user:
     name: 'ec2-user'
     groups: consul,vault
     append: yes
+
+- name: Copying Vault Certificates
+  import_tasks: certs.yml
+  when: vault_https_enabled == true

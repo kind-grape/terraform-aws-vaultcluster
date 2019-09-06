@@ -1,0 +1,23 @@
+- debug: msg="START - import_env.yml"
+
+- name: Check for vault token
+  stat: path=/etc/consul.d/tokens/vault
+  register: vault_token_file
+  ignore_errors: yes
+
+- name: Check for /etc/vault.d/tls/vault_tls_ca_bundle
+  stat: path=/etc/vault.d/tls/vault_tls_ca_bundle
+  register: stat_vault_tls_ca_bundle
+  ignore_errors: yes
+
+- name: Check for /etc/vault.d/tls/vault_server_tls_cert
+  local_action: stat path=/etc/vault.d/tls/vault_server_tls_cert
+  register: stat_vault_server_tls_cert
+  ignore_errors: yes
+
+- name: Check for /etc/vault.d/tls/vault_server_tls_key
+  local_action: stat path=/etc/vault.d/tls/vault_server_tls_key
+  register: stat_vault_server_tls_key
+  ignore_errors: yes
+
+- debug: msg="END - import_env.yml"

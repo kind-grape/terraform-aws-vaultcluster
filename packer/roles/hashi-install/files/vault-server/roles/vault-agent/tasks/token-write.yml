@@ -1,9 +1,3 @@
-# - name: Check for vault token
-#   stat:
-#     path: /etc/consul.d/tokens/vault
-#   register: vault_token_file
-#   ignore_errors: yes
-
 - name: Fetch client agent token from parameter store - token-write.yml
   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-vault | jq -r '.Parameter | .Value'"
   register: vault_agent_token
@@ -12,12 +6,11 @@
   delay: 2
   ignore_errors: yes
 
-- set_fact:
-    vault_agent_token: "{{ vault_agent_token.stdout }}"
+- set_fact: vault_agent_token="{{ vault_agent_token.stdout }}"
 
 - name: Show Vault Token
   debug:
-    # verbosity: 2
+    verbosity: "{{ debug_verbosity }}"
     var: vault_agent_token
 
 - name: Archive ACL agent token
