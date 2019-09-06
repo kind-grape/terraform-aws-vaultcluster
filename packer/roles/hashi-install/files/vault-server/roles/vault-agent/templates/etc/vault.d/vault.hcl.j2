@@ -7,6 +7,7 @@ storage "consul" {
 {% if consul_https_enabled == true %}
   address = "127.0.0.1:{{ consul_https_port }}"
   scheme  = "https"
+  tls_ca_file = "/etc/consul.d/tls/consul_tls_ca_bundle"
 {% else %}
   address = "127.0.0.1:{{ consul_http_port }}"
 {% endif %}
@@ -16,7 +17,14 @@ storage "consul" {
 
 listener "tcp" {
   address     = "127.0.0.1:8200"
+{% if vault_https_enabled == true %}
+  scheme  = "https"
+  tls_ca_file   = "/etc/vault.d/tls/ca.pem"
+  tls_cert_file = "/etc/vault.d/tls/cert.pem"
+  tls_key_file  = "/etc/vault.d/tls/key.pem"
+{% else %}
   tls_disable = true
+{% endif %}
 }
 
 {% if vault_telemtry_enabled == true %}

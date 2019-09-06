@@ -16,6 +16,9 @@ cat <<- _EOF_
     consul_join_tag_value: ${consul_join_tag_value}
     consul_join_region: ${consul_join_region}
     consul_agent_role: server
+    consul_unbound: ${consul_unbound}
+    consul_dnsmasq: ${consul_dnsmasq}
+    consul_https_enabled: ${consul_https_enabled}
     consul_agent_is_server: ${consul_agent_is_server}
     consul_server_rpc_port: ${consul_server_rpc_port}
     consul_serf_lan_port: ${consul_serf_lan_port}
@@ -23,12 +26,8 @@ cat <<- _EOF_
     consul_http_port: ${consul_http_port}
     consul_https_port: ${consul_https_port}
     consul_dns_port: ${consul_dns_port}
-    consul_encryption_key: ${consul_encryption_key}
     consul_agent_policy_name: consul-agent
     consul_application_policy_name: vault-agent
-    consul_config_path: /etc/consul.d
-    consul_user: consul
-    consul_group: consul
 
   roles:
     - consul-agent
@@ -48,25 +47,27 @@ cat <<- _EOF_
     consul_join_region: ${consul_join_region}
     consul_agent_role: server
     consul_agent_is_server: ${consul_agent_is_server}
+    consul_unbound: ${consul_unbound}
+    consul_dnsmasq: ${consul_dnsmasq}
+    consul_https_enabled: ${consul_https_enabled}
     consul_server_rpc_port: ${consul_server_rpc_port}
     consul_serf_lan_port: ${consul_serf_lan_port}
     consul_serf_wan_port: ${consul_serf_wan_port}
     consul_http_port: ${consul_http_port}
     consul_https_port: ${consul_https_port}
     consul_dns_port: ${consul_dns_port}
-    consul_encryption_key: ${consul_encryption_key}
     consul_agent_policy_name: consul-agent
     consul_application_policy_name: vault-agent
-    consul_config_path: /etc/consul.d
-    consul_user: consul
-    consul_group: consul
     vault_api_port: ${vault_api_port}
     vault_cluster_port: ${vault_cluster_port}
+    vault_https_enabled: ${vault_https_enabled}
+    vault_telemtry_enabled: ${vault_telemtry_enabled}
+    unseal_cloud: ${unseal_cloud}
     vault_kms_key_id: ${vault_kms_key_id}
 
   roles:
     - consul-agent
-    # - vault-agent
+    - vault-agent
 _EOF_
 }
 
@@ -79,60 +80,5 @@ elif [ "$role" == "vault" ]; then
 else
   echo "You suck at role association"
 fi
-
-function create_cert {
-cat <<- _EOF_
------BEGIN CERTIFICATE-----
-INSERT CERTIFICATE DATA HERE
------END CERTIFICATE-----
-_EOF_
-}
-
-function create_cert_client {
-cat <<- _EOF_
------BEGIN CERTIFICATE-----
------BEGIN CERTIFICATE-----
-INSERT CERTIFICATE DATA HERE
------END CERTIFICATE-----
-_EOF_
-}
-
-function create_cert_client_key {
-cat <<- _EOF_
------BEGIN EC PRIVATE KEY-----
-MHcCAQEEIIDdsU8HBzLx6T08F4hfBSgkeCmHHJ95QrO1EEDQTguroAoGCCqGSM49
-AwEHoUQDQgAEYOdEjRfEahRWwFbRunFI5vQkHoBIBpDg+JLp7A1pdeyceJepoINF
-PfzWlhFCdf6yZv1qRorX7sqg9peF3ZVADg==
------END EC PRIVATE KEY-----
-_EOF_
-}
-
-function create_cert_server {
-cat <<- _EOF_
------BEGIN CERTIFICATE-----
-INSERT CERTIFICATE DATA HERE
------END CERTIFICATE-----
-_EOF_
-}
-
-function create_cert_server_key {
-cat <<- _EOF_
------BEGIN CERTIFICATE-----
-INSERT CERTIFICATE DATA HERE
------END CERTIFICATE-----
-_EOF_
-}
-
-export -f create_cert; export -f create_cert_client; export -f create_cert_client_key; export -f create_cert_server; export -f create_cert_server_key
-
-cert_dir="/etc/ansible/roles/consul-agent/files/etc/consul.d/tls"
-create_cert > $cert_dir/consul-agent-ca.pem
-create_cert_client > $cert_dir/dc1-client-consul-0.pem
-create_cert_client_key > $cert_dir/dc1-client-consul-0-key.pem
-create_cert_server > $cert_dir/dc1-server-consul-0.pem
-create_cert_server_key > $cert_dir/dc1-server-consul-0-key.pem
-
-cp $cert_dir/consul-agent-ca.pem /etc/pki/ca-trust/source/anchors/
-update-ca-trust enable; update-ca-trust extract
 
 ansible-playbook /etc/ansible/bootstrap.yml
