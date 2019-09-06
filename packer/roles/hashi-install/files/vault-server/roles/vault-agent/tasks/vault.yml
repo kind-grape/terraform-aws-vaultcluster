@@ -9,6 +9,17 @@
 #     - vault-agent-ca.pem
 #   no_log: true
 
+- name: Add Trusted CA cert to OS
+  shell: |
+    cp /etc/consul.d/tls/consul_tls_ca_bundle /etc/pki/ca-trust/source/anchors/
+    update-ca-trust
+  register: consul_ca_trust
+
+- name: Show Vault Token
+  debug:
+    verbosity: "{{ debug_verbosity }}"
+    var: consul_https_enabled
+
 - name: Configure Vault Configuration
   template:
     src: etc/vault.d/vault.hcl.j2

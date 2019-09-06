@@ -4,7 +4,7 @@ api_addr     = "http://{{ ansible_ec2_local_ipv4 }}:8200"
 # cluster_addr = "https://$cluster_address:8201"
 
 storage "consul" {
-{% if consul_https_enabled %}
+{% if consul_https_enabled == true %}
   address = "127.0.0.1:{{ consul_https_port }}"
   scheme  = "https"
 {% else %}
@@ -19,14 +19,13 @@ listener "tcp" {
   tls_disable = true
 }
 
-{% if vault_telemtry_enabled %}
+{% if vault_telemtry_enabled == true %}
 telemetry {
   statsite_address = "127.0.0.1:8125"
   disable_hostname = true
-}
-{% endif %}
+}{% endif %}
 
-{% if unseal_cloud %}
+{% if unseal_cloud == 'awskms' %}
 seal "awskms" {
   region     = "{{ consul_join_region }}"
   kms_key_id = "{{ vault_kms_key_id }}"
