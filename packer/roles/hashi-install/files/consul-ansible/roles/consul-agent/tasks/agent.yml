@@ -1,12 +1,15 @@
 - debug: msg="START - agent.yml"
 
 - name: Fetch client agent token from parameter store
-  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-client | jq -r '.Parameter | .Value'"
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-agent | jq -r '.Parameter | .Value'"
   register: client_agent_token
   until: client_agent_token.stdout != "REPLACEME"
   retries: 120
   delay: 2
   ignore_errors: yes
+
+- name: Register ACL Agent token
+  set_fact: client_agent_token="{{ client_agent_token.stdout }}"
 
 - name: Add ACL configuration - agent.yml
   template:
@@ -15,6 +18,7 @@
     owner: 'consul'
     group: 'consul'
     mode: 0660
+  register: consul_agent_config
 
 - name: Restart Consul
   service: name=consul state=restarted

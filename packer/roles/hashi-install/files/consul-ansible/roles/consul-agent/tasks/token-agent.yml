@@ -35,6 +35,7 @@
       X-Consul-Token: "{{ consul_acl_master_token }}"
     validate_certs: no
   register: consul_agent_token_write
+  run_once: yes
 
 - name: Create agent token
   uri:

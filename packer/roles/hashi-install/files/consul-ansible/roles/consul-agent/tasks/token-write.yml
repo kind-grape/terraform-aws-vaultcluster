@@ -1,5 +1,5 @@
 - name: Fetch client agent token from parameter store
-  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-client | jq -r '.Parameter | .Value'"
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-agent | jq -r '.Parameter | .Value'"
   register: client_agent_token
   until: client_agent_token.stdout != "REPLACEME"
   retries: 120

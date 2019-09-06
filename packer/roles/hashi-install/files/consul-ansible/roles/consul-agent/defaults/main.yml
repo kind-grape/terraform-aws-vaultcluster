@@ -8,3 +8,5 @@ consul_dns_port: 8600
 consul_grpc_port: -1
 consul_unbound: false
 consul_dnsmasq: true
+
+debug_verbosity: 0

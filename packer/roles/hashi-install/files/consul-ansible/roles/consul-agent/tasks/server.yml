@@ -46,8 +46,6 @@
   import_tasks: bootstrap-acl.yml
   when:
     - consul_leader == true
-    # - agent_token_file.stat.exists == false
-    # - vault_token_file.stat.exists == false
 
 - name: Write Tokens to File System
   import_tasks: token-write.yml

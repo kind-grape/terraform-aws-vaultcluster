@@ -23,9 +23,9 @@
     groups: consul
     append: yes
 
-- name: Copy file with owner and permissions
-  copy:
-    src: "cleanup.sh"
+- name: Copy cleanup script with owner and permissions
+  template:
+    src: cleanup.sh
     dest: /bin/cleanup
     owner: root
     group: root

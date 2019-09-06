@@ -1,0 +1,31 @@
+{
+  "snapshot_agent": {
+    "http_addr": "https://127.0.0.1:7501",
+    "token": "585367df-0000-aaaa-1111-8fcc45e8f0c9",
+    "datacenter": "dc1",
+    "ca_file": "/etc/consul.d/tls/consul-agent-ca.pem",
+    "cert_file": "/etc/consul.d/tls/dc1-client-consul-0.pem",
+    "key_file": "/etc/consul.d/tls/dc1-client-consul-0-key.pem",
+    "log": {
+      "level": "INFO",
+      "enable_syslog": true,
+      "syslog_facility": "LOCAL0"
+    },
+    "snapshot": {
+      "interval": "1h",
+      "retain": 360,
+      "stale": false,
+      "service": "consul-snapshot",
+      "deregister_after": "72h",
+      "lock_key": "consul-snapshot/lock",
+      "max_failures": 3
+    },
+    "aws_storage": {
+      "s3_region": "us-east-2",
+      "s3_bucket": "demo-cluster-snapshots-rock-lobster",
+      "s3_key_prefix": "prod",
+      "s3_static_snapshot_name": "us-east-1-backup.snap",
+      "s3_server_side_encryption": false
+    }
+  }
+}
