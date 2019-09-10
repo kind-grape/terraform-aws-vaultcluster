@@ -1,0 +1,62 @@
+- name: Unarchive consul
+  unarchive:
+    src: "/tmp/consul-enterprise_{{ consul_version }}+prem_linux_amd64.zip"
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    remote_src: yes
+
+- name: "Copy Consul ansible directory"
+  copy: src="{{ item }}" dest="/etc/ansible/"
+  with_items:
+    - "consul-ansible/host_vars"
+    - "consul-ansible/roles"
+    - "consul-ansible/ansible.cfg"
+    - "consul-ansible/hosts"
+    - "consul-ansible/ec2.ini"
+    - "consul-ansible/ec2.py"
+
+- name: Setup autocompletion
+  copy:
+    content: complete -C "/usr/local/bin/consul" "consul"
+    dest: /etc/profile.d/99-consul-completion.sh
+    mode: 0644
+
+- name: Create consul user
+  user:
+    name: consul
+    system: yes
+    shell: /bin/false
+    home: /etc/consul.d
+    createhome: no
+    append: yes
+
+- name: Create configuration and TLS directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: consul
+    group: consul
+    mode: '0750'
+  with_items:
+    - /etc/consul.d
+    - /etc/consul.d/tls
+
+- name: Create symbolic link
+  file:
+    src: "/usr/local/bin/consul"
+    dest: "/bin/consul"
+    state: link
+
+- name: Create data directory
+  file:
+    path: /var/lib/consul
+    state: directory
+    owner: consul
+    group: consul
+    mode: '0700'
+
+- name: Install systemd unit
+  template:
+    src: lib/systemd/system/consul-snapshot-agent.service.j2
+    dest: /lib/systemd/system/consul-snapshot-agent.service

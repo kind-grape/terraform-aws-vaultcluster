@@ -41,7 +41,7 @@ enable_local_script_checks = false
 ## Encryption and TLS
 encrypt                = "{{ consul_encryption_key | default("bogus-token") }}"
 ca_file                = "/etc/consul.d/tls/consul_tls_ca_bundle"
-{% if consul_agent_is_server %}
+{% if consul_agent_is_server == true %}
 cert_file              = "/etc/consul.d/tls/consul_server_tls_cert"
 key_file               = "/etc/consul.d/tls/consul_server_tls_key"
 {% else %}
@@ -61,7 +61,7 @@ retry_join     = [
   "provider=aws tag_key={{ consul_join_tag_key }} tag_value={{ consul_join_tag_value }} region={{ consul_join_region }} addr_type=private_v4"
 ]
 
-{% if consul_agent_is_server %}
+{% if consul_agent_is_server == true %}
 ## Server Settings
 server           = true
 bootstrap        = false

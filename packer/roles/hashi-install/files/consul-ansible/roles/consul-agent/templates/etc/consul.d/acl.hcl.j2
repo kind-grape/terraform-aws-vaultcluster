@@ -7,7 +7,7 @@ acl = {
   enable_token_persistence = true
 
   tokens {
-  {% if consul_agent_is_server %}
+  {% if consul_agent_is_server == true -%}
     master = "{{ consul_acl_master_token }}"
   {% endif %}
     agent = "{{ client_agent_token }}"

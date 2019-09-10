@@ -151,7 +151,7 @@ variable "consul_storage" {
     ami               = "ami-0000000000000000a"
     size              = "t2.micro"
     health_check_type = "EC2"
-    server            = true
+    server            = false
     https             = false
     version           = "1.5.1"
     role              = "cslstore"
@@ -177,6 +177,45 @@ variable "consul_storage" {
   }
 }
 
+variable "consul_snap" {
+  description = "Default values for an instance"
+
+  default = {
+    root_name         = "/"
+    root_size         = "50"
+    root_type         = "gp2"
+    security_group    = ""
+    bucket_name       = "consul-snapshot-bucket"
+    snapshot_name     = "consul-snapshots"
+    ami               = "ami-0000000000000000a"
+    size              = "t2.micro"
+    health_check_type = "EC2"
+    server            = false
+    https             = false
+    version           = "1.5.1"
+    role              = "snapshot"
+    datacenter        = "vault"
+    datacenter_consul = "csl"
+    ports             = "8300,8301,8302,8500,8600,7300,7301,7302,7500,7600"
+    ingress_rules     = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-webuis-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
+    listening_port    = "7500"
+    masterkey         = "1111111111111111111111=="
+    agentkey          = "2222222222222222222222=="
+    unbound           = false
+    dnsmasq           = true
+    autojoin          = false
+    tlslistener       = false
+    enterprise        = false
+    enablesyslog      = false
+    ui                = false
+    count             = 0
+    desired_capacity  = 1
+    max_size          = 1
+    min_size          = 1
+    startindex        = 0
+  }
+}
+
 variable "consul_sd" {
   default = {
     root_name         = "/"
@@ -186,7 +225,7 @@ variable "consul_sd" {
     ami               = "ami-0000000000000000a"
     size              = "t2.micro"
     health_check_type = "EC2"
-    server            = true
+    server            = false
     https             = false
     version           = "1.5.1"
     role              = "cslsd"
@@ -207,7 +246,7 @@ variable "consul_sd" {
     count             = 0
     desired_capacity  = 1
     max_size          = 1
-    min_size          = 0
+    min_size          = 1
     startindex        = 0
   }
 }
@@ -242,7 +281,7 @@ variable "vault" {
     count             = 0
     desired_capacity  = 1
     max_size          = 1
-    min_size          = 0
+    min_size          = 1
     startindex        = 0
   }
 }
