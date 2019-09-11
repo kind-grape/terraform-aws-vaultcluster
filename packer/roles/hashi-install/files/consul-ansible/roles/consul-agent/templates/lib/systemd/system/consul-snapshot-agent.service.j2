@@ -1,0 +1,28 @@
+### BEGIN INIT INFO
+# Provides: consul
+# Required-Start: $local_fs $remote_fs
+# Required-Stop: $local_fs $remote_fs
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Consul snapshot agent
+# Description: Consul service snapshot agent
+### END INIT INFO
+
+[Unit]
+Description="HashiCorp Consul Snapshot Agent"
+Documentation=https://www.consul.io/
+Requires=network-online.target
+Requisite=consul.service
+After=network-online.target
+ConditionFileNotEmpty={{ consul_config_path }}/consul.hcl
+
+[Service]
+User=consul
+Group=consul
+ExecStart=/usr/local/bin/consul snapshot agent -config-dir={{ consul_config_path }}/
+ExecReload=/usr/local/bin/consul reload
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

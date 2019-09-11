@@ -8,3 +8,8 @@
 
 - name: Run client agent tasks
   import_tasks: agent.yml
+
+- name: Run snapshot agent tasks
+  import_tasks: snapshot.yml
+  when:
+    - consul_agent_role == "snapshot"

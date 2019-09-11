@@ -40,18 +40,20 @@ enable_local_script_checks = false
 
 ## Encryption and TLS
 encrypt                = "{{ consul_encryption_key | default("bogus-token") }}"
+{% if consul_https_enabled | bool -%}
 ca_file                = "/etc/consul.d/tls/consul_tls_ca_bundle"
-{% if consul_agent_is_server == true %}
+{% if consul_agent_is_server | bool -%}
 cert_file              = "/etc/consul.d/tls/consul_server_tls_cert"
 key_file               = "/etc/consul.d/tls/consul_server_tls_key"
-{% else %}
+{% else -%}
 cert_file              = "/etc/consul.d/tls/consul_client_tls_cert"
 key_file               = "/etc/consul.d/tls/consul_client_tls_key"
-{% endif %}
+{% endif -%}
 verify_incoming        = false
 verify_incoming_rpc    = true
 verify_outgoing        = true
 verify_server_hostname = false
+{% endif -%}
 disable_remote_exec    = true
 
 ## LAN Join
@@ -61,7 +63,7 @@ retry_join     = [
   "provider=aws tag_key={{ consul_join_tag_key }} tag_value={{ consul_join_tag_value }} region={{ consul_join_region }} addr_type=private_v4"
 ]
 
-{% if consul_agent_is_server == true %}
+{% if consul_agent_is_server == true -%}
 ## Server Settings
 server           = true
 bootstrap        = false
@@ -70,4 +72,4 @@ autopilot        = {}
 
 ## UI
 ui = true
-{% endif %}
+{% endif -%}

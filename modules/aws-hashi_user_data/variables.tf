@@ -29,6 +29,13 @@ variable "ports" {
   }
 }
 
+variable "snapshots" {
+  default = {
+    bucket_name       = "consul-snapshots-bucket"
+    snapshot_name     = "consul-snapshots"
+  }
+}
+
 variable "region" {
   description = "Region used to build all objects"
   default     = "ca-central-1"

@@ -11,6 +11,8 @@ data "template_file" "user_data" {
     consul_unbound          = "${var.serverinfo["unbound"]}"
     consul_dnsmasq          = "${var.serverinfo["dnsmasq"]}"
     consul_https_enabled    = "${var.serverinfo["https"]}"
+    consul_bucket_name      = "${var.snapshots["bucket_name"]}"
+    consul_snapshot_name    = "${var.snapshots["snapshot_name"]}"
     consul_server_rpc_port  = "${var.ports["consulbk_server_rpc_port"]}"
     consul_serf_lan_port    = "${var.ports["consulbk_serf_lan_port"]}"
     consul_serf_wan_port    = "${var.ports["consulbk_serf_wan_port"]}"

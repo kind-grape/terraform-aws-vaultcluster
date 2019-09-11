@@ -6,8 +6,11 @@
 - name: Importing Variables to verify guards against
   import_tasks: import_env.yml
 
+- debug: msg="{{ consul_https_enabled }}"
+
 - name: Copying Certificates
   import_tasks: certs.yml
+  when: consul_https_enabled | bool
 
 - name: Enable dnsmasq services
   import_tasks: dns_dnsmasq.yml
@@ -33,10 +36,10 @@
 
 - name: Create protected directory for ACL tokens
   file:
-    path: /etc/consul.d/tokens
+    path: "{{ consul_config_path }}/tokens"
     state: directory
-    owner: consul
-    group: consul
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
     mode: 0700
 
 - name: Enable TLS if HTTPS port enabled
@@ -53,18 +56,18 @@
     mode: 0755
     content: |
       export CONSUL_HTTP_ADDR={{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}
-      {% if consul_tls_enabled %}
-      export CONSUL_CACERT=/etc/consul.d/tls/consul_tls_ca_bundle
-      export CONSUL_CLIENT_CERT=/etc/consul.d/tls/consul_client_tls_cert
-      export CONSUL_CLIENT_KEY=/etc/consul.d/tls/consul_client_tls_key
-      {% endif %}
+      {% if consul_https_enabled | bool -%}
+      export CONSUL_CACERT={{ consul_config_path }}/tls/consul_tls_ca_bundle
+      export CONSUL_CLIENT_CERT={{ consul_config_path }}/tls/consul_client_tls_cert
+      export CONSUL_CLIENT_KEY={{ consul_config_path }}/tls/consul_client_tls_key
+      {% endif -%}
 
 - name: Configure Consul Configuration
   template:
     src: etc/consul.d/consul.hcl.j2
-    dest: '/etc/consul.d/consul.hcl'
-    owner: 'consul'
-    group: 'consul'
+    dest: "{{ consul_config_path }}/consul.hcl"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
     mode: 0660
   register: consul_config
 

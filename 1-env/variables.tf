@@ -23,11 +23,6 @@ variable "os_user" {
   default     = "ec2-user"
 }
 
-# variable "user_data" {
-#   description = "Variable place holder for rendered User Data scripts"
-#   default     = "../scripts/user_data.sh"
-# }
-
 variable "address_space" {
   description = "Default Supernet that all networks reside within"
   type        = "string"
@@ -112,6 +107,16 @@ variable "tags" {
   type        = "map"
 }
 
+variable "snapshots" {
+  description = "snapshot variables"
+  type        = "map"
+
+  default = {
+    bucket_name   = "consul-snapshots-bucket"
+    snapshot_name = "consul-snapshots"
+  }
+}
+
 variable "vault_extra_tags" {
   description = "Tags used across all resources that can be tagged"
   type        = "map"
@@ -185,8 +190,6 @@ variable "consul_snap" {
     root_size         = "50"
     root_type         = "gp2"
     security_group    = ""
-    bucket_name       = "consul-snapshot-bucket"
-    snapshot_name     = "consul-snapshots"
     ami               = "ami-0000000000000000a"
     size              = "t2.micro"
     health_check_type = "EC2"

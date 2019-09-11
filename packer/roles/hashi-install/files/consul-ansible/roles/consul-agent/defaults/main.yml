@@ -10,3 +10,15 @@ consul_unbound: false
 consul_dnsmasq: true
 
 debug_verbosity: 0
+
+consul_config_path: /etc/consul.d
+consul_user: consul
+consul_group: consul
+
+consul_snapshot_storage: /tmp
+
+consul_snapshot_interval: 1h
+consul_snapshot_retain: 360
+
+consul_snapshot_name: consul-snapshots
+consul_bucket_name: consul-snapshots-bucket

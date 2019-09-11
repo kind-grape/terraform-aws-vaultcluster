@@ -86,6 +86,30 @@ output "nsg_consul_storage_id" {
 # }
 #
 # #######################################################
+# ## Consul Snapshot outputs
+# #######################################################
+output "nsg_consul_snapshot_name" {
+  value = "${module.consul_snap_sg.this_security_group_name}"
+}
+
+output "nsg_consul_snapshot_id" {
+  value = "${module.consul_snap_sg.this_security_group_id}"
+}
+
+#
+# output "vault_srv_names" {
+#   value = ["${module.vault.server_names}"]
+# }
+#
+# output "vault_srv_ids" {
+#   value = ["${module.vault.server_ids}"]
+# }
+
+#
+# output "vault_status" {
+#   value = "${module.vault.status}"
+# }
+# #######################################################
 # ## Vault outputs
 # #######################################################
 output "nsg_vault_name" {
@@ -123,4 +147,19 @@ output "kms_id" {
 
 output "kms_iam_instance_profile" {
   value = "${module.kms.iam_instance_profile}"
+}
+
+# #######################################################
+# ## S3 outputs
+# #######################################################
+output "s3_arn" {
+  value = "${module.consul_snapshot_s3.arn}"
+}
+
+output "s3_id" {
+  value = "${module.consul_snapshot_s3.id}"
+}
+
+output "s3_domain_name" {
+  value = "${module.consul_snapshot_s3.bucket_domain_name}"
 }

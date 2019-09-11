@@ -19,22 +19,24 @@ module "consul_snap_sg" {
 module "consul_snapshot_s3" {
   source = "../modules/aws-s3"
 
-  bucket_name = "${var.consul_snap["bucket_name"]}"
-  region       = "${var.region}"
-  tags        = "${var.tags}"
+  serverinfo = "${var.consul_snap}"
+  snapshots  = "${var.snapshots}"
+  region     = "${var.region}"
+  tags       = "${var.tags}"
 }
 
 module "consul_snapshot_user_data" {
-  source     = "../modules/aws-hashi_user_data"
+  source = "../modules/aws-hashi_user_data"
 
   kms_key_id = "${module.kms.kms_id}"
   region     = "${var.region}"
   tags       = "${var.tags}"
+  snapshots  = "${var.snapshots}"
   serverinfo = "${var.consul_snap}"
 }
 
 module "consul_snapshot" {
-  source               = "../modules/aws-asg"
+  source = "../modules/aws-asg"
 
   ami                  = "${data.aws_ami.consul.id}"
   user_data            = "${module.consul_snapshot_user_data.user_data}"
@@ -43,6 +45,6 @@ module "consul_snapshot" {
   subnet_id            = ["${var.subnet_id}"]
   key_name             = "${var.key_name}"
   tags                 = "${var.tags}"
-  serverinfo           = "${var.consul_sd}"
+  serverinfo           = "${var.consul_snap}"
   cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.consul_snap["role"]}"
 }

@@ -3,17 +3,20 @@ variable "region" {
   default     = "us-west-2"
 }
 
-variable "bucket_name" {
-  description = "Default bucket name"
-  default     = "bucket_name"
-}
-
-variable "snapshot_name" {
-  description = "Default bucket name"
-  default     = "consul-snapshots"
+variable "snapshots" {
+  description = "snapshot variables"
+  type = "map"
+  default = {
+    bucket_name       = "consul-snapshots-bucket"
+    snapshot_name     = "consul-snapshots"
+  }
 }
 
 variable "tags" {
   type = "map"
   description = "Default tags"
+}
+
+variable "serverinfo" {
+  default = {}
 }
