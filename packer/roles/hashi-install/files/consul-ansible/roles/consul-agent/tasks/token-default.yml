@@ -1,0 +1,86 @@
+- name: Write Consul default ACL policy
+  set_fact:
+    default_policy: |
+      query_prefix "" {
+        policy = "read"
+      }
+      node_prefix "" {
+        policy = "read"
+      }
+      service_prefix "" {
+        policy = "read"
+      }
+
+- name: Make Consul default ACL policy machine-readable
+  set_fact:
+    default_policy_api_value: "{{
+      agent_policy |
+        regex_replace('\n', ' ') |
+        regex_replace('\"', '\\\"') |
+        regex_replace('\\s+', ' ')
+    }}"
+
+- name: Write Consul default ACL policy to Consul
+  uri:
+    body_format: json
+    body: |
+      {
+        "Name": "{{ consul_default_policy_name }}",
+        "Description": "Consul default token",
+        "Rules": "{{ default_policy_api_value }}"
+      }
+    method: PUT
+    url: "{{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/acl/policy"
+    headers:
+      X-Consul-Token: "{{ consul_acl_master_token }}"
+    validate_certs: no
+  register: consul_default_token_write
+  run_once: yes
+
+- name: Create default token
+  uri:
+    body_format: json
+    body: |
+      {
+        "Description": "Default token",
+        "Policies": [{"Name": "{{ consul_default_policy_name }}"}],
+        "Local": false
+      }
+    method: PUT
+    url: "{{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/acl/token"
+    headers:
+      X-Consul-Token: "{{ consul_acl_master_token }}"
+    validate_certs: no
+    return_content: yes
+  register: default_token
+  run_once: yes
+
+- set_fact:
+    agent_token: "{{ default_token.json.SecretID }}"
+
+- name: Show default Token - token-default.yml
+  debug:
+    var: default_token
+
+- name: Archive ACL default token
+  copy:
+    content: "{{ default_token }}"
+    dest: /etc/consul.d/tokens/default
+    owner: consul
+    group: consul
+    mode: 0640
+
+- name: Check for default token on filesystem
+  stat: path=/etc/consul.d/tokens/default
+  register: default_token_file
+  ignore_errors: yes
+
+- name: Archive ACL default token to parameter store
+  aws_ssm_parameter_store:
+    string_type: "SecureString"
+    name: "consul-{{ consul_join_tag_value }}-acl-default"
+    value: "{{ default_token }}"
+    description: "Consul Storage Server client default ACL token"
+    region: "{{ ansible_ec2_placement_region }}"
+    overwrite_value: "always"
+  run_once: yes

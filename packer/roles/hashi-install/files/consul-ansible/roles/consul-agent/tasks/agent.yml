@@ -20,6 +20,20 @@
     mode: 0660
   register: consul_agent_config
 
+- name: Check for agent token on filesystem
+  stat: path=/etc/consul.d/tokens/agent
+  register: agent_token_file
+  ignore_errors: yes
+
+- name: Archive ACL agent token
+  copy:
+    content: "{{ client_agent_token }}"
+    dest: "{{ consul_config_path }}/tokens/agent"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0640
+  when: agent_token_file.stat.exists == false
+
 - name: Restart Consul
   service: name=consul state=restarted
   when: consul_agent_config.changed

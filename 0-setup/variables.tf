@@ -68,12 +68,6 @@ variable "ingress_rules" {
   ]
 }
 
-# variable depends_on {
-#   description = "Dependencies"
-#   default     = []
-#   type        = "list"
-# }
-
 variable "tags" {
   description = "Tags used across all resources that can be tagged"
   type        = "map"

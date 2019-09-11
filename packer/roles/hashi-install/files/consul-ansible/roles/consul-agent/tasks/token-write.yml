@@ -11,9 +11,9 @@
 - name: Archive ACL agent token
   copy:
     content: "{{ client_agent_token }}"
-    dest: /etc/consul.d/tokens/agent
-    owner: consul
-    group: consul
+    dest: "{{ consul_config_path }}/tokens/agent"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
     mode: 0640
 
 - name: Show Agent Token
@@ -35,17 +35,41 @@
 - name: Archive ACL agent token
   copy:
     content: "{{ vault_agent_token }}"
-    dest: /etc/consul.d/tokens/vault
-    owner: consul
-    group: consul
+    dest: "{{ consul_config_path }}/tokens/vault"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
     mode: 0640
 
-- name: Show Vault Token - token-write.yml
+- name: Fetch client Vault token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-default | jq -r '.Parameter | .Value'"
+  register: default_token
+  until: default_token.stdout != "REPLACEME"
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- set_fact:
+    default_token: "{{ default_token.stdout }}"
+
+- name: Archive ACL default token
+  copy:
+    content: "{{ default_token }}"
+    dest: "{{ consul_config_path }}/tokens/default"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0640
+
+- name: Show Vault Token
   debug:
     var: vault_agent_token
     # verbosity: 2
 
-- name: Show Agent Token - token-write.yml
+- name: Show Agent Token
   debug:
     var: agent_token
+    # verbosity: 2
+
+- name: Show Default Token
+  debug:
+    var: default_token
     # verbosity: 2

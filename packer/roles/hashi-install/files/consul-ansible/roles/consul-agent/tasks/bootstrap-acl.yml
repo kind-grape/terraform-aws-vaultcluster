@@ -3,3 +3,6 @@
 
 - name: Create Vault Token
   import_tasks: token-vault.yml
+
+- name: Create Default Token
+  import_tasks: token-default.yml

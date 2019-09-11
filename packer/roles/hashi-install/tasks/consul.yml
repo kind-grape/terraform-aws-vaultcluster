@@ -27,7 +27,7 @@
     name: consul
     system: yes
     shell: /bin/false
-    home: /etc/consul.d
+    home: "{{ consul_config_path }}"
     createhome: no
     append: yes
 
@@ -35,8 +35,8 @@
   file:
     path: "{{ item }}"
     state: directory
-    owner: consul
-    group: consul
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
     mode: '0750'
   with_items:
     - /etc/consul.d

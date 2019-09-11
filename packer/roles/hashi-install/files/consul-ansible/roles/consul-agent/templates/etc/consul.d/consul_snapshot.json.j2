@@ -14,7 +14,7 @@
           },
           "snapshot": {
               "interval": "{{ consul_snapshot_interval }}",
-              "retain": "{{ consul_snapshot_retain }}",
+              "retain": {{ consul_snapshot_retain }},
               "stale": false,
               "service": "{{ consul_snapshot_name }}",
               "deregister_after": "72h",
@@ -24,6 +24,7 @@
       "aws_storage": {
         "s3_region": "{{ consul_join_region }}",
         "s3_bucket": "{{ consul_bucket_name }}",
+        "s3_key_prefix": "{{ consul_snapshot_name }}",
         "s3_static_snapshot_name": "{{ consul_datacenter }}.snap",
         "s3_server_side_encryption": false
       }

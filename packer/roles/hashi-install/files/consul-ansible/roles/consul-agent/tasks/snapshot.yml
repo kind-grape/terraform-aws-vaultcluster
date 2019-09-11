@@ -1,4 +1,4 @@
-- debug: msg="START - server.yml"
+- debug: msg="START - snapshot.yml"
 
 - name: Create snapshot systemd script
   template:
@@ -7,7 +7,7 @@
     owner: root
     group: root
     mode: 0644
-  register: systemd_unit
+  register: snapshot_service
 
 - name: Create snapshot agent config
   template:
@@ -16,12 +16,11 @@
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0644
-  # notify: start snapshot
 
 - name: Reload systemd
   systemd:
     daemon_reload: true
-  when: systemd_unit.changed
+  when: snapshot_service.changed
 
 - name: Create snaps storage folder
   file:
@@ -31,4 +30,4 @@
     group: "{{ consul_group }}"
     mode: 0744
 
-- debug: msg="END - server.yml"
+- debug: msg="END - snapshot.yml"

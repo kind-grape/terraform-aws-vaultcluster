@@ -1,25 +1,25 @@
-data "aws_iam_policy_document" "s3policy" {
-  statement {
-    effect    = "Allow"
-    actions   = ["s3:PutObject", "s3:DeleteObject"]
-    resources = ["arn:aws:s3:::${var.snapshots["bucket_name"]}/${var.snapshots["snapshot_name"]}/*.snap"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-  }
-  statement {
-    effect    = "Allow"
-    actions   = ["s3:ListBucketVersions", "s3:ListBucket"]
-    resources = ["arn:aws:s3:::${var.snapshots["bucket_name"]}"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-  }
-}
+# data "aws_iam_policy_document" "s3policy" {
+#   statement {
+#     effect    = "Allow"
+#     actions   = ["s3:PutObject", "s3:DeleteObject"]
+#     resources = ["arn:aws:s3:::${var.snapshots["bucket_name"]}/${var.snapshots["snapshot_name"]}/*.snap"]
+#
+#     principals {
+#       type        = "Service"
+#       identifiers = ["ec2.amazonaws.com"]
+#     }
+#   }
+#   statement {
+#     effect    = "Allow"
+#     actions   = ["s3:ListBucketVersions", "s3:ListBucket"]
+#     resources = ["arn:aws:s3:::${var.snapshots["bucket_name"]}"]
+#
+#     principals {
+#       type        = "Service"
+#       identifiers = ["ec2.amazonaws.com"]
+#     }
+#   }
+# }
 
 
 resource "aws_s3_bucket" "bucket" {
@@ -29,7 +29,7 @@ resource "aws_s3_bucket" "bucket" {
   region = "${var.region}"
   force_destroy = true
 
-  policy = "${data.aws_iam_policy_document.s3policy.json}"
+  # policy = "${data.aws_iam_policy_document.s3policy.json}"
 
   tags = {
     client = "${lower(var.tags["client"])}"

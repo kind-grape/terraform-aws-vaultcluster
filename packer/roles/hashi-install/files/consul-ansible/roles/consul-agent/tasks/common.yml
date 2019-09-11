@@ -23,7 +23,7 @@
 - name: adding existing user ec2-user to consul and hashi groups
   user:
     name: 'ec2-user'
-    groups: consul
+    groups: "{{ consul_group }}"
     append: yes
 
 - name: Copy cleanup script with owner and permissions

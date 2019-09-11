@@ -30,9 +30,11 @@ variable "ports" {
 }
 
 variable "snapshots" {
+  description = "snapshot variables"
+  type = "map"
   default = {
     bucket_name       = "consul-snapshots-bucket"
-    snapshot_name     = "consul-snapshots"
+    snapshot_name     = "consul-snapshot"
   }
 }
 

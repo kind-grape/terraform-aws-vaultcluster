@@ -32,7 +32,9 @@
   retries: 120
   delay: 2
   ignore_errors: yes
-  when: stat_consul_server_tls_cert.stat.exists == false
+  when:
+    - consul_agent_is_server | bool
+    - stat_consul_server_tls_cert.stat.exists == false
 
 - name: Fetch Server Cert Key from parameter store
   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul_server_tls_key | jq -r '.Parameter | .Value'"
@@ -41,7 +43,9 @@
   retries: 120
   delay: 2
   ignore_errors: yes
-  when: stat_consul_server_tls_key.stat.exists == false
+  when:
+    - consul_agent_is_server | bool
+    - stat_consul_server_tls_key.stat.exists == false
 
 - name: Install CA certificate
   copy:
