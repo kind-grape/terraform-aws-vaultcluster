@@ -1,3 +1,10 @@
+- debug: msg="START - token-default.yml"
+
+- name: Check for default token on filesystem
+  stat: path=/etc/consul.d/tokens/default
+  register: default_token_file
+  ignore_errors: yes
+
 - name: Write Consul default ACL policy
   set_fact:
     default_policy: |
@@ -14,7 +21,7 @@
 - name: Make Consul default ACL policy machine-readable
   set_fact:
     default_policy_api_value: "{{
-      agent_policy |
+      default_policy |
         regex_replace('\n', ' ') |
         regex_replace('\"', '\\\"') |
         regex_replace('\\s+', ' ')
@@ -26,7 +33,7 @@
     body: |
       {
         "Name": "{{ consul_default_policy_name }}",
-        "Description": "Consul default token",
+        "Description": "Consul default token for DNS resolution",
         "Rules": "{{ default_policy_api_value }}"
       }
     method: PUT
@@ -36,6 +43,7 @@
     validate_certs: no
   register: consul_default_token_write
   run_once: yes
+  when: default_token_file.stat.exists == false
 
 - name: Create default token
   uri:
@@ -54,9 +62,9 @@
     return_content: yes
   register: default_token
   run_once: yes
+  when: default_token_file.stat.exists == false
 
-- set_fact:
-    agent_token: "{{ default_token.json.SecretID }}"
+- set_fact: default_token="{{ default_token.json.SecretID }}"
 
 - name: Show default Token - token-default.yml
   debug:
@@ -70,11 +78,6 @@
     group: consul
     mode: 0640
 
-- name: Check for default token on filesystem
-  stat: path=/etc/consul.d/tokens/default
-  register: default_token_file
-  ignore_errors: yes
-
 - name: Archive ACL default token to parameter store
   aws_ssm_parameter_store:
     string_type: "SecureString"
@@ -84,3 +87,5 @@
     region: "{{ ansible_ec2_placement_region }}"
     overwrite_value: "always"
   run_once: yes
+
+- debug: msg="END - token-default.yml"

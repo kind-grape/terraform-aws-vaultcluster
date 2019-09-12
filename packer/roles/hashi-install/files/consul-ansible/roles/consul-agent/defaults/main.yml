@@ -22,3 +22,7 @@ consul_snapshot_retain: 360
 
 consul_snapshot_name: consul-snapshots
 consul_bucket_name: consul-snapshots-bucket
+
+consul_default_policy_name: default-agent
+consul_agent_policy_name: consul-agent
+consul_application_policy_name: vault-agent

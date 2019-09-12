@@ -4,3 +4,7 @@ consul_http_port: 8500
 consul_https_port: 8501
 
 debug_verbosity: 0
+
+consul_default_policy_name: default-agent
+consul_agent_policy_name: consul-agent
+consul_application_policy_name: vault-agent

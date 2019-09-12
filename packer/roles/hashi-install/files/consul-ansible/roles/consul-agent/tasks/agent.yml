@@ -1,5 +1,10 @@
 - debug: msg="START - agent.yml"
 
+- name: Check for agent token on filesystem
+  stat: path=/etc/consul.d/tokens/agent
+  register: agent_token_file
+  ignore_errors: yes
+
 - name: Fetch client agent token from parameter store
   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-agent | jq -r '.Parameter | .Value'"
   register: client_agent_token
@@ -7,9 +12,11 @@
   retries: 120
   delay: 2
   ignore_errors: yes
+  when: agent_token_file.stat.exists == false
 
 - name: Register ACL Agent token
   set_fact: client_agent_token="{{ client_agent_token.stdout }}"
+  when: client_agent_token.stdout is defined
 
 - name: Add ACL configuration - agent.yml
   template:
@@ -19,11 +26,7 @@
     group: 'consul'
     mode: 0660
   register: consul_agent_config
-
-- name: Check for agent token on filesystem
-  stat: path=/etc/consul.d/tokens/agent
-  register: agent_token_file
-  ignore_errors: yes
+  when: agent_token_file.stat.exists == false
 
 - name: Archive ACL agent token
   copy:

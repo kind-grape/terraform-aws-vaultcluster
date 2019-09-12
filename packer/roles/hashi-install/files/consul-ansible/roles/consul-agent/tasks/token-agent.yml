@@ -1,3 +1,8 @@
+- name: Check for agent token on filesystem
+  stat: path=/etc/consul.d/tokens/agent
+  register: agent_token_file
+  ignore_errors: yes
+
 - name: Write Consul agent ACL policy
   set_fact:
     agent_policy: |
@@ -69,11 +74,6 @@
     owner: consul
     group: consul
     mode: 0640
-
-- name: Check for agent token on filesystem
-  stat: path=/etc/consul.d/tokens/agent
-  register: agent_token_file
-  ignore_errors: yes
 
 - name: Archive ACL agent token to parameter store
   aws_ssm_parameter_store:

@@ -20,3 +20,15 @@ resource "aws_ssm_parameter" "vault_token" {
     ignore_changes = ["value", "description", "key_id"]
   }
 }
+
+resource "aws_ssm_parameter" "default_token" {
+  name   = "consul-${var.join_tag}-acl-default"
+  type   = "SecureString"
+  value  = "REPLACEME"
+  key_id = "${var.key_id}"
+  # overwrite = true
+
+  lifecycle {
+    ignore_changes = ["value", "description", "key_id"]
+  }
+}

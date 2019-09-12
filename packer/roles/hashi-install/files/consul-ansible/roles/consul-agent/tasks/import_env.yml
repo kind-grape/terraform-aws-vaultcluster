@@ -15,6 +15,11 @@
   register: vault_token_file
   ignore_errors: yes
 
+- name: Check for default token on filesystem
+  stat: path=/etc/consul.d/tokens/default
+  register: default_token_file
+  ignore_errors: yes
+
 - name: Check for /etc/consul.d/tls/consul_tls_ca_bundle
   stat: path=/etc/consul.d/tls/consul_tls_ca_bundle
   register: stat_consul_tls_ca_bundle
@@ -61,6 +66,16 @@
 
 - set_fact: vault_agent_token="{{ vault_agent_token.stdout }}"
 
+- name: Fetch client default token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-default | jq -r '.Parameter | .Value'"
+  register: default_agent_token
+  until: default_agent_token.stdout != ""
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- set_fact: default_agent_token="{{ default_agent_token.stdout }}"
+
 - name: Fetch Gossip Encryption Key from parameter store
   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul_gossip_encryption_key | jq -r '.Parameter | .Value'"
   register: consul_encryption_key
@@ -79,6 +94,10 @@
 - name: Show Vault Token
   debug:
     var: vault_agent_token
+
+- name: Show Default Token
+  debug:
+    var: default_agent_token
 
 - name: Show Gossip Encryption Key
   debug:
