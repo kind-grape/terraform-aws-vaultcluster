@@ -52,9 +52,15 @@
   retries: 120
   delay: 2
   ignore_errors: yes
+  when: agent_token_file.stat.exists == false
 
 - name: Register ACL Agent token for Ansible plays
   set_fact: client_agent_token="{{ client_agent_token.stdout }}"
+  when: agent_token_file.stat.exists == false
+
+- name: Register ACL Agent token for Ansible plays
+  set_fact: client_agent_token="{{ lookup('file', agent_token_file.stat.path) }}"
+  when: agent_token_file.stat.exists == true
 
 - name: Fetch client Vault token from parameter store
   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-vault | jq -r '.Parameter | .Value'"
@@ -63,8 +69,15 @@
   retries: 120
   delay: 2
   ignore_errors: yes
+  when: vault_token_file.stat.exists == false
 
-- set_fact: vault_agent_token="{{ vault_agent_token.stdout }}"
+- name: Register ACL Vault token for Ansible plays
+  set_fact: vault_agent_token="{{ vault_agent_token.stdout }}"
+  when: vault_token_file.stat.exists == false
+
+- name: Register ACL Vault token for Ansible plays
+  set_fact: vault_agent_token="{{ lookup('file', vault_token_file.stat.path) }}"
+  when: vault_token_file.stat.exists == true
 
 - name: Fetch client default token from parameter store
   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-default | jq -r '.Parameter | .Value'"
@@ -73,8 +86,21 @@
   retries: 120
   delay: 2
   ignore_errors: yes
+  when:
+    - default_token_file.stat.exists == false
+    - consul_agent_is_server | bool
 
-- set_fact: default_agent_token="{{ default_agent_token.stdout }}"
+- name: Register ACL Default token for Ansible plays
+  set_fact: default_agent_token="{{ default_agent_token.stdout }}"
+  when:
+    - default_token_file.stat.exists == false
+    - consul_agent_is_server | bool
+
+- name: Register ACL Default token for Ansible plays
+  set_fact: default_agent_token="{{ lookup('file', default_token_file.stat.path) }}"
+  when:
+    - default_token_file.stat.exists == true
+    - consul_agent_is_server | bool
 
 - name: Fetch Gossip Encryption Key from parameter store
   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul_gossip_encryption_key | jq -r '.Parameter | .Value'"
@@ -98,9 +124,11 @@
 - name: Show Default Token
   debug:
     var: default_agent_token
+  when: consul_agent_is_server | bool
 
 - name: Show Gossip Encryption Key
   debug:
     var: consul_encryption_key
+  when: consul_agent_is_server | bool
 
 - debug: msg="END - import_env.yml"

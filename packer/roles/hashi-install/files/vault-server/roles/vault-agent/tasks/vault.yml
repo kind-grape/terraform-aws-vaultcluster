@@ -1,17 +1,26 @@
 - name: Show Vault Token
   debug:
     verbosity: "{{ debug_verbosity }}"
-    var: consul_https_enabled
+    var: vault_https_enabled
 
 - name: Configure Vault Configuration
   template:
     src: etc/vault.d/vault.hcl.j2
-    dest: '/etc/vault.d/vault.hcl'
-    owner: 'vault'
-    group: 'vault'
+    dest: "{{ vault_config_path }}/vault.hcl"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
     mode: 0660
   register: vault_config
 
 - name: Restart Vault
   service: name=vault state=restarted
   when: vault_config.changed
+
+- name: Wait and check for Vault port
+  wait_for:
+    port: "{{ vault_api_port }}"
+    delay: 6
+
+- name: Write Tokens to File System
+  import_tasks: token-write.yml
+  when: vault_token_file.stat.exists == false

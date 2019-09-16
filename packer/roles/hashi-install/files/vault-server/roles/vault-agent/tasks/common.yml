@@ -1,8 +1,7 @@
+- debug: msg="START - common.yml"
+
 - name: Gather instance metadata
   ec2_metadata_facts:
-
-- name: Importing Variables to verify guards against
-  import_tasks: import_env.yml
 
 - name: adding existing user ec2-user to consul and hashi groups
   user:
@@ -10,6 +9,27 @@
     groups: consul,vault
     append: yes
 
+- name: Importing Variables to verify guards against
+  import_tasks: import_env.yml
+
 - name: Copying Vault Certificates
   import_tasks: certs.yml
-  when: vault_https_enabled == true
+  when: vault_https_enabled | bool
+
+- name: Set API endpoint to HTTP or HTTPS
+  set_fact:
+    vault_api_protocol: "{{ vault_https_enabled | ternary('https', 'http') }}"
+
+- name: Set Vault environment variables
+  copy:
+    dest: /etc/profile.d/99-vault-env.sh
+    mode: 0755
+    content: |
+      export VAULT_ADDR={{ vault_api_protocol }}://127.0.0.1:{{ vault_api_port }}
+      {% if vault_https_enabled | bool -%}
+      export VAULT_CACERT={{ vault_config_path }}/tls/vault_tls_ca_bundle
+      export VAULT_CLIENT_CERT={{ vault_config_path }}/tls/vault_client_tls_cert
+      export VAULT_CLIENT_KEY={{ vault_config_path }}/tls/vault_client_tls_key
+      {% endif -%}
+
+- debug: msg="END - common.yml"

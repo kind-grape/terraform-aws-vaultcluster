@@ -1,9 +1,9 @@
 - name: Perform Common Tasks
   import_tasks: common.yml
 
-- name: Write Tokens to File System
-  import_tasks: token-write.yml
-  when: vault_token_file.stat.exists == false
-
 - name: Configure Vault
   import_tasks: vault.yml
+
+# - name: Unseal Vault
+#   import_tasks: unseal.yml
+#   when: unseal_temp_file.stat.exists == false

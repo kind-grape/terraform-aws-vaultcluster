@@ -1,10 +1,16 @@
 vault_datacenter: dc1
-consul_server_rpc_port: 8200
-consul_http_port: 8500
+vault_api_port: 8201
 consul_https_port: 8501
+
+vault_config_path: /etc/vault.d
+vault_user: vault
+vault_group: vault
 
 debug_verbosity: 0
 
 consul_default_policy_name: default-agent
 consul_agent_policy_name: consul-agent
 consul_application_policy_name: vault-agent
+
+vault_recovery_shares: 5
+vault_recovery_threshold: 3
