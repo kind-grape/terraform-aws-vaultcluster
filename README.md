@@ -12,6 +12,7 @@
 8. Set the count to 1 for consul and vault (depending if you want to use consul as a storage backend)
 9. Edit MasterKey for the generated token in step 2
 10. Set Desired, Max, Min capacity values for vault and consul
+** run `0-setup` if the network and subnets are not already existing
 
 ## Certificates
 1. ```consul tls ca create```

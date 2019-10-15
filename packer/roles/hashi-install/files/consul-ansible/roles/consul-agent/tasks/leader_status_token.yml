@@ -6,8 +6,7 @@
   register: consul_leader_token_bool
 
 - name: Set Consul Leader Status
-  set_fact:
-    consul_leader: "{{ consul_leader_token_bool.stdout }}"
+  set_fact: consul_leader="{{ consul_leader_token_bool.stdout }}"
 
 - name: Show Consul Leader - leader_status_token.yml
   debug:
