@@ -1,4 +1,0 @@
-consul_dns_port: 8600
-consul_config_path: /etc/consul.d
-consul_user: consul
-consul_group: consul
