@@ -15,10 +15,12 @@ cat <<- _EOF_
     consul_join_tag_key: auto_join
     consul_join_tag_value: ${consul_join_tag_value}
     consul_join_region: ${consul_join_region}
-    consul_agent_role: server
+    consul_agent_role: ${role}
     consul_unbound: ${consul_unbound}
     consul_dnsmasq: ${consul_dnsmasq}
     consul_https_enabled: ${consul_https_enabled}
+    consul_bucket_name: ${consul_bucket_name}
+    consul_snapshot_name: ${consul_snapshot_name}
     consul_agent_is_server: ${consul_agent_is_server}
     consul_server_rpc_port: ${consul_server_rpc_port}
     consul_serf_lan_port: ${consul_serf_lan_port}
@@ -26,8 +28,6 @@ cat <<- _EOF_
     consul_http_port: ${consul_http_port}
     consul_https_port: ${consul_https_port}
     consul_dns_port: ${consul_dns_port}
-    consul_agent_policy_name: consul-agent
-    consul_application_policy_name: vault-agent
 
   roles:
     - consul-agent
@@ -45,19 +45,19 @@ cat <<- _EOF_
     consul_join_tag_key: auto_join
     consul_join_tag_value: ${consul_join_tag_value}
     consul_join_region: ${consul_join_region}
-    consul_agent_role: server
+    consul_agent_role: ${role}
     consul_agent_is_server: ${consul_agent_is_server}
     consul_unbound: ${consul_unbound}
     consul_dnsmasq: ${consul_dnsmasq}
     consul_https_enabled: ${consul_https_enabled}
+    consul_bucket_name: ${consul_bucket_name}
+    consul_snapshot_name: ${consul_snapshot_name}
     consul_server_rpc_port: ${consul_server_rpc_port}
     consul_serf_lan_port: ${consul_serf_lan_port}
     consul_serf_wan_port: ${consul_serf_wan_port}
     consul_http_port: ${consul_http_port}
     consul_https_port: ${consul_https_port}
     consul_dns_port: ${consul_dns_port}
-    consul_agent_policy_name: consul-agent
-    consul_application_policy_name: vault-agent
     vault_api_port: ${vault_api_port}
     vault_cluster_port: ${vault_cluster_port}
     vault_https_enabled: ${vault_https_enabled}
