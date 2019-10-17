@@ -49,7 +49,7 @@
   ignore_errors: yes
 
 - set_fact:
-    default_token: "{{ default_token.stdout }}"
+    default_agent_token: "{{ default_token.stdout }}"
 
 - name: Archive ACL default token
   copy:
@@ -66,10 +66,10 @@
 
 - name: Show Agent Token
   debug:
-    var: agent_token
+    var: client_agent_token
     # verbosity: 2
 
 - name: Show Default Token
   debug:
-    var: default_token
+    var: default_agent_token
     # verbosity: 2

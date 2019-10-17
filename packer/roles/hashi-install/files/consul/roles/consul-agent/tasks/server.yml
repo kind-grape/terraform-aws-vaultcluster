@@ -28,31 +28,29 @@
     port: "{{ consul_serf_lan_port }}"
     delay: 6
 
-- name: Check for agent token on filesystem
-  stat: path=/etc/consul.d/tokens/agent
-  register: agent_token_file
-  ignore_errors: yes
+- set_fact: agent_token_file_contents="{{ client_agent_token }}"
+  when: agent_token_file.stat.exists == false
 
-- set_fact: agent_token_file_contents="{{ lookup('file', '/etc/consul.d/tokens/agent') }}"
+- set_fact: agent_token_file_contents="{{ lookup('file', agent_token_file.stat.path) }}"
   when: agent_token_file.stat.exists == true
 
-# - debug: msg="{{ agent_token_file }}"
+- debug: msg="{{ agent_token_file_contents }}"
 
-# - name: Check for vault token on filesystem
-#   stat: path=/etc/consul.d/tokens/vault
-#   register: vault_token_file
-#   ignore_errors: yes
-#
-# - set_fact: vault_token_file_contents="{{ lookup('file', '/etc/consul.d/tokens/vault') }}"
-#   # when: vault_token_file.stat.exists == true
-#
-# - name: Check for default token on filesystem
-#   stat: path=/etc/consul.d/tokens/default
-#   register: default_token_file
-#   ignore_errors: yes
-#
-# - set_fact: default_token_file_contents="{{ lookup('file', /etc/consul.d/tokens/default) }}"
-#   # when: default_token_file.stat.exists == true
+- set_fact: vault_token_file_contents="{{ vault_agent_token }}"
+  when: agent_token_file.stat.exists == false
+
+- set_fact: vault_token_file_contents="{{ lookup('file', vault_token_file.stat.path) }}"
+  when: vault_token_file.stat.exists == true
+
+- debug: msg="{{ vault_token_file_contents }}"
+
+- set_fact: default_token_file_contents="{{ default_agent_token }}"
+  when: default_token_file.stat.exists == false
+
+- set_fact: default_token_file_contents="{{ lookup('file', default_token_file.stat.path) }}"
+  when: default_token_file.stat.exists == true
+
+- debug: msg="{{ default_token_file_contents }}"
 
 - name: Run bootstrap tasks
   import_tasks: bootstrap-acl.yml
