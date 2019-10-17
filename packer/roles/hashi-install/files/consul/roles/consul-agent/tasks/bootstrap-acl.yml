@@ -1,11 +1,11 @@
 - name: Create Agent Token
   import_tasks: token-agent.yml
-  when: client_agent_token.stdout != "REPLACEME"
+  # when: agent_token_file_contents != "REPLACEME"
 
 - name: Create Vault Token
   import_tasks: token-vault.yml
-  when: vault_agent_token.stdout != "REPLACEME"
+  # when: vault_token_file_contents != "REPLACEME"
 
 - name: Create Default Token
   import_tasks: token-default.yml
-  when: default_agent_token.stdout != "REPLACEME"
+  # when: default_token_file_contents != "REPLACEME"

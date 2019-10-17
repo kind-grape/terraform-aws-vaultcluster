@@ -10,9 +10,6 @@
   debug:
     var: consul_leader
 
-# - name: Run leader detection
-#   import_tasks: leader_status_token.yml
-
 - name: Add ACL configuration - server.yml
   template:
     src: etc/consul.d/acl.hcl.j2
@@ -36,10 +33,26 @@
   register: agent_token_file
   ignore_errors: yes
 
-- name: Check for vault token on filesystem
-  stat: path=/etc/consul.d/tokens/vault
-  register: vault_token_file
-  ignore_errors: yes
+- set_fact: agent_token_file_contents="{{ lookup('file', '/etc/consul.d/tokens/agent') }}"
+  when: agent_token_file.stat.exists == true
+
+# - debug: msg="{{ agent_token_file }}"
+
+# - name: Check for vault token on filesystem
+#   stat: path=/etc/consul.d/tokens/vault
+#   register: vault_token_file
+#   ignore_errors: yes
+#
+# - set_fact: vault_token_file_contents="{{ lookup('file', '/etc/consul.d/tokens/vault') }}"
+#   # when: vault_token_file.stat.exists == true
+#
+# - name: Check for default token on filesystem
+#   stat: path=/etc/consul.d/tokens/default
+#   register: default_token_file
+#   ignore_errors: yes
+#
+# - set_fact: default_token_file_contents="{{ lookup('file', /etc/consul.d/tokens/default) }}"
+#   # when: default_token_file.stat.exists == true
 
 - name: Run bootstrap tasks
   import_tasks: bootstrap-acl.yml
