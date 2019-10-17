@@ -1,8 +1,3 @@
-# - name: Copy vault archive
-#   copy:
-#     src: "vault-enterprise_{{ vault_version }}+prem_linux_amd64.zip"
-#     dest: "/tmp/vault-enterprise_{{ vault_version }}+prem_linux_amd64.zip"
-
 - name: Unarchive vault
   unarchive:
     src: "/tmp/vault-enterprise_{{ vault_version }}+prem_linux_amd64.zip"
@@ -11,20 +6,12 @@
     group: root
     remote_src: yes
 
-- name: "Copy vault ansible directory"
+- name: "Copy Vault ansible directory"
   synchronize:
-    src: "{{ item }}"
+    src: vault/
     dest: "/etc/ansible/"
-    use_ssh_args: yes
-    owner: no
-    group: no
-  with_items:
-    - "vault-server/host_vars"
-    - "vault-server/roles"
-    - "vault-server/ansible.cfg"
-    - "vault-server/hosts"
-    - "vault-server/ec2.ini"
-    - "vault-server/ec2.py"
+    recursive: yes
+    copy_links: yes
 
 - name: Setup autocompletion
   copy:
@@ -39,20 +26,20 @@
 
 - name: Create vault user
   user:
-    name: vault
+    name: "{{ vault_user }}"
     system: yes
     shell: /bin/false
-    home: /etc/vault.d
+    home: "{{ vault_config_path }}"
     createhome: no
-    groups: consul
+    groups: "{{ consul_group }}"
     append: yes
 
 - name: Create configuration and TLS directories
   file:
     path: "{{ item }}"
     state: directory
-    owner: vault
-    group: consul
+    owner: "{{ vault_user }}"
+    group: "{{ consul_group }}"
     mode: '0740'
   with_items:
     - /etc/vault.d
@@ -62,8 +49,8 @@
   file:
     path: /var/lib/vault
     state: directory
-    owner: vault
-    group: vault
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
     mode: '0700'
 
 - name: Create symbolic link
@@ -74,5 +61,5 @@
 
 - name: Install systemd unit
   template:
-    src: lib/systemd/system/vault.service.j2
+    src: vault.service.j2
     dest: /lib/systemd/system/vault.service
