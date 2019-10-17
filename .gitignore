@@ -23,6 +23,7 @@ id_rsa*
 *.pem
 *.sh
 !update_groups.sh
+!unseal.sh
 
 crash.log
 blah.txt
