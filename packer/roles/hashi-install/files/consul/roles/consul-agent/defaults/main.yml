@@ -26,3 +26,5 @@ consul_bucket_name: consul-snapshots-bucket
 consul_default_policy_name: default-agent
 consul_agent_policy_name: consul-agent
 consul_application_policy_name: vault-agent
+
+tempdir: /tmp

@@ -5,6 +5,11 @@
   register: agent_token_file
   ignore_errors: yes
 
+- name: Check for default token on filesystem
+  stat: path=/etc/consul.d/tokens/default
+  register: default_token_file
+  ignore_errors: yes
+
 - name: Fetch client agent token from parameter store
   shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-agent | jq -r '.Parameter | .Value'"
   register: client_agent_token
@@ -16,7 +21,28 @@
 
 - name: Register ACL Agent token
   set_fact: client_agent_token="{{ client_agent_token.stdout }}"
-  when: client_agent_token.stdout is defined
+  when: agent_token_file.stat.exists == false
+
+- name: Register ACL Agent token
+  set_fact: client_agent_token="{{ lookup('file', agent_token_file.stat.path) }}"
+  when: agent_token_file.stat.exists == true
+
+- name: Fetch default agent token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-default | jq -r '.Parameter | .Value'"
+  register: default_token
+  until: default_token.stdout != "REPLACEME"
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+  when: agent_token_file.stat.exists == false
+
+- name: Register ACL Agent token
+  set_fact: default_token="{{ default_token.stdout }}"
+  when: default_token_file.stat.exists == false
+
+- name: Register ACL Agent token
+  set_fact: default_token="{{ lookup('file', default_token_file.stat.path) }}"
+  when: default_token_file.stat.exists == true
 
 - name: Add ACL configuration - agent.yml
   template:
@@ -36,6 +62,15 @@
     group: "{{ consul_group }}"
     mode: 0640
   when: agent_token_file.stat.exists == false
+
+- name: Archive ACL default token
+  copy:
+    content: "{{ default_token }}"
+    dest: "{{ consul_config_path }}/tokens/default"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0640
+  when: default_token_file.stat.exists == false
 
 - name: Restart Consul
   service: name=consul state=restarted

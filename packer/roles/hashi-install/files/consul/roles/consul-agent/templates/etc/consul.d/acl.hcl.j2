@@ -11,5 +11,6 @@ acl = {
     master = "{{ consul_acl_master_token }}"
   {% endif %}
     agent = "{{ client_agent_token }}"
+    default = "{{ default_token }}"
   }
 }
