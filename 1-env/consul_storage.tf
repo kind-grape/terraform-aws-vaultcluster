@@ -25,14 +25,14 @@ module "consul_storage_user_data" {
 }
 
 module "consul_storage" {
-  source               = "../modules/aws-asg"
+  source               = "../modules/aws-createinstance"
   ami                  = "${data.aws_ami.consul.id}"
   user_data            = "${module.consul_storage_user_data.user_data}"
-  security_groups      = ["${module.consul_storage_sg.this_security_group_id}"]
+  security_groups      = "${module.consul_storage_sg.this_security_group_id}"
   iam_instance_profile = "${module.kms.iam_instance_profile}"
-  subnet_id            = ["${var.subnet_id}"]
+  subnet_id            = "${var.subnet_id}"
   key_name             = "${var.key_name}"
   tags                 = "${var.tags}"
   serverinfo           = "${var.consul_storage}"
-  cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.consul_storage["role"]}"
+  hostname         = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.consul_storage["role"]}"
 }

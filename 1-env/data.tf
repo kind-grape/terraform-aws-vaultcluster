@@ -1,4 +1,5 @@
 data "aws_ami" "vault" {
+  # count       = "${var.vault["count"] >= 1 ? 1 : 0}"
   most_recent = true
   owners      = ["${var.ami_owner_account}"]
   name_regex  = "amz2-vault-ent-${var.vault["version"]}-*"
