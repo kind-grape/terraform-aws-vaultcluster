@@ -22,7 +22,7 @@ variable "rules" {
     consul-tcp          = [8300, 8300, "tcp", "Consul server"]
     consul-cli-rpc-tcp  = [8400, 8400, "tcp", "Consul CLI RPC"]
     consul-webui-tcp    = [8500, 8500, "tcp", "Consul web UI"]
-    consul-webuis-tcp   = [8500, 8500, "tcp", "Consul web UI Secure"]
+    consul-webuis-tcp   = [8501, 8501, "tcp", "Consul web UI Secure"]
     consul-dns-tcp      = [8600, 8600, "tcp", "Consul DNS"]
     consul-dns-udp      = [8600, 8600, "udp", "Consul DNS"]
     consul-serf-lan-tcp = [8301, 8301, "tcp", "Serf LAN"]
