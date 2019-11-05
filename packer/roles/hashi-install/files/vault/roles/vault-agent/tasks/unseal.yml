@@ -6,14 +6,15 @@
     . /etc/profile.d/99-vault-env.sh
     vault operator init -recovery-shares={{ vault_recovery_shares }} -recovery-threshold={{ vault_recovery_threshold }}
   register: operator_init
-  when: unseal_temp_file.stat.exists == false
+  when: not unseal_temp_file.stat.exists
+  run_once: yes
 
 - debug: msg="{{ operator_init }}"
-  when: unseal_temp_file.stat.exists == false
+  when: not unseal_temp_file.stat.exists
 
 - name: Set Operator Output
-  set_fact: operator_init_output="{{ operator_init.stdout }}"
-  when: unseal_temp_file.stat.exists == false
+  set_fact: operator_init_output="{{ operator_init.stdout_lines }}"
+  when: not unseal_temp_file.stat.exists
 
 - name: Write Unseal Temp File
   copy:
@@ -22,7 +23,7 @@
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0440
-  when: unseal_temp_file.stat.exists == false
+  when: not unseal_temp_file.stat.exists
 
 - name: Set Operator Output
   set_fact: operator_init_output="{{ lookup('file', unseal_temp_file.stat.path).splitlines() }}"
@@ -30,7 +31,7 @@
 
 - name: Init unseal_lines
   set_fact: unseal_lines="{{ [] }}"
-  when: unseal_keys_temp_file.stat.exists == false
+  when: not unseal_keys_temp_file.stat.exists
 
 - name: Truncate unseal_file_lines
   set_fact:
@@ -40,34 +41,34 @@
     extended: yes
   when:
     - "ansible_loop.index <= {{ vault_recovery_shares }}"
-    - unseal_keys_temp_file.stat.exists == false
+    - not unseal_keys_temp_file.stat.exists
 
 - name: Init unseal_keys
   set_fact: unseal_keys="{{ [] }}"
-  when: unseal_keys_temp_file.stat.exists == false
+  when: not unseal_keys_temp_file.stat.exists
 
 - name: Extract Unseal Keys
   set_fact: unseal_keys="{{ unseal_keys + [item | regex_replace('^Recovery Key .. (.*)$', '\\1')] }}"
   with_items: "{{ unseal_lines }}"
-  when: unseal_keys_temp_file.stat.exists == false
+  when: not unseal_keys_temp_file.stat.exists
 
 - debug: msg="{{ unseal_keys }}"
-  when: unseal_keys_temp_file.stat.exists == false
+  when: not unseal_keys_temp_file.stat.exists
 
 - name: Join unseal_keys
   set_fact: unseal_keys="{{ unseal_keys | join('\n') }}"
-  when: unseal_keys_temp_file.stat.exists == false
+  when: not unseal_keys_temp_file.stat.exists
 
 - name: Set Keys Output
   set_fact: unseal_keys_output="{{ unseal_keys }}"
-  when: unseal_keys_temp_file.stat.exists == false
+  when: not unseal_keys_temp_file.stat.exists
 
 - name: Set Keys Output
   set_fact: unseal_keys_output="{{ lookup('file', unseal_keys_temp_file.stat.path) }}"
   when: unseal_keys_temp_file.stat.exists == true
 
 - debug: msg="{{ unseal_keys_output }}"
-  when: unseal_keys_temp_file.stat.exists == false
+  when: not unseal_keys_temp_file.stat.exists
 
 - name: Write Unseal Keys Temp File
   copy:
@@ -76,7 +77,7 @@
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0440
-  when: unseal_keys_temp_file.stat.exists == false
+  when: not unseal_keys_temp_file.stat.exists
 
 - name: Write Unseal Complete
   copy:
