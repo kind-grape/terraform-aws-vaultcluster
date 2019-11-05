@@ -25,14 +25,14 @@ module "vault_user_data" {
 }
 
 module "vault" {
-  source               = "../modules/aws-asg"
+  source               = "../modules/aws-createinstance"
   ami                  = "${data.aws_ami.vault.id}"
   user_data            = "${module.vault_user_data.user_data}"
-  security_groups      = ["${module.vault_sg.this_security_group_id}"]
+  security_groups      = "${module.vault_sg.this_security_group_id}"
   iam_instance_profile = "${module.kms.iam_instance_profile}"
-  subnet_id            = ["${var.subnet_id}"]
+  subnet_id            = "${var.subnet_id}"
   key_name             = "${var.key_name}"
   tags                 = "${var.tags}"
   serverinfo           = "${var.vault}"
-  cluster_name         = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.vault["role"]}"
+  hostname         = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.vault["role"]}"
 }

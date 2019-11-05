@@ -44,6 +44,10 @@ output "nsg_consul_storage_id" {
   value = "${module.consul_storage_sg.this_security_group_id}"
 }
 
+output "consul_storage_pubips" {
+  value = "${module.consul_storage.server_pubips}"
+}
+
 # output "consul_bk_user_data" {
 #   value = "${module.consul_bk_user_data.user_data}"
 # }
@@ -118,6 +122,10 @@ output "nsg_vault_name" {
 
 output "nsg_vault_id" {
   value = "${module.vault_sg.this_security_group_id}"
+}
+
+output "vault_pubips" {
+  value = "${module.vault.server_pubips}"
 }
 
 #
