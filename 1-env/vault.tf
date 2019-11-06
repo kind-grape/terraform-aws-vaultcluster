@@ -17,11 +17,12 @@ module "vault_sg" {
 }
 
 module "vault_user_data" {
-  source     = "../modules/aws-hashi_user_data"
-  kms_key_id = "${module.kms.kms_id}"
-  region     = "${var.region}"
-  tags       = "${var.tags}"
-  serverinfo = "${var.vault}"
+  source       = "../modules/aws-hashi_user_data"
+  kms_key_id   = "${module.kms.kms_id}"
+  vault_unseal = "${var.vault_unseal}"
+  region       = "${var.region}"
+  tags         = "${var.tags}"
+  serverinfo   = "${var.vault}"
 }
 
 module "vault" {
@@ -34,5 +35,5 @@ module "vault" {
   key_name             = "${var.key_name}"
   tags                 = "${var.tags}"
   serverinfo           = "${var.vault}"
-  hostname         = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.vault["role"]}"
+  hostname             = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.vault["role"]}"
 }

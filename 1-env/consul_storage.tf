@@ -34,5 +34,5 @@ module "consul_storage" {
   key_name             = "${var.key_name}"
   tags                 = "${var.tags}"
   serverinfo           = "${var.consul_storage}"
-  hostname         = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.consul_storage["role"]}"
+  hostname             = "${lower(var.tags["client"])}-${var.environment}-${var.region}-${var.consul_storage["role"]}"
 }

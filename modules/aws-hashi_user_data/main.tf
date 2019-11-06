@@ -19,7 +19,7 @@ data "template_file" "user_data" {
     consul_http_port        = "${var.ports["consulbk_http_port"]}"
     consul_https_port       = "${var.ports["consulbk_https_port"]}"
     consul_dns_port         = "${var.ports["consulbk_dns_port"]}"
-    vault_unseal            = "${var.serverinfo["unseal"]}"
+    vault_unseal            = "${var.vault_unseal}"
     vault_api_port          = "${var.ports["vault_api_port"]}"
     vault_cluster_port      = "${var.ports["vault_cluster_port"]}"
     vault_https_enabled     = "${var.serverinfo["tlslistener"]}"

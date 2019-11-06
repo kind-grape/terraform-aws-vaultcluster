@@ -36,6 +36,7 @@ variable "key_name" {
 
 variable "subnet_id" {
   description = "Subnet where servers will reside"
+
   # type        = "list"
 }
 
@@ -143,6 +144,12 @@ variable "kms" {
     iam_instance_profile_path = "/"  # standard or premium
     key_deletion_window       = "30"
   }
+}
+
+variable "vault_unseal" {
+  description = "Unseal = true, default = false"
+  type        = "string"
+  default     = false
 }
 
 variable "consul_storage" {

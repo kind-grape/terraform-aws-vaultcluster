@@ -57,7 +57,6 @@ variable "serverinfo" {
     unbound          = false
     dnsmasq          = true
     https            = false
-    unseal           = false
     tlslistener      = false
   }
 }
@@ -65,6 +64,11 @@ variable "serverinfo" {
 variable "unseal_cloud" {
   description = "Cloud acronym used for vault config to enable auto-unseal"
   default     = "awskms"
+}
+
+variable "vault_unseal" {
+  description = "Unseal = true, default = false"
+  default     = false
 }
 
 variable "vault_telemetry" {
