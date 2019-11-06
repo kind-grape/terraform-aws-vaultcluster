@@ -1,32 +1,37 @@
 - debug: msg="START - import_env.yml"
 
 - name: Check for unseal temp file
-  stat: path=/tmp/vault.txt
+  local_action: stat path="{{ tempdir }}/vault.txt"
   register: unseal_temp_file
   ignore_errors: yes
 
-- name: Check for vault token
-  stat: path=/etc/consul.d/tokens/vault
-  register: vault_token_file
+- name: Check for unseal keys temp file
+  local_action: stat path="{{ tempdir }}/vault_unseal.txt"
+  register: unseal_keys_temp_file
   ignore_errors: yes
 
 - name: Check Vault Unsealed
-  stat: path=/tmp/unsealed
+  stat: path="{{ vault_config_path }}/unsealed"
   register: vault_unsealed
   ignore_errors: yes
 
-- name: Check for /etc/vault.d/tls/vault_tls_ca_bundle
-  stat: path=/etc/vault.d/tls/vault_tls_ca_bundle
+- name: Check for vault token
+  stat: path="{{ consul_config_path }}/tokens/vault"
+  register: vault_token_file
+  ignore_errors: yes
+
+- name: Check for vault_tls_ca_bundle
+  stat: path="{{ vault_config_path }}/tls/vault_tls_ca_bundle"
   register: stat_vault_tls_ca_bundle
   ignore_errors: yes
 
-- name: Check for /etc/vault.d/tls/vault_server_tls_cert
-  local_action: stat path=/etc/vault.d/tls/vault_server_tls_cert
+- name: Check for vault_server_tls_cert
+  stat: path="{{ vault_config_path }}/tls/vault_server_tls_cert"
   register: stat_vault_server_tls_cert
   ignore_errors: yes
 
-- name: Check for /etc/vault.d/tls/vault_server_tls_key
-  local_action: stat path=/etc/vault.d/tls/vault_server_tls_key
+- name: Check for vault_server_tls_key
+  stat: path="{{ vault_config_path }}/tls/vault_server_tls_key"
   register: stat_vault_server_tls_key
   ignore_errors: yes
 

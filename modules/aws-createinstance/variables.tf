@@ -1,4 +1,7 @@
-variable "os_user" {}
+# variable "os_user" {}
+variable "ami" {}
+variable "iam_instance_profile" {}
+
 variable "user_data" {}
 variable "key_name" {}
 variable "hostname" {}
@@ -10,7 +13,7 @@ variable "consul_bk_ports" {
   default = {}
 }
 
-variable "region" {}
+# variable "region" {}
 
 variable "tags" {
   default = {}
@@ -20,4 +23,4 @@ variable "serverinfo" {
   default = {}
 }
 
-variable "environment" {}
+# variable "environment" {}

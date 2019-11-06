@@ -13,3 +13,9 @@
     name: ['unzip', 'jq', 'awscli', 'ansible', 'python2-boto3', 'htop']
     state: present
     update_cache: true
+
+- name: Update the Operating System
+  yum:
+    name: "*"
+    state: latest
+    update_cache: true

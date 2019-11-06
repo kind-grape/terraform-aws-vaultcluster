@@ -4,6 +4,8 @@
 - name: Configure Vault
   import_tasks: vault.yml
 
-# - name: Unseal Vault
-#   import_tasks: unseal.yml
-#   when: unseal_temp_file.stat.exists == false
+- name: Unseal Vault
+  import_tasks: unseal.yml
+  when:
+    - vault_unsealed.stat.exists == false
+    - vault_unseal == true
