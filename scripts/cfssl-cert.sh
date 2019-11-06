@@ -27,7 +27,7 @@ fi
 cd $TEMPDIR
 
 if [ ! -f "$TEMPDIR/client-cert.json" ]; then
-cat <<CERT | sudo tee $TEMPDIR/client-cert.json
+cat <<CERT | sudo tee $TEMPDIR/${ORG}_vault.json
 {
   "CN": "$DOMAIN",
   "key": {
@@ -66,6 +66,6 @@ cat <<INTCERT | sudo tee $TEMPDIR/int-client-cert.json
 INTCERT
 fi
 
-cfssl gencert -ca ${ORG}_intermediate_CA.pem -ca-key ${ORG}_intermediate_CA-key.pem \
+cfssl gencert -ca ${ORG}_root_CA.pem -ca-key ${ORG}_root_CA-key.pem \
 -hostname="vault,vault.$DOMAIN,vault1.$DOMAIN,vault2.$DOMAIN,*.node.consul,*.service.consul,server.$DC.consul,*.$DC.consul,localhost,127.0.0.1" \
--config int-client-cert.json client-cert.json | cfssljson -bare vault
+-config int-client-cert.json ${ORG}_vault.json | cfssljson -bare ${ORG}_vault

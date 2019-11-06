@@ -25,6 +25,7 @@ id_rsa*
 !update_groups.sh
 !unseal.sh
 !cfssl*.sh
+!vault_cert.sh
 
 crash.log
 blah.txt

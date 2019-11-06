@@ -26,7 +26,7 @@ if [ ! -d "$TEMPDIR" ]; then
 fi
 cd $TEMPDIR
 
-cat <<CACERT | sudo tee $TEMPDIR/ca-cert.json
+cat <<CACERT | sudo tee $TEMPDIR/${ORG}_root_CA.json
 {
   "CN": "$ORG-ROOT-CA",
   "key": {
@@ -48,4 +48,5 @@ cat <<CACERT | sudo tee $TEMPDIR/ca-cert.json
 }
 CACERT
 
-cfssl gencert -initca ca-cert.json | cfssljson -bare ${ORG}_root_CA
+cfssl gencert -initca ${ORG}_root_CA.json | cfssljson -bare ${ORG}_root_CA
+cat ${ORG}_root_CA.pem > ${ORG}_bundle.pem
