@@ -1,12 +1,4 @@
-- name: Check for unseal temp file
-  stat: path=/tmp/vault.txt
-  register: unseal_temp_file
-  ignore_errors: yes
-
-- name: Check for unseal keys temp file
-  stat: path=/tmp/vault_unseal.txt
-  register: unseal_keys_temp_file
-  ignore_errors: yes
+- debug: msg="Initialized - {{ unseal_temp_file.stat.exists }}"
 
 - name: Operator Init
   shell: |
@@ -14,50 +6,84 @@
     . /etc/profile.d/99-vault-env.sh
     vault operator init -recovery-shares={{ vault_recovery_shares }} -recovery-threshold={{ vault_recovery_threshold }}
   register: operator_init
-  when: unseal_temp_file.stat.exists == false
+  when: not unseal_temp_file.stat.exists
+  run_once: yes
+
+- debug: msg="{{ operator_init }}"
+  when: not unseal_temp_file.stat.exists
 
 - name: Set Operator Output
-  set_fact: operator_init_output="{{ operator_init.stdout }}"
-  when: unseal_temp_file.stat.exists == false
+  set_fact: operator_init_output="{{ operator_init.stdout_lines }}"
+  when: not unseal_temp_file.stat.exists
 
 - name: Write Unseal Temp File
   copy:
     content: "{{ operator_init_output }}"
-    dest: /tmp/vault.txt
+    dest: "{{ tempdir }}/vault.txt"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0440
-  when: unseal_temp_file.stat.exists == false
+  when: not unseal_temp_file.stat.exists
 
 - name: Set Operator Output
-  set_fact: operator_init_output="{{ lookup('file', '/tmp/vault.txt') }}"
+  set_fact: operator_init_output="{{ lookup('file', unseal_temp_file.stat.path).splitlines() }}"
   when: unseal_temp_file.stat.exists == true
 
-- debug: msg="{{ operator_init_output }}"
+- name: Init unseal_lines
+  set_fact: unseal_lines="{{ [] }}"
+  when: not unseal_keys_temp_file.stat.exists
+
+- name: Truncate unseal_file_lines
+  set_fact:
+    unseal_lines: "{{ unseal_lines + [item] }}"
+  loop: "{{ operator_init_output }}"
+  loop_control:
+    extended: yes
+  when:
+    - "ansible_loop.index <= {{ vault_recovery_shares }}"
+    - not unseal_keys_temp_file.stat.exists
+
+- name: Init unseal_keys
+  set_fact: unseal_keys="{{ [] }}"
+  when: not unseal_keys_temp_file.stat.exists
 
 - name: Extract Unseal Keys
-  shell: |
-    . /etc/profile.d/99-consul-env.sh
-    . /etc/profile.d/99-vault-env.sh
-    echo {{ operator_init_output }} | grep "Recovery Key" | awk '{ print $4 }'
-  register: unseal_keys
-  when: unseal_keys_temp_file.stat.exists == false
+  set_fact: unseal_keys="{{ unseal_keys + [item | regex_replace('^Recovery Key .. (.*)$', '\\1')] }}"
+  with_items: "{{ unseal_lines }}"
+  when: not unseal_keys_temp_file.stat.exists
 
-- name: Set Operator Output
-  set_fact: unseal_keys_output="{{ unseal_keys.stdout }}"
-  when: unseal_keys_temp_file.stat.exists == false
+- debug: msg="{{ unseal_keys }}"
+  when: not unseal_keys_temp_file.stat.exists
+
+- name: Join unseal_keys
+  set_fact: unseal_keys="{{ unseal_keys | join('\n') }}"
+  when: not unseal_keys_temp_file.stat.exists
+
+- name: Set Keys Output
+  set_fact: unseal_keys_output="{{ unseal_keys }}"
+  when: not unseal_keys_temp_file.stat.exists
+
+- name: Set Keys Output
+  set_fact: unseal_keys_output="{{ lookup('file', unseal_keys_temp_file.stat.path) }}"
+  when: unseal_keys_temp_file.stat.exists == true
+
+- debug: msg="{{ unseal_keys_output }}"
+  when: not unseal_keys_temp_file.stat.exists
 
 - name: Write Unseal Keys Temp File
   copy:
     content: "{{ unseal_keys_output }}"
-    dest: /tmp/vault_unseal.txt
+    dest: "{{ tempdir }}/vault_unseal.txt"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0440
-  when: unseal_keys_temp_file.stat.exists == false
+  when: not unseal_keys_temp_file.stat.exists
 
-- name: Set Unseal Keys Output
-  set_fact: unseal_keys_output="{{ lookup('file', '/tmp/vault_unseal.txt') }}"
-  when: unseal_keys_temp_file.stat.exists == true
-
-- debug: msg="{{ unseal_keys_output }}"
+- name: Write Unseal Complete
+  copy:
+    content: "unsealed"
+    dest: "{{ vault_config_path }}/unsealed"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0440
+  when: vault_unsealed.stat.exists == false
