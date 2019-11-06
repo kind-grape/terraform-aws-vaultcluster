@@ -7,7 +7,7 @@ storage "consul" {
 {% if consul_https_enabled == true %}
   address = "127.0.0.1:{{ consul_https_port }}"
   scheme  = "https"
-  tls_ca_file = "/etc/consul.d/tls/consul_tls_ca_bundle"
+  tls_ca_file = "{{ consul_config_path }}/tls/consul_tls_ca_bundle"
 {% else %}
   address = "127.0.0.1:{{ consul_http_port }}"
 {% endif %}
