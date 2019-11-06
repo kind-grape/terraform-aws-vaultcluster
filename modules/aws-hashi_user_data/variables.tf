@@ -31,10 +31,10 @@ variable "ports" {
 
 variable "snapshots" {
   description = "snapshot variables"
-  type = "map"
+  type        = "map"
   default = {
-    bucket_name       = "consul-snapshots-bucket"
-    snapshot_name     = "consul-snapshot"
+    bucket_name   = "consul-snapshots-bucket"
+    snapshot_name = "consul-snapshot"
   }
 }
 
@@ -49,7 +49,17 @@ variable "tags" {
 }
 
 variable "serverinfo" {
-  default = {}
+  default = {
+    role             = "vault"
+    desired_capacity = 1
+    datacenter       = "vault"
+    server           = false
+    unbound          = false
+    dnsmasq          = true
+    https            = false
+    unseal           = false
+    tlslistener      = false
+  }
 }
 
 variable "unseal_cloud" {
