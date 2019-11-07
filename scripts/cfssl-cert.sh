@@ -1,9 +1,8 @@
 #!/bin/bash -x
-TEMPDIR="/tmp/certs"
+TEMPDIR="."
 VAULTDIR="/etc/vault.d/tls"
-CANAME="rootCA"
 DOMAIN="example.com"
-DC="dc1"
+DC="vault"
 COUNTRY="CA"
 STATE="Ontario"
 LOCATION="Ottawa"
@@ -26,8 +25,8 @@ if [ ! -d "$TEMPDIR" ]; then
 fi
 cd $TEMPDIR
 
-if [ ! -f "$TEMPDIR/client-cert.json" ]; then
-cat <<CERT | sudo tee $TEMPDIR/${ORG}_vault.json
+if [ ! -f "$TEMPDIR/vault-client-cert.json" ]; then
+cat <<CERT | sudo tee $TEMPDIR/vault-client-cert.json
 {
   "CN": "$DOMAIN",
   "key": {
@@ -47,8 +46,8 @@ cat <<CERT | sudo tee $TEMPDIR/${ORG}_vault.json
 CERT
 fi
 
-if [ ! -f "$TEMPDIR/int-client-cert.json" ]; then
-cat <<INTCERT | sudo tee $TEMPDIR/int-client-cert.json
+if [ ! -f "$TEMPDIR/vault-int-client-cert.json" ]; then
+cat <<INTCERT | sudo tee $TEMPDIR/vault-int-client-cert.json
 {
 	"signing": {
 		"profiles": {
@@ -66,6 +65,6 @@ cat <<INTCERT | sudo tee $TEMPDIR/int-client-cert.json
 INTCERT
 fi
 
-cfssl gencert -ca ${ORG}_root_CA.pem -ca-key ${ORG}_root_CA-key.pem \
+cfssl gencert -ca vault_root_CA.pem -ca-key vault_root_CA-key.pem \
 -hostname="vault,vault.$DOMAIN,vault1.$DOMAIN,vault2.$DOMAIN,*.node.consul,*.service.consul,server.$DC.consul,*.$DC.consul,localhost,127.0.0.1" \
--config int-client-cert.json ${ORG}_vault.json | cfssljson -bare ${ORG}_vault
+-config vault-int-client-cert.json vault-client-cert.json | cfssljson -bare vault_cert

@@ -1,9 +1,8 @@
 #!/bin/bash -x
-TEMPDIR="/tmp/certs"
+TEMPDIR="."
 VAULTDIR="/etc/vault.d/tls"
-CANAME="rootCA"
 DOMAIN="example.com"
-DC="dc1"
+DC="vault"
 COUNTRY="CA"
 STATE="Ontario"
 LOCATION="Ottawa"
@@ -26,7 +25,8 @@ if [ ! -d "$TEMPDIR" ]; then
 fi
 cd $TEMPDIR
 
-cat <<CACERT | sudo tee $TEMPDIR/${ORG}_root_CA.json
+if [ ! -f "$TEMPDIR/vault_root_CA.json" ]; then
+cat <<CACERT | sudo tee $TEMPDIR/vault_root_CA.json
 {
   "CN": "$ORG-ROOT-CA",
   "key": {
@@ -47,6 +47,7 @@ cat <<CACERT | sudo tee $TEMPDIR/${ORG}_root_CA.json
   }
 }
 CACERT
+fi
 
-cfssl gencert -initca ${ORG}_root_CA.json | cfssljson -bare ${ORG}_root_CA
-cat ${ORG}_root_CA.pem > ${ORG}_bundle.pem
+cfssl gencert -initca vault_root_CA.json | cfssljson -bare vault_root_CA
+cat vault_root_CA.pem > vault_bundle.pem

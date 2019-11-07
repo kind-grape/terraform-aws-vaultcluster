@@ -6,6 +6,11 @@ variable "ssm_kms_key_rotate" {
   default = true
 }
 
+variable "https_enabled" {
+  description = "Enable Vault certs"
+  default     = false
+}
+
 variable "key_id" {}
 
 variable "region" {
