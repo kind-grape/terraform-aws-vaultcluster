@@ -28,7 +28,7 @@
 - name: Install CA certificate
   copy:
     content: "{{ vault_tls_ca_bundle.stdout }}"
-    dest: "{{ stat_vault_tls_ca_bundle.stat.path }}"
+    dest: "{{ vault_config_path }}/tls/vault_tls_ca_bundle"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0440
@@ -38,7 +38,7 @@
 - name: Install server certificate
   copy:
     content: "{{ vault_server_tls_cert.stdout }}"
-    dest: "{{ stat_vault_server_tls_cert.stat.path }}"
+    dest: "{{ vault_config_path }}/tls/vault_server_tls_cert"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0400
@@ -48,7 +48,7 @@
 - name: Install server certificate key
   copy:
     content: "{{ vault_server_tls_key.stdout }}"
-    dest: "{{ stat_vault_server_tls_key.stat.path }}"
+    dest: "{{ vault_config_path }}/tls/vault_server_tls_key"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0400

@@ -16,12 +16,12 @@ storage "consul" {
 }
 
 listener "tcp" {
-  address     = "0.0.0.0:8200"
+  address     = "0.0.0.0:{{ vault_api_port }}"
 {% if vault_https_enabled == true %}
   scheme  = "https"
   tls_ca_file   = "{{ vault_config_path }}/tls/vault_tls_ca_bundle"
-  tls_cert_file = "{{ vault_config_path }}/tls/vault_client_tls_cert"
-  tls_key_file  = "{{ vault_config_path }}/tls/vault_client_tls_key"
+  tls_cert_file = "{{ vault_config_path }}/tls/vault_server_tls_cert"
+  tls_key_file  = "{{ vault_config_path }}/tls/vault_server_tls_key"
 {% else %}
   tls_disable = true
 {% endif %}

@@ -6,7 +6,7 @@ locals {
 
 resource "aws_ssm_parameter" "vault_server_tls_ca_bundle" {
   count     = "${var.https_enabled == 1 ? 1 : 0}"
-  name      = "vault_server_tls_ca_bundle"
+  name      = "vault_tls_ca_bundle"
   type      = "SecureString"
   value     = "${file("${path.module}/../../${local.vault_root_cert}")}"
   key_id    = "${var.key_id}"
