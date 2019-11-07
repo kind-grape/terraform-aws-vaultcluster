@@ -141,7 +141,7 @@ variable "kms" {
   type        = "map"
 
   default = {
-    iam_instance_profile_path = "/"  # standard or premium
+    iam_instance_profile_path = "/" # standard or premium
     key_deletion_window       = "30"
   }
 }
@@ -263,35 +263,37 @@ variable "consul_sd" {
 
 variable "vault" {
   default = {
-    root_name         = "/"
-    root_size         = "50"
-    root_type         = "gp2"
-    security_group    = ""
-    ami               = "ami-0000000000000000b"
-    size              = "t2.micro"
-    health_check_type = "EC2"
-    server            = false
-    telemetry         = false
-    https             = false
-    version           = "1.1.3"
-    role              = "vault"
-    datacenter        = "vault"
-    datacenter_consul = "csl"
-    ports             = "8200,8201"
-    ingress_rules     = "vault-tcp,vault-cluster-tcp"
-    listening_port    = "8200"
-    unbound           = false
-    dnsmasq           = true
-    autojoin          = false
-    tlslistener       = false
-    enterprise        = false
-    enablesyslog      = false
-    masterkey         = "1111111111111111111111=="
-    ui                = false
-    count             = 0
-    desired_capacity  = 1
-    max_size          = 1
-    min_size          = 1
-    startindex        = 0
+    root_name                = "/"
+    root_size                = "50"
+    root_type                = "gp2"
+    security_group           = ""
+    ami                      = "ami-0000000000000000b"
+    size                     = "t2.micro"
+    health_check_type        = "EC2"
+    server                   = false
+    telemetry                = false
+    https                    = false
+    version                  = "1.1.3"
+    role                     = "vault"
+    datacenter               = "vault"
+    datacenter_consul        = "csl"
+    ports                    = "8200,8201"
+    ingress_rules            = "vault-tcp,vault-cluster-tcp"
+    listening_port           = "8200"
+    unbound                  = false
+    dnsmasq                  = true
+    autojoin                 = false
+    tlslistener              = false
+    enterprise               = false
+    enablesyslog             = false
+    masterkey                = "1111111111111111111111=="
+    ui                       = false
+    count                    = 0
+    vault_recovery_shares    = 5
+    vault_recovery_threshold = 3
+    desired_capacity         = 1
+    max_size                 = 1
+    min_size                 = 1
+    startindex               = 0
   }
 }

@@ -32,3 +32,16 @@ resource "aws_ssm_parameter" "default_token" {
     ignore_changes = ["value", "description", "key_id"]
   }
 }
+
+resource "aws_ssm_parameter" "vaultkey" {
+  count  = "${var.vault_recovery_shares >= 1 ? var.vault_recovery_shares : 0}"
+  name   = "vault_recovery_share_${count.index}"
+  type   = "SecureString"
+  value  = "REPLACEME"
+  key_id = "${var.key_id}"
+
+
+  lifecycle {
+    ignore_changes = ["value", "description", "key_id"]
+  }
+}

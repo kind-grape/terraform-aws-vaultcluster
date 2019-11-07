@@ -27,3 +27,8 @@ variable "namespace" {
   description = "used to identify the client space, or client acronym"
   default     = "client001"
 }
+
+variable "vault_recovery_shares" {
+  description = "Amount of recovery shards to create"
+  default     = 5
+}
