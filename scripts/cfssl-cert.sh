@@ -8,6 +8,7 @@ STATE="Ontario"
 LOCATION="Ottawa"
 ORG="ACME"
 OU="IT"
+HOSTNAMES="vault,vault.$DOMAIN,vault1.$DOMAIN,vault2.$DOMAIN,*.node.consul,*.service.consul,server.$DC.consul,*.$DC.consul"
 
 if [ ! -f "/usr/local/bin/cfssl" ]; then
 	curl -s -L -o /usr/local/bin/cfssl https://pkg.cfssl.org/R1.2/cfssl_linux-amd64
@@ -66,5 +67,5 @@ INTCERT
 fi
 
 cfssl gencert -ca vault_root_CA.pem -ca-key vault_root_CA-key.pem \
--hostname="vault,vault.$DOMAIN,vault1.$DOMAIN,vault2.$DOMAIN,*.node.consul,*.service.consul,server.$DC.consul,*.$DC.consul,localhost,127.0.0.1" \
+-hostname="$HOSTNAMES,localhost,127.0.0.1" \
 -config vault-int-client-cert.json vault-client-cert.json | cfssljson -bare vault_cert
