@@ -75,3 +75,13 @@ variable "vault_telemetry" {
   description = "enable/disable vault telemetry"
   default     = false
 }
+
+variable "vault_recovery_shares" {
+  description = "Amount of recovery shards to create"
+  default     = 5
+}
+
+variable "vault_recovery_threshold" {
+  description = "Amount of recovery shards required to recover"
+  default     = 3
+}
