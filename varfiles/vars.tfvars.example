@@ -35,9 +35,12 @@ kms = {
 }
 
 consul_storage = {
-  count             = 1
-  version           = "1.5.1"
+  count             = 3
+  ingress_rules     = "consul-tcp,consul-cli-rpc-tcp,consul-webui-tcp,consul-webuis-tcp,consul-dns-tcp,consul-dns-udp,consul-serf-lan-tcp,consul-serf-lan-udp,consul-serf-wan-tcp,consul-serf-wan-udp"
+  listening_port    = "8500"
+  version           = "1.6.1"
   root_size         = "10"
+  https             = true
   dnsmasq           = true
   server            = true
   ui                = true

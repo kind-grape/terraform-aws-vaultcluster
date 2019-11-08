@@ -34,17 +34,17 @@ head -3 /tmp/vault_unseal.txt | while read a; do vault operator unseal $a; done
 <% end -%>
 
 if [ ! -f "/tmp/vault_admin_key.txt" ]; then
-	vault login $(cat /tmp/vault_root_key.txt)
-	function hcl {
-	cat <<- _EOF_
-	path "*" { capabilities = [ "read", "create", "update", "delete", "sudo", "list" ] }
-	_EOF_
-	}
-	export -f hcl
-	hcl > /tmp/admin.hcl
-	vault policy write admin /tmp/admin.hcl
-	vault token create -orphan -policy=admin | grep "^token\b" | awk '{ print $2 }' 2>&1 | tee /tmp/vault_admin_key.txt
-	# vault token revoke -self
+vault login $(cat /tmp/vault_root_key.txt)
+function hcl {
+cat <<- _EOF_
+path "*" { capabilities = [ "read", "create", "update", "delete", "sudo", "list" ] }
+_EOF_
+}
+export -f hcl
+hcl > /tmp/admin.hcl
+vault policy write admin /tmp/admin.hcl
+vault token create -orphan -policy=admin | grep "^token\b" | awk '{ print $2 }' 2>&1 | tee /tmp/vault_admin_key.txt
+# vault token revoke -self
 fi
 
 # vault login $(cat /tmp/vault_admin_key.txt)

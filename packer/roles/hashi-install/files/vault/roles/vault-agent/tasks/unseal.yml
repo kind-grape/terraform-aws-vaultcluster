@@ -31,7 +31,7 @@
 
 - name: Init unseal_lines
   set_fact: unseal_lines="{{ [] }}"
-  when: not unseal_keys_temp_file.stat.exists
+  # when: not unseal_keys_temp_file.stat.exists
 
 - name: Truncate unseal_file_lines
   set_fact:
@@ -40,20 +40,20 @@
   loop_control:
     extended: yes
   when:
-    - "ansible_loop.index <= {{ vault_recovery_shares }}"
-    - not unseal_keys_temp_file.stat.exists
+    - ansible_loop.index <= vault_recovery_shares
+    # - not unseal_keys_temp_file.stat.exists
 
 - name: Init unseal_keys
   set_fact: unseal_keys="{{ [] }}"
-  when: not unseal_keys_temp_file.stat.exists
+  # when: not unseal_keys_temp_file.stat.exists
 
 - name: Extract Unseal Keys
   set_fact: unseal_keys="{{ unseal_keys + [item | regex_replace('^Recovery Key .. (.*)$', '\\1')] }}"
   with_items: "{{ unseal_lines }}"
-  when: not unseal_keys_temp_file.stat.exists
+  # when: not unseal_keys_temp_file.stat.exists
 
 - debug: msg="{{ unseal_keys }}"
-  when: not unseal_keys_temp_file.stat.exists
+  # when: not unseal_keys_temp_file.stat.exists
 
 - name: Join unseal_keys
   set_fact: unseal_keys="{{ unseal_keys | join('\n') }}"
@@ -87,3 +87,7 @@
     group: "{{ vault_group }}"
     mode: 0440
   when: vault_unsealed.stat.exists == false
+
+- name: Store Shards in AWS SSM
+  import_tasks: shards_ssm.yml
+  when: unseal_temp_file.stat.exists == true

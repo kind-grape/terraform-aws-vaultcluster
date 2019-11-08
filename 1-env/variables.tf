@@ -36,7 +36,7 @@ variable "key_name" {
 
 variable "subnet_id" {
   description = "Subnet where servers will reside"
-  type        = "list"
+  # type        = "list"
 }
 
 variable "vpc_id" {
