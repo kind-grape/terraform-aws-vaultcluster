@@ -1,6 +1,6 @@
 {
   "variables": {
-    "app_name": "consul-or-vault",
+    "app_name": "consul",
     "ssh_username": "ec2-user",
     "vault_version": "",
     "consul_version": "",
@@ -9,6 +9,7 @@
     "subnet_id": "",
     "source_ami_name": "",
     "source_ami_owner": "",
+    "instance_type": ""
   },
   "builders": [{
     "type": "amazon-ebs",
@@ -25,9 +26,9 @@
     },
     "instance_type": "{{user `instance_type`}}",
     "ssh_username": "{{ user `ssh_username` }}",
-    "ami_name": "amz2-{{user `app_name`}}-ent-{{user `consul-or-vault_version`}}-{{timestamp}}",
+    "ami_name": "amz2-{{user `app_name`}}-ent-{{user `consul_version`}}-{{timestamp}}",
     "tags": {
-      "Name": "amz2-{{user `app_name`}}-ent-{{user `consul-or-vault_version`}}-{{timestamp}}"
+      "Name": "amz2-{{user `app_name`}}-ent-{{user `consul_version`}}-{{timestamp}}"
     }
   }],
   "provisioners": [
