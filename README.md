@@ -1,5 +1,11 @@
 # terraform-aws-vaultcluster
 
+## Requirements
+1. Access to the Hashi Binaries ()
+2. AWS account, and environment variables set (AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID)
+3. AWS Key Pair uploaded - Referenced in the code (see step 6 below)
+4. At this time, Terraform 11 is the version the code runs in (will be upgraded in the near future)
+
 ## Pre-Setup
 1. Build packer image
 2. Generate new consul master key/token
