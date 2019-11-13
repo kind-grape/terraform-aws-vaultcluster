@@ -13,10 +13,9 @@
 3. Create local copy of vars.tfvars based on vars.tfvars.example
 4. Replace AMI value with new AMI
 5. Replace SSH key key_name for the key stored in AWS that you wish to use to connect to servers with
-6. Edit your MGMT Subnets (using cidr notation)
+6. Edit your MGMT Subnets (using cidr notation), including the IP you wish to access the environment.
 7. Edit Tags accordingly
 8. Set the count to 1 for consul and vault (depending if you want to use consul as a storage backend)
-9. Edit MasterKey for the generated token in step 2
 10. Set Desired, Max, Min capacity values for vault and consul
 ** run `0-setup` if the network and subnets are not already existing
 
