@@ -28,6 +28,12 @@
 1. ```export CONSUL_HTTP_ADDR=https://127.0.0.1:7501```
 2. ```export CONSUL_HTTP_TOKEN=$(sudo cat /etc/consul.d/tokens/master)```
 
+## Terraform Commands
+1. ```terraform plan -var-file=../varfiles/setup.tfvars``` from 0-Setup
+2. ```terraform plan -var-file=../varfiles/vars.tfvars``` from 1-env
+** use ```terraform apply``` pointing to the correct variable file when complete
+** If using Terraform Enterprise, put all the variables in the variables tab, and ignore having to point to variable files, or storing variable files with the root module. https://12factor.net/config
+
 # Need to look at
 
 https://github.com/hashicorp/IS-terraform-aws-vault-ansible/issues/3
