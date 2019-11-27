@@ -1,0 +1,118 @@
+---
+- name: Check for snapshot token on filesystem
+  stat: path="{{ consul_config_path }}/tokens/snapshot"
+  register: snapshot_token_file
+
+- name: Register ACL Snapshot Agent token for Ansible plays
+  set_fact: snapshot_token="{{ lookup('file', snapshot_token_file.stat.path) }}"
+  when: snapshot_token_file.stat.exists == true
+
+- name: Write Consul snapshot agent ACL policy
+  set_fact:
+    agent_policy: |
+      acl = "write"
+      agent_prefix "" {
+        policy = "write"
+      }
+      node_prefix "" {
+        policy = "write"
+      }
+      service_prefix "" {
+        policy = "read"
+      }
+      service "consul-snapshot" {
+        policy = "write"
+      }
+      key_prefix "consul-snapshot/" {
+        policy = "write"
+      }
+      session_prefix "" {
+        policy = "write"
+      }
+
+- name: Make Consul snapshot agent ACL policy machine-readable
+  set_fact:
+    agent_policy_api_value: "{{
+      agent_policy |
+        regex_replace('\n', ' ') |
+        regex_replace('\"', '\\\"') |
+        regex_replace('\\s+', ' ')
+    }}"
+
+- name: Show Predefined Snapshot Agent Token - token-snapshot.yml
+  debug:
+    var: snapshot_agent_token
+  when: snapshot_agent_token is defined
+
+- name: Show Predefined Master Token
+  debug:
+    var: consul_acl_master_token
+  when: consul_acl_master_token is defined
+
+- name: Write Consul agent ACL policy to Consul
+  uri:
+    body_format: json
+    body: |
+      {
+        "Name": "{{ consul_snapshot_agent_policy_name }}",
+        "Description": "Consul Snapshot token",
+        "Rules": "{{ agent_policy_api_value }}"
+      }
+    method: PUT
+    url: "{{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/acl/policy"
+    headers:
+      X-Consul-Token: "{{ consul_acl_master_token }}"
+    validate_certs: no
+  register: snapshot_agent_token_write
+  run_once: yes
+  ignore_errors: yes # TODO: add check so this is skipped if policy exists
+
+- name: Create snapshot agent token
+  uri:
+    body_format: json
+    body: |
+      {
+        "Description": "Agent token",
+        "Policies": [{"Name": "{{ consul_snapshot_agent_policy_name }}"}],
+        "Local": false
+      }
+    method: PUT
+    url: "{{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/acl/token"
+    headers:
+      X-Consul-Token: "{{ consul_acl_master_token }}"
+    validate_certs: no
+    return_content: yes
+  register: agent_token
+  run_once: yes
+  when: snapshot_agent_token is not defined
+
+- set_fact:
+    snapshot_token: "{{ agent_token.json.SecretID }}"
+  when:
+    - agent_token is defined
+    - agent_token.json is defined
+    - snapshot_agent_token is not defined
+
+- name: Show Agent Token - token-agent.yml
+  debug:
+    var: snapshot_token
+  when:
+    - snapshot_token is defined
+    - snapshot_agent_token is not defined
+
+- set_fact:
+    snapshot_agent_token: "{{ snapshot_token }}"
+  when:
+    - snapshot_token is defined
+    - snapshot_agent_token is not defined
+
+- name: Archive ACL agent token
+  copy:
+    content: "{{ snapshot_token }}"
+    dest: "{{ consul_config_path }}/tokens/snapshot"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0640
+  when:
+    - snapshot_token is defined
+    - snapshot_agent_token is not defined

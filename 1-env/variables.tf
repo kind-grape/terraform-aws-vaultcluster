@@ -25,13 +25,13 @@ variable "os_user" {
 
 variable "address_space" {
   description = "Default Supernet that all networks reside within"
-  type        = "string"
+  type        = string
   default     = "172.21.0.0/16"
 }
 
 variable "key_name" {
   description = "Default Key Name for server access"
-  type        = "string"
+  type        = string
 }
 
 variable "subnet_id" {
@@ -41,19 +41,19 @@ variable "subnet_id" {
 
 variable "vpc_id" {
   description = "VPC where servers will reside"
-  type        = "string"
+  type        = string
   default     = "vpc-0000000000000000e"
 }
 
 variable "ami_owner_account" {
   description = "Account that owns the AMI used"
-  type        = "string"
+  type        = string
   default     = "123456789111"
 }
 
 variable "subnets" {
   description = "public and private subnets"
-  type        = "map"
+  type        = map(string)
 
   default = {
     public  = "172.21.1.0/24"
@@ -63,7 +63,7 @@ variable "subnets" {
 
 variable "dns_servers" {
   description = "Default DNS Servers that the servers will use to resolve"
-  type        = "list"
+  type        = list(string)
 
   default = [
     "1.1.1.1",
@@ -73,7 +73,7 @@ variable "dns_servers" {
 
 variable "ingress_rules" {
   description = "List of ingress rules"
-  type        = "list"
+  type        = list(string)
 
   default = [
     "ssh-tcp",
@@ -82,13 +82,13 @@ variable "ingress_rules" {
 
 variable "security_groups" {
   description = "Default Security Group IDs"
-  type        = "list"
+  type        = list(string)
   default     = ["sg-00000000000000000"]
 }
 
 variable "mgmt_subnets" {
   description = "List of subnets allowed to manage and connect to the services"
-  type        = "list"
+  type        = list(string)
 
   default = [
     "172.21.1.0/24",
@@ -96,195 +96,141 @@ variable "mgmt_subnets" {
   ]
 }
 
-variable depends_on {
-  description = "Dependencies"
-  default     = []
-  type        = "list"
-}
+# variable "depends_on" {
+#   description = "Dependencies"
+#   default     = []
+#   type        = list(string)
+# }
 
 variable "tags" {
   description = "Tags used across all resources that can be tagged"
-  type        = "map"
+  type        = map(string)
+}
+
+variable "customtags" {
+  description = "Tags used across all resources that can be tagged"
+  type        = map(string)
+
+  default = {}
 }
 
 variable "snapshots" {
   description = "snapshot variables"
-  type        = "map"
+  type        = map(string)
 
-  default = {
-    bucket_name   = "consul-snapshots-bucket"
-    snapshot_name = "consul-snapshot"
-  }
+  default = {}
 }
+
+# variable "custom_snapshots" {
+#   description = "snapshot variables"
+#   type        = map(string)
+#
+#   default = {
+#     bucket_name   = "consul-snapshots-bucket"
+#     snapshot_name = "consul-snapshot"
+#   }
+# }
 
 variable "vault_extra_tags" {
   description = "Tags used across all resources that can be tagged"
-  type        = "map"
+  type        = map(string)
   default     = {}
 }
 
 variable "consul_storage_extra_tags" {
   description = "Tags used across all resources that can be tagged"
-  type        = "map"
+  type        = map(string)
   default     = {}
 }
 
 variable "consul_sd_extra_tags" {
   description = "Tags used across all resources that can be tagged"
-  type        = "map"
+  type        = map(string)
   default     = {}
 }
 
 variable "kms" {
   description = "Secrets Vault Values"
-  type        = "map"
+  type        = map(string)
 
   default = {
-    iam_instance_profile_path = "/"  # standard or premium
+    iam_instance_profile_path = "/" # standard or premium
     key_deletion_window       = "30"
   }
 }
 
 variable "consul_storage" {
   description = "Default values for an instance"
+  type        = map(string)
+
+  default = {}
+}
+
+variable "custom_consul_storage" {
+  description = "Default values for an instance"
+  type        = map(string)
 
   default = {
-    root_name         = "/"
-    root_size         = "50"
-    root_type         = "gp2"
-    security_group    = ""
-    ami               = "ami-0000000000000000a"
-    size              = "t2.micro"
-    health_check_type = "EC2"
-    server            = false
-    https             = false
-    version           = "1.5.1"
     role              = "cslstore"
     datacenter        = "vault"
-    datacenter_consul = "csl"
-    ports             = "8300,8301,8302,8500,8600,7300,7301,7302,7500,7600"
     ingress_rules     = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-webuis-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
-    listening_port    = "7500"
-    masterkey         = "1111111111111111111111=="
-    agentkey          = "2222222222222222222222=="
-    unbound           = false
-    dnsmasq           = true
-    autojoin          = false
-    tlslistener       = false
-    enterprise        = false
-    enablesyslog      = false
-    ui                = false
     count             = 0
-    desired_capacity  = 1
-    max_size          = 1
-    min_size          = 0
-    startindex        = 0
   }
 }
 
 variable "consul_snap" {
   description = "Default values for an instance"
+  type        = map(string)
+
+  default = {}
+}
+
+variable "custom_consul_snap" {
+  description = "Default values for an instance"
+  type        = map(string)
 
   default = {
-    root_name         = "/"
-    root_size         = "50"
-    root_type         = "gp2"
-    security_group    = ""
-    ami               = "ami-0000000000000000a"
-    size              = "t2.micro"
-    health_check_type = "EC2"
-    server            = false
-    https             = false
-    version           = "1.5.1"
     role              = "snapshot"
     datacenter        = "vault"
-    datacenter_consul = "csl"
-    ports             = "8300,8301,8302,8500,8600,7300,7301,7302,7500,7600"
     ingress_rules     = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-webuis-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
-    listening_port    = "7500"
-    masterkey         = "1111111111111111111111=="
-    agentkey          = "2222222222222222222222=="
-    unbound           = false
-    dnsmasq           = true
-    autojoin          = false
-    tlslistener       = false
-    enterprise        = false
-    enablesyslog      = false
-    ui                = false
     count             = 0
-    desired_capacity  = 1
-    max_size          = 1
-    min_size          = 1
-    startindex        = 0
   }
 }
 
 variable "consul_sd" {
+  description = "Default values for an instance"
+  type        = map(string)
+
+  default = {}
+}
+
+variable "custom_consul_sd" {
+  description = "Default values for an instance"
+  type        = map(string)
+
   default = {
-    root_name         = "/"
-    root_size         = "50"
-    root_type         = "gp2"
-    security_group    = ""
-    ami               = "ami-0000000000000000a"
-    size              = "t2.micro"
-    health_check_type = "EC2"
-    server            = false
-    https             = false
-    version           = "1.5.1"
     role              = "cslsd"
     datacenter        = "vault"
-    datacenter_consul = "csl"
-    ports             = "8300,8301,8302,8500,8600,7300,7301,7302,7500,7600"
     ingress_rules     = "consul-tcp,consul-cli-rpc-tcp,consul-webui-tcp,consul-webuis-tcp,consul-dns-tcp,consul-dns-udp,consul-serf-lan-tcp,consul-serf-lan-udp,consul-serf-wan-tcp,consul-serf-wan-udp"
-    listening_port    = "8500"
-    unbound           = false
-    dnsmasq           = true
-    autojoin          = false
-    tlslistener       = false
-    enterprise        = false
-    enablesyslog      = false
-    masterkey         = "1111111111111111111111=="
-    agentkey          = "2222222222222222222222=="
-    ui                = false
     count             = 0
-    desired_capacity  = 1
-    max_size          = 1
-    min_size          = 1
-    startindex        = 0
   }
 }
 
 variable "vault" {
+  description = "Default values for an instance"
+  type        = map(string)
+
+  default = {}
+}
+
+variable "custom_vault" {
+  description = "Default values for an instance"
+  type        = map(string)
+
   default = {
-    root_name         = "/"
-    root_size         = "50"
-    root_type         = "gp2"
-    security_group    = ""
-    ami               = "ami-0000000000000000b"
-    size              = "t2.micro"
-    health_check_type = "EC2"
-    server            = false
-    telemetry         = false
-    https             = false
-    version           = "1.1.3"
     role              = "vault"
     datacenter        = "vault"
-    datacenter_consul = "csl"
-    ports             = "8200,8201"
     ingress_rules     = "vault-tcp,vault-cluster-tcp"
-    listening_port    = "8200"
-    unbound           = false
-    dnsmasq           = true
-    autojoin          = false
-    tlslistener       = false
-    enterprise        = false
-    enablesyslog      = false
-    masterkey         = "1111111111111111111111=="
-    ui                = false
     count             = 0
-    desired_capacity  = 1
-    max_size          = 1
-    min_size          = 1
-    startindex        = 0
   }
 }
