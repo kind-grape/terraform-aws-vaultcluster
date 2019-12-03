@@ -1,13 +1,13 @@
 module "consul_storage_sg" {
   source = "../modules/aws-security_group"
-  create = local.consul_sd["count"] >= 1 ? true : false
+  create = local.consul_storage["count"] >= 1 ? true : false
 
-  name        = "consulbk_sg"
-  description = "Security group consul backend"
+  name        = "consul_storage_sg"
+  description = "Security group consul storage"
   vpc_id      = var.vpc_id
 
   ingress_cidr_blocks = var.mgmt_subnets
-  ingress_rules       = ["consul-tcp"] #concat(var.ingress_rules, split(",", local.consul_sd["ingress_rules"]))
+  ingress_rules       = concat(split(",", local.consul_storage["ingress_rules"]), var.ingress_rules)
   egress_rules        = ["all-all"]
 
   tags = {
@@ -21,7 +21,7 @@ module "consul_storage_user_data" {
   kms_key_id = module.kms.kms_id
   region     = var.region
   tags       = local.tags
-  serverinfo = local.consul_sd
+  serverinfo = local.consul_storage
 }
 
 module "consul_storage" {
@@ -33,6 +33,6 @@ module "consul_storage" {
   subnet_id            = var.subnet_id
   key_name             = var.key_name
   tags                 = local.tags
-  serverinfo           = local.consul_sd
-  cluster_name         = "${lower(local.tags["client"])}-${var.environment}-${var.region}-${local.consul_sd["role"]}"
+  serverinfo           = local.consul_storage
+  cluster_name         = "${lower(local.tags["client"])}-${var.environment}-${var.region}-${local.consul_storage["role"]}"
 }

@@ -73,7 +73,7 @@ variable "dns_servers" {
 
 variable "ingress_rules" {
   description = "List of ingress rules"
-  type        = list(string)
+  type        = list(any)
 
   default = [
     "ssh-tcp",

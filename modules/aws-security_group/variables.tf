@@ -40,7 +40,7 @@ variable "tags" {
 ##########
 variable "ingress_rules" {
   description = "List of ingress rules to create by name"
-  type        = list(string)
+  type        = list(any)
   default     = []
 }
 

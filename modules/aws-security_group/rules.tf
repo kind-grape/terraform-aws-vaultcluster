@@ -127,6 +127,9 @@ variable "rules" {
     storm-nimbus-tcp     = [6627, 6627, "tcp", "Nimbus"]
     storm-ui-tcp         = [8080, 8080, "tcp", "Storm UI"]
     storm-supervisor-tcp = [6700, 6703, "tcp", "Supervisor"]
+    # Vault
+    vault-tcp  = [8200, 8200, "tcp", "Vault API Port"]
+    vault-cluster-tcp = [8201, 8201, "tcp", "Vault Cluster Port"]
     # Web
     web-jmx-tcp = [1099, 1099, "tcp", "JMX"]
     # WinRM

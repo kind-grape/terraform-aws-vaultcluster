@@ -7,7 +7,7 @@ module "vault_sg" {
   vpc_id      = var.vpc_id
 
   ingress_cidr_blocks = var.mgmt_subnets
-  ingress_rules       = concat(var.ingress_rules, split(",", local.vault["ingress_rules"]))
+  ingress_rules       = concat(split(",", local.vault["ingress_rules"]), var.ingress_rules)
   egress_rules        = ["all-all"]
 
   tags = {

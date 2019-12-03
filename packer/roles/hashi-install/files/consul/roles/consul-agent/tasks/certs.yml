@@ -70,7 +70,7 @@
 - name: Install client certificate key
   copy:
     content: "{{ consul_client_tls_key.stdout }}"
-    dest: "/etc/consul.d/tls/consul_client_tls_key"
+    dest: "{{ consul_config_path }}/tls/consul_client_tls_key"
     owner: consul
     group: consul
     mode: 0440
@@ -80,7 +80,7 @@
 - name: Install server certificate
   copy:
     content: "{{ consul_server_tls_cert.stdout }}"
-    dest: "/etc/consul.d/tls/consul_server_tls_cert"
+    dest: "{{ consul_config_path }}/tls/consul_server_tls_cert"
     owner: consul
     group: consul
     mode: 0400
@@ -92,7 +92,7 @@
 - name: Install server certificate key
   copy:
     content: "{{ consul_server_tls_key.stdout }}"
-    dest: "/etc/consul.d/tls/consul_server_tls_key"
+    dest: "{{ consul_config_path }}/tls/consul_server_tls_key"
     owner: consul
     group: consul
     mode: 0400
