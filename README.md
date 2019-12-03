@@ -4,7 +4,8 @@
 1. Access to the Hashi Binaries ()
 2. AWS account, and environment variables set (AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID)
 3. AWS Key Pair uploaded - Referenced in the code (see step 6 below)
-4. At this time, Terraform 11 is the version the code runs in (will be upgraded in the near future)
+4. Terraform 12
+5. Certs to be created using the `cfssl-ca.sh` and `cfssl-cert.sh` and files stored in the `certs/` directory
 
 ## Pre-Setup
 1. Build packer image
