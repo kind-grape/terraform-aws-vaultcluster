@@ -7,6 +7,7 @@ data "aws_availability_zones" "available" {
 }
 
 resource "aws_placement_group" "consul_asg" {
+  count    = local.serverinfo["count"] >= 1 ? 1 : 0
   name     = var.cluster_name
   strategy = "spread"
 }
@@ -33,7 +34,7 @@ resource "aws_autoscaling_group" "consul_asg" {
   launch_configuration = aws_launch_configuration.consul_instance_asg[0].name
   availability_zones   = [data.aws_availability_zones.available.id]
   vpc_zone_identifier  = var.subnet_id
-  placement_group      = aws_placement_group.consul_asg.id
+  placement_group      = aws_placement_group.consul_asg[0].id
 
   min_size             = local.serverinfo["min_size"]
   max_size             = local.serverinfo["max_size"]
