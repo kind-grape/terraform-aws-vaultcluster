@@ -6,7 +6,7 @@ module "consul_storage_sg" {
   description = "Security group consul storage"
   vpc_id      = var.vpc_id
 
-  ingress_cidr_blocks = var.mgmt_subnets
+  ingress_cidr_blocks = local.mgmt_subnets
   ingress_rules       = concat(split(",", local.consul_storage["ingress_rules"]), var.ingress_rules)
   egress_rules        = ["all-all"]
 

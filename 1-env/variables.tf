@@ -36,7 +36,6 @@ variable "key_name" {
 
 variable "subnet_id" {
   description = "Subnet where servers will reside"
-  # type        = "list"
 }
 
 variable "vpc_id" {
@@ -56,8 +55,8 @@ variable "subnets" {
   type        = map(string)
 
   default = {
-    public  = "172.21.1.0/24"
-    private = "172.21.2.0/24"
+    public  = "172.21.11.0/24,172.21.12.0/24,172.21.13.0/24"
+    private = "172.21.21.0/24,172.21.22.0/24,172.21.23.0/24"
   }
 }
 
@@ -91,16 +90,11 @@ variable "mgmt_subnets" {
   type        = list(string)
 
   default = [
-    "172.21.1.0/24",
-    "172.21.2.0/24",
+    "23.233.28.57/32",
+    "174.114.254.19/32",
+    "72.137.254.70/32"
   ]
 }
-
-# variable "depends_on" {
-#   description = "Dependencies"
-#   default     = []
-#   type        = list(string)
-# }
 
 variable "tags" {
   description = "Tags used across all resources that can be tagged"

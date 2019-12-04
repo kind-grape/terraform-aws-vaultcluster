@@ -6,7 +6,7 @@ module "vault_sg" {
   description = "Security group vault"
   vpc_id      = var.vpc_id
 
-  ingress_cidr_blocks = var.mgmt_subnets
+  ingress_cidr_blocks = local.mgmt_subnets
   ingress_rules       = concat(split(",", local.vault["ingress_rules"]), var.ingress_rules)
   egress_rules        = ["all-all"]
 

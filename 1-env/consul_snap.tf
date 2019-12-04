@@ -6,7 +6,7 @@ module "consul_snap_sg" {
   description = "Security group consul service discovery"
   vpc_id      = var.vpc_id
 
-  ingress_cidr_blocks = var.mgmt_subnets
+  ingress_cidr_blocks = local.mgmt_subnets
   ingress_rules       = concat(var.ingress_rules, split(",", local.consul_snap["ingress_rules"]))
   egress_rules        = ["all-all"]
 
