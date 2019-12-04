@@ -1,6 +1,6 @@
 data "aws_ami" "vault" {
   most_recent = true
-  owners      = ["${var.ami_owner_account}"]
+  owners      = [var.ami_owner_account]
   name_regex  = "amz2-vault-ent-${var.vault["version"]}-*"
 
   filter {
@@ -16,7 +16,7 @@ data "aws_ami" "vault" {
 
 data "aws_ami" "consul" {
   most_recent = true
-  owners      = ["${var.ami_owner_account}"]
+  owners      = [var.ami_owner_account]
   name_regex  = "amz2-consul-ent-${var.consul_storage["version"]}-*"
 
   filter {
@@ -29,3 +29,4 @@ data "aws_ami" "consul" {
     values = ["hvm"]
   }
 }
+

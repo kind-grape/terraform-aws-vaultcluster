@@ -5,18 +5,19 @@ variable "region" {
 
 variable "snapshots" {
   description = "snapshot variables"
-  type = "map"
+  type        = map(string)
   default = {
-    bucket_name       = "consul-snapshots-bucket"
-    snapshot_name     = "consul-snapshot"
+    bucket_name   = "consul-snapshots-bucket"
+    snapshot_name = "consul-snapshot"
   }
 }
 
 variable "tags" {
-  type = "map"
+  type        = map(string)
   description = "Default tags"
 }
 
 variable "serverinfo" {
   default = {}
 }
+

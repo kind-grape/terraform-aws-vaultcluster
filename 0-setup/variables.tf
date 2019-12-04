@@ -25,13 +25,13 @@ variable "os_user" {
 
 variable "address_space" {
   description = "Default Supernet that all networks reside within"
-  type        = "string"
+  type        = string
   default     = "172.21.0.0/16"
 }
 
 variable "subnets" {
   description = "public and private subnets"
-  type        = "map"
+  type        = map(string)
 
   default = {
     public  = "172.21.1.0/24"
@@ -41,7 +41,7 @@ variable "subnets" {
 
 variable "dns_servers" {
   description = "Default DNS Servers that the servers will use to resolve"
-  type        = "list"
+  type        = list(string)
 
   default = [
     "1.1.1.1",
@@ -51,7 +51,7 @@ variable "dns_servers" {
 
 variable "mgmt_subnets" {
   description = "List of subnets allowed to manage and connect to the services"
-  type        = "list"
+  type        = list(string)
 
   default = [
     "172.21.1.0/24",
@@ -61,7 +61,7 @@ variable "mgmt_subnets" {
 
 variable "ingress_rules" {
   description = "List of AWS rules to apply to the Security Group"
-  type        = "list"
+  type        = list(string)
 
   default = [
     "ssh-tcp",
@@ -70,10 +70,11 @@ variable "ingress_rules" {
 
 variable "tags" {
   description = "Tags used across all resources that can be tagged"
-  type        = "map"
+  type        = map(string)
 
   default = {
     client     = "TESTCLIENT"
     costcenter = "TESTCOMPANY"
   }
 }
+
