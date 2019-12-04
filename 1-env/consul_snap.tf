@@ -42,7 +42,7 @@ module "consul_snapshot" {
   user_data            = module.consul_snapshot_user_data.user_data
   security_groups      = [module.consul_snap_sg.this_security_group_id]
   iam_instance_profile = module.kms.iam_instance_profile
-  subnet_id            = var.subnet_id
+  subnet_id            = split(",", var.subnet_id)
   key_name             = var.key_name
   tags                 = local.tags
   serverinfo           = local.consul_snap
