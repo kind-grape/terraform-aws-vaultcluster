@@ -7,8 +7,8 @@ module "vpc" {
   cidr = var.address_space
 
   azs             = data.aws_availability_zones.available.names
-  private_subnets = [split(",", var.subnets["private"])]
-  public_subnets  = [split(",", var.subnets["public"])]
+  private_subnets = split(",", var.subnets["private"])
+  public_subnets  = split(",", var.subnets["public"])
 
   enable_nat_gateway     = true
   single_nat_gateway     = true
