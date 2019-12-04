@@ -1,0 +1,45 @@
+- debug: msg="START - snapshot.yml"
+
+- name: Create snaps storage folder
+  file:
+    state: directory
+    path: "{{ consul_data_path }}"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0744
+
+- name: Generate Snapshot Token
+  import_tasks: token-snapshot.yml
+  when: snapshot_agent_token is not defined
+
+- name: Create snapshot systemd script
+  template:
+    src: consul-snapshot-agent.service.j2
+    dest: /lib/systemd/system/consul_snapshot.service
+    owner: root
+    group: root
+    mode: 0644
+  register: snapshot_service
+
+- name: Create snapshot agent config
+  template:
+    src: consul_snapshot.json.j2
+    dest: "{{ consul_config_path }}/consul_snapshot.json"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0644
+  register: snapshot_config
+
+- name: Restart consul snapshot agent
+  systemd:
+    name: consul_snapshot
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  when: snapshot_service.changed
+
+- name: Restart Consul
+  service: name=consul_snapshot state=restarted
+  when: snapshot_config.changed
+
+- debug: msg="END - snapshot.yml"

@@ -21,17 +21,17 @@
 #   }
 # }
 
-
 resource "aws_s3_bucket" "bucket" {
-  count  = "${var.serverinfo["count"] >= 1 ? 1 : 0}"
-  bucket = "${var.snapshots["bucket_name"]}"
-  acl    = "private"
-  region = "${var.region}"
+  count         = var.serverinfo["count"] >= 1 ? 1 : 0
+  bucket        = var.snapshots["bucket_name"]
+  acl           = "private"
+  region        = var.region
   force_destroy = true
 
   # policy = "${data.aws_iam_policy_document.s3policy.json}"
 
   tags = {
-    client = "${lower(var.tags["client"])}"
+    client = lower(var.tags["client"])
   }
 }
+

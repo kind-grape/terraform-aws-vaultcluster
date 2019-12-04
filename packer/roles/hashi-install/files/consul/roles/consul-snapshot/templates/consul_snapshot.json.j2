@@ -1,0 +1,29 @@
+{
+  "snapshot_agent": {
+    "http_addr": "{{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}",
+    "token": "{{ snapshot_agent_token }}",
+    "datacenter": "{{ consul_datacenter }}",
+    {% if consul_https_enabled | bool -%}
+    "ca_file": "{{ consul_config_path }}/tls/consul_tls_ca_bundle",
+    "cert_file": "{{ consul_config_path }}/tls/consul_client_tls_cert",
+    "key_file": "{{ consul_config_path }}/tls/consul_client_tls_key",
+    {% endif %}
+    "log": {
+        "level": "INFO",
+        "enable_syslog": true,
+        "syslog_facility": "LOCAL0"
+    },
+    "snapshot": {
+        "interval": "{{ consul_snapshot_interval }}",
+        "retain": {{ consul_snapshot_retain }},
+        "stale": false,
+        "service": "{{ consul_snapshot_name }}",
+        "deregister_after": "72h",
+        "lock_key": "{{ consul_snapshot_name }}/lock",
+        "max_failures": 3
+    },
+    "local_storage": {
+      "path": "{{ consul_snapshot_storage }}"
+    }
+  }
+}

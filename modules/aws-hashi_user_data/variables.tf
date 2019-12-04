@@ -9,7 +9,7 @@ variable "kms_key_id" {
 
 variable "ports" {
   description = "Ports required to run Consul Backend"
-  type        = "map"
+  type        = map(string)
 
   default = {
     consulbk_server_rpc_port = "7300"
@@ -31,7 +31,13 @@ variable "ports" {
 
 variable "snapshots" {
   description = "snapshot variables"
-  type        = "map"
+  type        = map(string)
+  default = {}
+}
+
+variable "custom_snapshots" {
+  description = "snapshot variables"
+  type        = map(string)
   default = {
     bucket_name   = "consul-snapshots-bucket"
     snapshot_name = "consul-snapshot"
@@ -45,10 +51,26 @@ variable "region" {
 
 variable "tags" {
   description = "Tags used across all resources that can be tagged"
-  type        = "map"
+  type        = map(string)
+
+  default = {}
+}
+
+variable "customtags" {
+  description = "Tags used across all resources that can be tagged"
+  type        = map(string)
+
+  default = {
+    client     = "TESTCLIENT"
+    costcenter = "TESTCOMPANY"
+    auto_join  = "AUTOJOIN"
+  }
 }
 
 variable "serverinfo" {
+  default = {}
+}
+variable "custom_serverinfo" {
   default = {
     role             = "vault"
     desired_capacity = 1

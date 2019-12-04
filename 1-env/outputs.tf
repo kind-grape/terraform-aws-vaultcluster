@@ -1,165 +1,86 @@
 # #######################################################
 # ## SSM outputs
 # #######################################################
-output "consul_server_master_token" {
-  value = "${module.ssm_data.consul_server_master_token}"
-}
-
-# output "ssm_kms_key_id" {
-#   value = "${module.ssm_data.ssm_kms_key_id}"
-# }
-
-output "ssm_parameter_consul_gossip_encryption_key_id" {
-  value = "${module.ssm_data.ssm_parameter_consul_gossip_encryption_key_id}"
-}
-
-output "ssm_parameter_consul_tls_ca_bundle" {
-  value = "${module.ssm_data.ssm_parameter_consul_tls_ca_bundle}"
-}
-
-output "ssm_parameter_consul_server_tls_cert" {
-  value = "${module.ssm_data.ssm_parameter_consul_server_tls_cert}"
-}
-
-output "ssm_parameter_consul_server_tls_key" {
-  value = "${module.ssm_data.ssm_parameter_consul_server_tls_key}"
-}
-
-output "ssm_parameter_consul_client_tls_cert" {
-  value = "${module.ssm_data.ssm_parameter_consul_client_tls_cert}"
-}
-
-output "ssm_parameter_consul_client_tls_key" {
-  value = "${module.ssm_data.ssm_parameter_consul_client_tls_key}"
+output "ssm_parameters" {
+  value = {
+    consul_server_master_token = module.ssm_data.consul_server_master_token
+    ssm_parameter_consul_gossip_encryption_key_id = module.ssm_data.ssm_parameter_consul_gossip_encryption_key_id
+    ssm_parameter_consul_tls_ca_bundle = module.ssm_data.ssm_parameter_consul_tls_ca_bundle
+    ssm_parameter_consul_server_tls_cert = module.ssm_data.ssm_parameter_consul_server_tls_cert
+    ssm_parameter_consul_server_tls_key = module.ssm_data.ssm_parameter_consul_server_tls_key
+    ssm_parameter_consul_client_tls_cert = module.ssm_data.ssm_parameter_consul_client_tls_cert
+    ssm_parameter_consul_client_tls_key = module.ssm_data.ssm_parameter_consul_client_tls_key
+    # ssm_kms_key_id = module.ssm_data.ssm_kms_key_id
+  }
 }
 
 # #######################################################
 # ## Consul Backend outputs
 # #######################################################
-output "nsg_consul_storage_name" {
-  value = "${module.consul_storage_sg.this_security_group_name}"
+
+output "consul_storage" {
+  value = {
+    nsg_consul_storage_name = module.consul_storage_sg.this_security_group_name
+    nsg_consul_storage_id = module.consul_storage_sg.this_security_group_id
+    # consul_bk_user_data = module.consul_bk_user_data.user_data
+    # consulbk_srv_names = module.consul_storage.server_names
+    # consulbk_srv_ids = module.consul_storage.server_ids
+    # consulbk_status = module.consul_storage.status
+  }
 }
 
-output "nsg_consul_storage_id" {
-  value = "${module.consul_storage_sg.this_security_group_id}"
-}
-
-# output "consul_bk_user_data" {
-#   value = "${module.consul_bk_user_data.user_data}"
-# }
-
-#
-# output "consulbk_srv_names" {
-#   value = ["${module.consul_backend.server_names}"]
-# }
-
-# output "consulbk_srv_ids" {
-#   value = ["${module.consul_bk.server_ids}"]
-# }
-
-#
-# output "consulbk_status" {
-#   value = "${module.consul_backend.status}"
-# }
-#
 # #######################################################
 # ## Consul SD outputs
 # #######################################################
-# output "nsg_consulsd_name" {
-#   value = "${module.consulsd_sg.this_security_group_name}"
-# }
-#
-# output "nsg_consulsd_id" {
-#   value = "${module.consulsd_sg.this_security_group_id}"
-# }
+output "consul_sd" {
+  value = {
+    nsg_consulsd_name = module.consul_storage_sg.this_security_group_name
+    nsg_consulsd_id = module.consul_storage_sg.this_security_group_id
+    # consulsd_user_data = module.consul_sd_user_data.user_data
+    # consulsd_srv_names = module.consul_sd.server_names
+    # consulsd_srv_ids = module.consul_sd.server_ids
+    # consulsd_status = module.consul_sd.status
+  }
+}
 
-# output "consulsd_srv_names" {
-#   value = ["${module.consul_sd.server_names}"]
-# }
-
-# output "consulsd_srv_ids" {
-#   value = ["${module.consul_sd.server_ids}"]
-# }
-
-# output "consulsd_status" {
-#   value = "${module.consul_sd.status}"
-# }
-#
 # #######################################################
 # ## Consul Snapshot outputs
 # #######################################################
-output "nsg_consul_snapshot_name" {
-  value = "${module.consul_snap_sg.this_security_group_name}"
+output "consul_snapshot" {
+  value = {
+    nsg_consul_snapshot_name = module.consul_snap_sg.this_security_group_name
+    nsg_consul_snapshot_id = module.consul_snap_sg.this_security_group_id
+  }
 }
 
-output "nsg_consul_snapshot_id" {
-  value = "${module.consul_snap_sg.this_security_group_id}"
-}
-
-#
-# output "vault_srv_names" {
-#   value = ["${module.vault.server_names}"]
-# }
-#
-# output "vault_srv_ids" {
-#   value = ["${module.vault.server_ids}"]
-# }
-
-#
-# output "vault_status" {
-#   value = "${module.vault.status}"
-# }
 # #######################################################
 # ## Vault outputs
 # #######################################################
-output "nsg_vault_name" {
-  value = "${module.vault_sg.this_security_group_name}"
+output "vault" {
+  value = {
+    nsg_vault_name = module.vault_sg.this_security_group_name
+    nsg_vault_id = module.vault_sg.this_security_group_id
+  }
 }
 
-output "nsg_vault_id" {
-  value = "${module.vault_sg.this_security_group_id}"
-}
-
-#
-# output "vault_srv_names" {
-#   value = ["${module.vault.server_names}"]
-# }
-#
-# output "vault_srv_ids" {
-#   value = ["${module.vault.server_ids}"]
-# }
-
-#
-# output "vault_status" {
-#   value = "${module.vault.status}"
-# }
-#
 # #######################################################
 # ## KMS outputs
 # #######################################################
-output "kms_arn" {
-  value = "${module.kms.kms_arn}"
-}
-
-output "kms_id" {
-  value = "${module.kms.kms_id}"
-}
-
-output "kms_iam_instance_profile" {
-  value = "${module.kms.iam_instance_profile}"
+output "kms" {
+  value = {
+    kms_arn = module.kms.kms_arn
+    kms_id = module.kms.kms_id
+    kms_iam_instance_profile = module.kms.iam_instance_profile
+  }
 }
 
 # #######################################################
 # ## S3 outputs
 # #######################################################
-output "s3_arn" {
-  value = "${module.consul_snapshot_s3.arn}"
-}
-
-output "s3_id" {
-  value = "${module.consul_snapshot_s3.id}"
-}
-
-output "s3_domain_name" {
-  value = "${module.consul_snapshot_s3.bucket_domain_name}"
+output "s3" {
+  value = {
+    s3_arn = module.consul_snapshot_s3.arn
+    s3_id = module.consul_snapshot_s3.id
+    s3_domain_name = module.consul_snapshot_s3.bucket_domain_name
+  }
 }

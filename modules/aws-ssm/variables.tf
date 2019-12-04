@@ -11,7 +11,8 @@ variable "https_enabled" {
   default     = false
 }
 
-variable "key_id" {}
+variable "key_id" {
+}
 
 variable "region" {
   description = "Region used to build all objects"
@@ -32,3 +33,4 @@ variable "vault_recovery_shares" {
   description = "Amount of recovery shards to create"
   default     = 5
 }
+
