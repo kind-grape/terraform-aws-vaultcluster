@@ -34,8 +34,8 @@ variable "subnets" {
   type        = map(string)
 
   default = {
-    public  = "172.21.1.0/24"
-    private = "172.21.2.0/24"
+    public  = "172.21.11.0/24,172.21.12.0/24,172.21.13.0/24"
+    private = "172.21.21.0/24,172.21.22.0/24,172.21.23.0/24"
   }
 }
 
@@ -49,25 +49,6 @@ variable "dns_servers" {
   ]
 }
 
-variable "mgmt_subnets" {
-  description = "List of subnets allowed to manage and connect to the services"
-  type        = list(string)
-
-  default = [
-    "172.21.1.0/24",
-    "172.21.2.0/24",
-  ]
-}
-
-variable "ingress_rules" {
-  description = "List of AWS rules to apply to the Security Group"
-  type        = list(string)
-
-  default = [
-    "ssh-tcp",
-  ]
-}
-
 variable "tags" {
   description = "Tags used across all resources that can be tagged"
   type        = map(string)
@@ -77,4 +58,3 @@ variable "tags" {
     costcenter = "TESTCOMPANY"
   }
 }
-
