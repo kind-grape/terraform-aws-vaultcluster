@@ -14,6 +14,11 @@ variable "https_enabled" {
 variable "key_id" {
 }
 
+variable "create_cert" {
+  type    = any
+  default = null
+}
+
 variable "region" {
   description = "Region used to build all objects"
   default     = "ca-central-1"
@@ -34,3 +39,24 @@ variable "vault_recovery_shares" {
   default     = 5
 }
 
+# variable "module_depends_on" {
+#   description = "Depends Variable used to cross polinate modules"
+#   type        = any
+#   default     = null
+# }
+
+variable "serverinfo" {
+  default = {}
+}
+variable "custom_serverinfo" {
+  default = {
+    role             = "vault"
+    desired_capacity = 1
+    datacenter       = "vault"
+    server           = false
+    unbound          = false
+    dnsmasq          = true
+    https            = false
+    tlslistener      = false
+  }
+}

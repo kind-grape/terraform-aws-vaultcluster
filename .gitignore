@@ -23,6 +23,7 @@ id_rsa*
 !update_groups.sh
 !unseal.sh
 !cfssl*.sh
+!cert.sh
 !cleanup.sh
 
 crash.log

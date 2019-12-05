@@ -26,7 +26,7 @@ fi
 cd $TEMPDIR
 
 if [ ! -f "$TEMPDIR/vault_root_CA.json" ]; then
-cat <<CACERT | sudo tee $TEMPDIR/vault_root_CA.json
+cat <<CACERT | tee $TEMPDIR/vault_root_CA.json
 {
   "CN": "$ORG-ROOT-CA",
   "key": {
@@ -50,7 +50,7 @@ CACERT
 fi
 
 if [ ! -f "$TEMPDIR/vault-client-cert.json" ]; then
-cat <<CERT | sudo tee $TEMPDIR/vault-client-cert.json
+cat <<CERT | tee $TEMPDIR/vault-client-cert.json
 {
   "CN": "$DOMAIN",
   "key": {
@@ -71,7 +71,7 @@ CERT
 fi
 
 if [ ! -f "$TEMPDIR/vault-int-client-cert.json" ]; then
-cat <<INTCERT | sudo tee $TEMPDIR/vault-int-client-cert.json
+cat <<INTCERT | tee $TEMPDIR/vault-int-client-cert.json
 {
 	"signing": {
 		"profiles": {

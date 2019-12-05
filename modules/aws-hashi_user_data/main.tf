@@ -1,9 +1,3 @@
-locals {
-  serverinfo = merge(var.custom_serverinfo, var.serverinfo)
-  snapshots = merge(var.custom_snapshots, var.snapshots)
-  tags = merge(var.customtags, var.tags)
-}
-
 data "template_file" "user_data" {
   template = file(var.user_data)
 

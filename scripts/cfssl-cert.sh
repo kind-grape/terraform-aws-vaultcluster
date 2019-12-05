@@ -1,13 +1,12 @@
 #!/bin/bash -x
-TEMPDIR="."
-VAULTDIR="/etc/vault.d/tls"
-DOMAIN="example.com"
-DC="vault"
-COUNTRY="CA"
-STATE="Ontario"
-LOCATION="Ottawa"
-ORG="ACME"
-OU="IT"
+TEMPDIR="${tempdir}"
+DOMAIN="${domain}"
+DC="${dc}"
+COUNTRY="${country}"
+STATE="${state}"
+LOCATION="${location}"
+ORG="${org}"
+OU="${ou}"
 HOSTNAMES="vault,vault.$DOMAIN,vault1.$DOMAIN,vault2.$DOMAIN,*.node.consul,*.service.consul,server.$DC.consul,*.$DC.consul"
 
 if [ ! -f "/usr/local/bin/cfssl" ]; then

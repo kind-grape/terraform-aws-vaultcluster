@@ -18,6 +18,36 @@ variable "region" {
   default     = "ca-central-1"
 }
 
+variable "domain" {
+  description = "Client domain"
+  default     = "example.com"
+}
+
+variable "certs" {
+  description = "Certificate details"
+  type        = map(string)
+  default     = {}
+}
+
+variable "example_cert" {
+  description = "Certificate details"
+  type        = map(string)
+  default = {
+    DC       = "vault"
+    COUNTRY  = "CA"
+    STATE    = "Ontario"
+    LOCATION = "Ottawa"
+    ORG      = "ACME"
+    OU       = "IT"
+  }
+}
+
+# variable "module_depends_on" {
+#   description = "Depends Variable used to cross polinate modules"
+#   type        = any
+#   default     = null
+# }
+
 variable "os_user" {
   description = "Default OS User when VM is Created"
   default     = "ec2-user"
@@ -165,10 +195,10 @@ variable "custom_consul_storage" {
   type        = map(string)
 
   default = {
-    role              = "cslstore"
-    datacenter        = "vault"
-    ingress_rules     = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-webuis-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
-    count             = 0
+    role          = "cslstore"
+    datacenter    = "vault"
+    ingress_rules = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-webuis-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
+    count         = 0
   }
 }
 
@@ -184,10 +214,10 @@ variable "custom_consul_snap" {
   type        = map(string)
 
   default = {
-    role              = "snapshot"
-    datacenter        = "vault"
-    ingress_rules     = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-webuis-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
-    count             = 0
+    role          = "snapshot"
+    datacenter    = "vault"
+    ingress_rules = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-webuis-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
+    count         = 0
   }
 }
 
@@ -203,10 +233,10 @@ variable "custom_consul_sd" {
   type        = map(string)
 
   default = {
-    role              = "cslsd"
-    datacenter        = "vault"
-    ingress_rules     = "consul-tcp,consul-cli-rpc-tcp,consul-webui-tcp,consul-webuis-tcp,consul-dns-tcp,consul-dns-udp,consul-serf-lan-tcp,consul-serf-lan-udp,consul-serf-wan-tcp,consul-serf-wan-udp"
-    count             = 0
+    role          = "cslsd"
+    datacenter    = "vault"
+    ingress_rules = "consul-tcp,consul-cli-rpc-tcp,consul-webui-tcp,consul-webuis-tcp,consul-dns-tcp,consul-dns-udp,consul-serf-lan-tcp,consul-serf-lan-udp,consul-serf-wan-tcp,consul-serf-wan-udp"
+    count         = 0
   }
 }
 
@@ -222,9 +252,9 @@ variable "custom_vault" {
   type        = map(string)
 
   default = {
-    role              = "vault"
-    datacenter        = "vault"
-    ingress_rules     = "vault-tcp,vault-cluster-tcp"
-    count             = 0
+    role          = "vault"
+    datacenter    = "vault"
+    ingress_rules = "vault-tcp,vault-cluster-tcp"
+    count         = 0
   }
 }
