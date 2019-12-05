@@ -25,6 +25,7 @@ id_rsa*
 !cfssl*.sh
 !cert.sh
 !cleanup.sh
+!generate_consul_certs.sh
 
 crash.log
 blah.txt
