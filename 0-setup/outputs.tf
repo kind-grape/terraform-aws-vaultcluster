@@ -12,6 +12,6 @@ output "private_subnets" {
 output "public_subnets" {
   value = {
     public_subnets_cidr_blocks = module.vpc.public_subnets_cidr_blocks
-    public_subnets_ids         = module.vpc.private_subnets
+    public_subnets_ids         = module.vpc.public_subnets
   }
 }
