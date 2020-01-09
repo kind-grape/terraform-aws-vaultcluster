@@ -22,6 +22,7 @@ module "vault_user_data" {
   region     = var.region
   tags       = local.tags
   serverinfo = local.vault
+  ports      = local.ports
 }
 
 module "vault" {
