@@ -22,6 +22,7 @@ module "consul_sd_user_data" {
   region     = var.region
   tags       = local.tags
   serverinfo = local.consul_sd
+  ports      = local.ports
 }
 
 module "consul_sd" {

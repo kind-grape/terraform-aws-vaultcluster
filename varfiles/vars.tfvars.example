@@ -28,6 +28,7 @@ tags = {
   client                  = "CLIENT"
   costcenter              = "CLIENTAWS"
   auto_join               = "AUTOJOIN"
+  project                 = "demo"
 }
 
 kms = {

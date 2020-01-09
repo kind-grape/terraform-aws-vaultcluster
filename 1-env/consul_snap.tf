@@ -33,6 +33,7 @@ module "consul_snapshot_user_data" {
   tags       = local.tags
   snapshots  = var.snapshots
   serverinfo = local.consul_snap
+  ports      = local.ports
 }
 
 module "consul_snapshot" {

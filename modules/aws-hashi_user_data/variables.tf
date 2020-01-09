@@ -11,6 +11,13 @@ variable "ports" {
   description = "Ports required to run Consul Backend"
   type        = map(string)
 
+  default = {}
+}
+
+variable "custom_ports" {
+  description = "Ports required to run Consul Backend"
+  type        = map(string)
+
   default = {
     consulbk_server_rpc_port = "7300"
     consulbk_serf_lan_port   = "7301"
@@ -32,7 +39,7 @@ variable "ports" {
 variable "snapshots" {
   description = "snapshot variables"
   type        = map(string)
-  default = {}
+  default     = {}
 }
 
 variable "custom_snapshots" {
