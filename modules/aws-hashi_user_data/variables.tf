@@ -96,7 +96,7 @@ variable "unseal_cloud" {
 }
 
 variable "vault_unseal" {
-  description = "Unseal = true, default = false"
+  description = "initialize = true, default = false"
   default     = false
 }
 
