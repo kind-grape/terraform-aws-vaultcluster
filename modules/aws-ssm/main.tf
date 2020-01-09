@@ -1,5 +1,4 @@
-resource "random_uuid" "consul_master_key" {
-}
+resource "random_uuid" "consul_master_key" {}
 
 resource "random_id" "consul_gossip_encryption_key" {
   byte_length = 16

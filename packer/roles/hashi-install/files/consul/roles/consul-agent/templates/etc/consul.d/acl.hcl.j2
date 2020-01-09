@@ -10,10 +10,10 @@ acl = {
   {% if consul_agent_is_server == true -%}
     master = "{{ consul_acl_master_token }}"
   {% endif %}
-  {% if client_agent_token is defined %}
+  {% if client_agent_token is defined and client_agent_token != "REPLACEME" %}
     agent = "{{ client_agent_token }}"
   {% endif %}
-  {% if default_token is defined %}
+  {% if default_token is defined and default_token != "REPLACEME" %}
     default = "{{ default_token }}"
   {% endif %}
   }
