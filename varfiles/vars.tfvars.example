@@ -17,9 +17,7 @@ key_name                  = "EXAMPLEKEY"
 ## What can access the systems
 mgmt_subnets = [
   "1.1.1.1/32",
-  "2.2.2.2/32",
-  "172.21.1.0/24",
-  "172.21.2.0/24"
+  "2.2.2.2/32"
 ]
 
 tags = {
