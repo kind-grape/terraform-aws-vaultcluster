@@ -11,8 +11,6 @@ ami_owner_account         = "111222333444"
 environment               = "dev"
 region                    = "ca-central-1"
 
-routing_mode              = "GLOBAL"
-
 ## Common Key used for all machines
 key_name                  = "EXAMPLEKEY"
 

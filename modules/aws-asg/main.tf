@@ -1,5 +1,4 @@
-data "aws_availability_zones" "available" {
-}
+data "aws_availability_zones" "available" {}
 
 resource "aws_placement_group" "consul_asg" {
   count    = local.serverinfo["count"] >= 1 ? 1 : 0
