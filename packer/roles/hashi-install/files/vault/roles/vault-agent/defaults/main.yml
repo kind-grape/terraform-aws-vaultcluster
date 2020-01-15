@@ -19,3 +19,5 @@ vault_recovery_shares: 5
 vault_recovery_threshold: 3
 
 tempdir: /tmp
+
+vault_initialize: false

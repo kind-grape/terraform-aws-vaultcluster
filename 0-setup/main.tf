@@ -17,7 +17,7 @@ module "vpc" {
   enable_dns_hostnames = true
   enable_dns_support   = true
 
-  enable_dhcp_options      = true
+  # enable_dhcp_options      = true
   dhcp_options_domain_name = "${lower(var.tags["client"])}.local"
 
   tags = {
