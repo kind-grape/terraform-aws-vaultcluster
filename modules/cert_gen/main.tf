@@ -2,7 +2,7 @@ data "template_file" "generate_consul_certs" {
   template = file("${path.module}/../../scripts/generate_consul_certs.sh")
   vars = {
     region  = var.region
-    tempdir = "${path.module}/../../certs"
+    tempdir = "${path.root}/../certs"
   }
 }
 
