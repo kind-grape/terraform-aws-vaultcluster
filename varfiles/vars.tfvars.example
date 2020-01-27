@@ -4,7 +4,7 @@ backend                   = "s3"
 
 ## Pre-created using a different step
 vpc_id                    = "vpc-0a11a111ad1b11abe"
-subnet_id                 = ["subnet-0f11ea1cdc1fe111c"]
+subnet_id                 = "subnet-0f11ea1cdc1fe111a,subnet-0f11ea1cdc1fe111b,subnet-0f11ea1cdc1fe111c"
 ami_owner_account         = "111222333444"
 
 
