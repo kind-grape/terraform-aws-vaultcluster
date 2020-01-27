@@ -1,5 +1,5 @@
 data "template_file" "generate_consul_certs" {
-  template = file("${path.module}/../../scripts/generate_consul_certs.sh")
+  template = file("${path.root}/../scripts/generate_consul_certs.sh")
   vars = {
     region  = var.region
     tempdir = "${path.root}/../certs"
@@ -13,7 +13,7 @@ resource "null_resource" "generate_consul_certs" {
 }
 
 data "template_file" "generate_vault_ca" {
-  template = file("${path.module}/../../scripts/cert.sh")
+  template = file("${path.root}/../scripts/cert.sh")
   vars = {
     domain   = var.domain
     dc       = var.certs["DC"]
@@ -22,7 +22,7 @@ data "template_file" "generate_vault_ca" {
     location = var.certs["LOCATION"]
     org      = var.certs["ORG"]
     ou       = var.certs["OU"]
-    tempdir  = "${path.module}/../../certs"
+    tempdir  = "${path.root}/../certs"
   }
 }
 

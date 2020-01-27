@@ -6,13 +6,13 @@
 3. AWS Key Pair uploaded - Referenced in the code (see step 6 below)
 4. Terraform 12
 5. Certs to be created using the `cfssl-ca.sh` and `cfssl-cert.sh` and files stored in the `certs/` directory
+6. run 0-setup to create required network (if not already provided)
 
 ## Pre-Setup
 1. Build packer image
-2. Generate new consul master key/token
 2. Copy id_rsa and id_rsa.pub into varfiles directory
 3. Create local copy of vars.tfvars based on vars.tfvars.example
-4. Replace AMI value with new AMI
+4. Update Vault/Consul version in your vars.tfvars, so the data.tf may search for your AMIs
 5. Replace SSH key key_name for the key stored in AWS that you wish to use to connect to servers with
 6. Edit your MGMT Subnets (using cidr notation), including the IP you wish to access the environment.
 7. Edit Tags accordingly
