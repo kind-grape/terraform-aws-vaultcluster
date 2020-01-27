@@ -20,7 +20,7 @@ module "consul_snapshot_s3" {
   source = "../modules/aws-s3"
 
   serverinfo = local.consul_snap
-  snapshots  = var.snapshots
+  snapshots  = local.snapshots
   region     = var.region
   tags       = local.tags
 }
@@ -31,7 +31,7 @@ module "consul_snapshot_user_data" {
   kms_key_id = module.kms.kms_id
   region     = var.region
   tags       = local.tags
-  snapshots  = var.snapshots
+  snapshots  = local.snapshots
   serverinfo = local.consul_snap
   ports      = local.ports
 }

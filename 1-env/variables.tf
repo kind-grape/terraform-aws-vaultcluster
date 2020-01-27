@@ -145,15 +145,15 @@ variable "snapshots" {
   default = {}
 }
 
-# variable "custom_snapshots" {
-#   description = "snapshot variables"
-#   type        = map(string)
-#
-#   default = {
-#     bucket_name   = "consul-snapshots-bucket"
-#     snapshot_name = "consul-snapshot"
-#   }
-# }
+variable "custom_snapshots" {
+  description = "snapshot variables"
+  type        = map(string)
+
+  default = {
+    bucket_name   = "consul-snapshots-bucket"
+    snapshot_name = "consul-snapshot"
+  }
+}
 
 variable "vault_extra_tags" {
   description = "Tags used across all resources that can be tagged"
