@@ -5,8 +5,8 @@
 2. AWS account, and environment variables set (AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID)
 3. AWS Key Pair uploaded - Referenced in the code (see step 6 below)
 4. Terraform 12
-5. Certs to be created using the `cfssl-ca.sh` and `cfssl-cert.sh` and files stored in the `certs/` directory
-6. run 0-setup to create required network (if not already provided)
+5. run 0-setup to create required network (if not already provided)
+6. run 0-requirements to create necessary Certificates (Mac Users need to run `brew install cfssl`)
 
 ## Pre-Setup
 1. Build packer image
