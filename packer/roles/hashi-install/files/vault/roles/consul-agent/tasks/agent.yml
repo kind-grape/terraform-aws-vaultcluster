@@ -1,9 +1,0 @@
-- debug: msg="START - agent.yml"
-
-- name: Apply Configurations
-  import_tasks: configs.yml
-
-- name: Verify Bootstrap
-  import_tasks: verify_bootstrap.yml
-
-- debug: msg="END - agent.yml"
