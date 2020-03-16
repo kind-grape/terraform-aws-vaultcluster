@@ -1,6 +1,6 @@
 ui           = true
 plugin_directory = "{{ vault_config_path }}/plugin"
-api_addr     = "{{ vault_api_protocol }}://{{ ansible_ec2_local_ipv4 }}:{{ vault_api_port }}"
+api_addr     = "{{ vault_api_protocol }}://{{ local_ip_address }}:{{ vault_api_port }}"
 # cluster_addr = "https://$cluster_address:8201"
 
 storage "consul" {
@@ -12,7 +12,7 @@ storage "consul" {
   address = "127.0.0.1:{{ consul_http_port }}"
 {% endif %}
   path    = "/vault"
-  token   = "{{ vault_agent_token }}"
+  token   = "{{ vault_token }}"
 }
 
 listener "tcp" {
@@ -33,9 +33,11 @@ telemetry {
   disable_hostname = true
 }{% endif %}
 
-{% if unseal_cloud == 'awskms' %}
+{% if cloud_env == 'aws' %}
 seal "awskms" {
-  region     = "{{ consul_join_region }}"
+  region     = "{{ location }}"
   kms_key_id = "{{ vault_kms_key_id }}"
 }
+{% elif cloud_env == "azure" -%}
+# comment
 {% endif %}

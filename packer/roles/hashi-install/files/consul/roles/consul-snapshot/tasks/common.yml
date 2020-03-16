@@ -1,39 +1,30 @@
 - debug: msg="START - common.yml"
 
-- name: Check for /etc/consul.d/tls/consul_tls_ca_bundle
-  stat: path="{{ consul_config_path }}/tls/consul_tls_ca_bundle"
-  register: stat_consul_tls_ca_bundle
+- name: Importing Variables to verify guards against
+  import_tasks: import_env.yml
 
-- name: Check for /etc/consul.d/tls/consul_client_tls_cert
-  stat: path="{{ consul_config_path }}/tls/consul_client_tls_cert"
-  register: stat_consul_client_tls_cert
+- debug: msg="HTTPS Enabled - {{ consul_https_enabled }}"
+  when: debug_verbosity == 1
 
-- name: Check for /etc/consul.d/tls/consul_client_tls_key
-  stat: path="{{ consul_config_path }}/tls/consul_client_tls_key"
-  register: stat_consul_client_tls_key
-
-- name: Check for /etc/consul.d/tls/consul_server_tls_cert
-  stat: path="{{ consul_config_path }}/tls/consul_server_tls_cert"
-  register: stat_consul_server_tls_cert
-
-- name: Check for /etc/consul.d/tls/consul_server_tls_key
-  stat: path="{{ consul_config_path }}/tls/consul_server_tls_key"
-  register: stat_consul_server_tls_key
-
-- name: adding existing user sre to consul group
+- name: adding existing user to consul and hashi groups
   user:
-    name: 'sre'
+    name: "{{ user }}"
     groups: "{{ consul_group }}"
     append: yes
 
-- debug: msg="{{ consul_https_enabled }}"
-- name: Enable TLS if HTTPS port enabled
-  set_fact: consul_tls_enabled="{{ (consul_https_port != -1) | ternary(True, False) }}"
+- name: Copy cleanup script with owner and permissions
+  template:
+    src: cleanup.sh.j2
+    dest: /bin/cleanup
+    owner: root
+    group: root
+    mode: '0750'
+    force: yes
 
 - name: Set API endpoint to HTTP or HTTPS
   set_fact:
-    consul_api_protocol: "{{ consul_tls_enabled | ternary('https', 'http') }}"
-    consul_api_port: "{{ consul_tls_enabled | ternary(consul_https_port, consul_http_port) }}"
+    consul_api_protocol: "{{ consul_https_enabled | ternary('https', 'http') }}"
+    consul_api_port: "{{ consul_https_enabled | ternary(consul_https_port, consul_http_port) }}"
 
 - name: Set Consul environment variables
   copy:
@@ -46,14 +37,5 @@
       export CONSUL_CLIENT_CERT={{ consul_config_path }}/tls/consul_client_tls_cert
       export CONSUL_CLIENT_KEY={{ consul_config_path }}/tls/consul_client_tls_key
       {% endif -%}
-
-- name: Check for master token on filesystem
-  stat: path="{{ consul_config_path }}/tokens/master"
-  register: master_token_file
-
-- name: Register ACL Master Agent token for Ansible plays
-  set_fact: consul_acl_master_token="{{ lookup('file', master_token_file.stat.path) }}"
-  when: master_token_file.stat.exists == true
-
 
 - debug: msg="END - common.yml"

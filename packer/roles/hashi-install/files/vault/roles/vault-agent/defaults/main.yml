@@ -1,23 +1,33 @@
 vault_datacenter: dc1
-vault_api_port: 8201
-consul_https_port: 8501
-
-consul_config_path: /etc/consul.d
+vault_http_port: 8200
+vault_https_port: 8201
+vault_telemtry_enabled: 0
+vault_unseal: false
+vault_initialize: false
+vault_https_enabled: 0
 
 vault_config_path: /etc/vault.d
 vault_user: vault
 vault_group: vault
-vault_unseal: false
 
 debug_verbosity: 0
 
 consul_default_policy_name: default-agent
 consul_agent_policy_name: consul-agent
 consul_application_policy_name: vault-agent
+consul_snapshot_policy_name: snapshot-agent
 
 vault_recovery_shares: 5
 vault_recovery_threshold: 3
 
 tempdir: /tmp
 
-vault_initialize: false
+consul_config_path: /etc/consul.d
+consul_data_path: /var/lib/consul
+consul_log_path: /var/log/consul
+consul_user: consul
+consul_group: consul
+consul_agent_is_server: 0
+consul_https_enabled: 0
+
+cloud_env: aws

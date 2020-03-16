@@ -1,0 +1,9 @@
+[program:consul]
+command=/usr/local/bin/consul agent -config-dir $consul_config_dir -data-dir $consul_data_dir
+stdout_logfile={{ consul_log_path }}/consul-stdout.log
+stderr_logfile={{ consul_log_path }}/consul-error.log
+numprocs=1
+autostart=true
+autorestart=true
+stopsignal=INT
+user={{ consul_user }}

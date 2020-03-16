@@ -1,56 +1,47 @@
 - debug: msg="START - import_env.yml"
 
-- name: Check for unseal temp file
-  local_action: stat path="{{ tempdir }}/vault.txt"
-  register: unseal_temp_file
-  ignore_errors: yes
+- name: register files first
+  import_tasks: register-files.yml
 
-- name: Check for unseal keys temp file
-  local_action: stat path="{{ tempdir }}/vault_unseal.txt"
-  register: unseal_keys_temp_file
-  ignore_errors: yes
+- name: Azure ENV Pull
+  import_tasks: azure.yml
+  when: cloud_env == "azure"
 
-- name: Check Vault Unsealed
-  stat: path="{{ vault_config_path }}/unsealed"
-  register: vault_unsealed
-  ignore_errors: yes
+- name: AWS ENV Pull
+  import_tasks: aws.yml
+  when: cloud_env == "aws"
 
-- name: Check for vault token
-  stat: path="{{ consul_config_path }}/tokens/vault"
-  register: vault_token_file
-  ignore_errors: yes
+- name: register files
+  import_tasks: register-files.yml
 
-- name: Check for vault_tls_ca_bundle
-  stat: path="{{ vault_config_path }}/tls/vault_tls_ca_bundle"
-  register: stat_vault_tls_ca_bundle
-  ignore_errors: yes
+## Master Token import
+- name: Register Master token for Ansible plays
+  set_fact: consul_master_token="{{ lookup('file', master_token_file.stat.path) }}"
+  when: consul_agent_is_server | bool
 
-- name: Check for vault_server_tls_cert
-  stat: path="{{ vault_config_path }}/tls/vault_server_tls_cert"
-  register: stat_vault_server_tls_cert
-  ignore_errors: yes
+## Gossip Key import
+- name: Register Gossip Key for Ansible plays
+  set_fact: consul_encryption_key="{{ lookup('file', gossip_key_file.stat.path) }}"
 
-- name: Check for vault_server_tls_key
-  stat: path="{{ vault_config_path }}/tls/vault_server_tls_key"
-  register: stat_vault_server_tls_key
-  ignore_errors: yes
+## Consul Agent Token import
+- name: Register consul agent token for Ansible plays
+  set_fact: client_agent_token="{{ lookup('file', agent_token_file.stat.path) }}"
 
-- name: Fetch client Vault token from parameter store
-  shell: "aws ssm get-parameter --output json --region {{ ansible_ec2_placement_region }} --with-decryption --name consul-{{ consul_join_tag_value }}-acl-vault | jq -r '.Parameter | .Value'"
-  register: vault_agent_token
-  until: vault_agent_token.stdout != ""
-  retries: 120
-  delay: 2
-  ignore_errors: yes
-  when: vault_token_file.stat.exists == false
+## Vault Agent Token import
+- name: Register vault agent token for Ansible plays
+  set_fact: vault_token="{{ lookup('file', vault_token_file.stat.path) }}"
 
-- set_fact: vault_agent_token="{{ vault_agent_token.stdout }}"
-  when: vault_token_file.stat.exists == false
+## Default Agent Token import
+- name: Register default agent token for Ansible plays
+  set_fact: default_token="{{ lookup('file', default_token_file.stat.path) }}"
 
-- name: Set Operator Output
-  set_fact: vault_agent_token="{{ lookup('file', vault_token_file.stat.path) }}"
-  when: vault_token_file.stat.exists == true
+## Snapshot Agent Token import
+- name: Register Snapshot token for Ansible plays
+  set_fact: snapshot_token="{{ lookup('file', snapshot_token_file.stat.path) }}"
+  when: consul_agent_is_server | bool
 
-- debug: msg="{{ vault_agent_token }}"
+- name: Debug Output
+  import_tasks: debug.yml
+  when: debug_verbosity == 1
 
 - debug: msg="END - import_env.yml"

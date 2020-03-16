@@ -1,0 +1,11 @@
+- name: Bootstrap Servers
+  import_tasks: bootstrap.yml
+  when:
+    - consul_agent_is_server | bool
+    - bootstrap_file.stat.exists == false
+
+- name: Verify Bootstrap
+  import_tasks: verify_bootstrap.yml
+
+- name: Build Server Configurations
+  import_tasks: configs.yml

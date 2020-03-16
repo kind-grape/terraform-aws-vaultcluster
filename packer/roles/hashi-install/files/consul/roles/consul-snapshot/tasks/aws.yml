@@ -1,0 +1,44 @@
+- name: Gather instance metadata
+  ec2_metadata_facts:
+
+- name: Set Location
+  set_fact: location="{{ ansible_ec2_placement_region }}"
+
+- name: Set Name
+  set_fact: instance_id="{{ ansible_ec2_instance_id }}"
+
+- name: Set Ip Address
+  set_fact: local_ip_address="{{ ansible_ec2_local_ipv4 }}"
+
+- name: Fetch snapshot token from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul-snapshot-token | jq -r '.Parameter | .Value'"
+  register: snapshot_token
+  when: snapshot_token_file.stat.exists == false
+
+- name: Fetch Root Cert from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul_tls_ca_bundle | jq -r '.Parameter | .Value'"
+  register: consul_tls_ca_bundle
+  when:
+    - stat_consul_tls_ca_bundle.stat.exists == false
+    - consul_https_enabled | bool
+
+- name: Fetch Client Cert from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul_client_tls_cert | jq -r '.Parameter | .Value'"
+  register: consul_client_tls_cert
+  when:
+    - stat_consul_client_tls_cert.stat.exists == false
+    - consul_https_enabled | bool
+
+- name: Fetch Client Cert Key from parameter store
+  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul_client_tls_key | jq -r '.Parameter | .Value'"
+  register: consul_client_tls_key
+  when:
+    - stat_consul_client_tls_key.stat.exists == false
+    - consul_https_enabled | bool
+
+- name: Write Tokens to File System
+  import_tasks: token-write.yml
+
+- name: Copying Certificates
+  import_tasks: certs.yml
+  when: consul_https_enabled | bool

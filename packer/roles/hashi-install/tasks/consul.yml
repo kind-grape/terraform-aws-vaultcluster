@@ -21,7 +21,7 @@
 
 - name: Create consul user
   user:
-    name: consul
+    name: "{{ consul_user }}"
     system: yes
     shell: /bin/false
     home: "{{ consul_config_path }}"
@@ -47,7 +47,7 @@
 
 - name: Create data directory
   file:
-    path: /var/lib/consul
+    path: "{{ consul_data_path }}"
     state: directory
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"

@@ -1,0 +1,5 @@
+rm -rf ~/.ansible/
+rm -rf {{ vault_config_path }}/*
+cp -R /home/azure-user/tasks/* /etc/ansible/roles/vault-agent/tasks/
+cp -R /home/azure-user/templates/* /etc/ansible/roles/vault-agent/templates/
+cp -R /home/azure-user/defaults/* /etc/ansible/roles/vault-agent/defaults/

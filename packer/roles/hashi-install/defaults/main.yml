@@ -1,0 +1,17 @@
+debug_verbosity: 0
+
+supervisor_directory: /etc/supervisor
+supervisor_user: supervisor
+supervisor_group: supervisor
+
+consul_config_path: /etc/consul.d
+consul_data_path: /var/lib/consul
+consul_log_path: /var/log/consul
+consul_user: consul
+consul_group: consul
+
+vault_config_path: /etc/vault.d
+vault_user: vault
+vault_group: vault
+
+applications: ['unzip', 'htop', 'jq', 'azure-cli', 'ansible', 'apt-transport-https', 'build-essential', 'python-dev', 'libffi-dev', 'libssl-dev', 'git', 'aptitude']

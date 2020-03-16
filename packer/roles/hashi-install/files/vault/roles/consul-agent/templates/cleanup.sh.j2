@@ -1,0 +1,7 @@
+service consul stop
+rm -rf ~/.ansible/
+rm -rf {{ consul_config_path }}/*
+rm -rf {{ consul_data_path }}/*
+cp -R /home/azure-user/tasks/* /etc/ansible/roles/consul-agent/tasks/
+cp -R /home/azure-user/templates/* /etc/ansible/roles/consul-agent/templates/
+cp -R /home/azure-user/defaults/* /etc/ansible/roles/consul-agent/defaults/

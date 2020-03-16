@@ -1,0 +1,46 @@
+- name: Write Consul agent ACL policy
+  set_fact:
+    agent_policy: |
+      acl = "write"
+      key "consul-snapshot/lock" {
+        policy = "write"
+      }
+      session_prefix "" {
+        policy = "write"
+      }
+      service "consul-snapshot" {
+        policy = "write"
+      }
+
+- name: Make Consul agent ACL policy machine-readable
+  set_fact:
+    agent_policy_api_value: "{{
+      agent_policy |
+        regex_replace('\n', ' ') |
+        regex_replace('\"', '\\\"') |
+        regex_replace('\\s+', ' ')
+    }}"
+
+- name: Write Consul snapshot ACL policy to Consul
+  uri:
+    body_format: json
+    body: |
+      {
+        "Name": "{{ consul_snapshot_policy_name }}",
+        "Description": "Consul snapshot token",
+        "Rules": "{{ agent_policy_api_value }}"
+      }
+    method: PUT
+    url: "{{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/acl/policy"
+    headers:
+      X-Consul-Token: "{{ consul_master_token }}"
+    validate_certs: no
+  register: consul_snapshot_token_write
+  run_once: yes
+
+- name: Write Token
+  shell: |
+    . /etc/profile.d/99-consul-env.sh
+    export CONSUL_HTTP_TOKEN=$(cat /etc/consul.d/tokens/master)
+    consul acl token create -description 'Consul snapshot token' -policy-name "{{ consul_snapshot_policy_name }}" -secret "{{ snapshot_token }}"
+  register: consul_snapshot_token_create

@@ -1,24 +1,30 @@
 - debug: msg="START - common.yml"
 
-- name: Gather instance metadata
-  ec2_metadata_facts:
-
-- name: adding existing user ec2-user to consul and hashi groups
-  user:
-    name: 'ec2-user'
-    groups: consul,vault
-    append: yes
-
 - name: Importing Variables to verify guards against
   import_tasks: import_env.yml
 
-- name: Copying Vault Certificates
-  import_tasks: certs.yml
-  when: vault_https_enabled | bool
+- debug: msg="HTTPS Enabled - {{ vault_https_enabled }}"
+  when: debug_verbosity == 1
+
+- name: adding existing user to consul and hashi groups
+  user:
+    name: "{{ user }}"
+    groups: "{{ consul_group }},{{ vault_group }}"
+    append: yes
+
+- name: Copy cleanup script with owner and permissions
+  template:
+    src: cleanup.sh.j2
+    dest: /bin/cleanup
+    owner: root
+    group: root
+    mode: '0750'
+    force: yes
 
 - name: Set API endpoint to HTTP or HTTPS
   set_fact:
     vault_api_protocol: "{{ vault_https_enabled | ternary('https', 'http') }}"
+    vault_api_port: "{{ vault_https_enabled | ternary(vault_https_port, vault_http_port) }}"
 
 - name: Set Vault environment variables
   copy:

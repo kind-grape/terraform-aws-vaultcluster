@@ -3,5 +3,3 @@
 
 - name: Run snapshot tasks
   import_tasks: snapshot.yml
-  when:
-    - consul_snapshot | bool

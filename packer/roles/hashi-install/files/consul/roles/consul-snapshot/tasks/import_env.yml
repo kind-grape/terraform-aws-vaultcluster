@@ -1,0 +1,26 @@
+- debug: msg="START - import_env.yml"
+
+- name: register files first
+  import_tasks: register-files.yml
+
+- name: Azure ENV Pull
+  import_tasks: azure.yml
+  when: cloud_env == "azure"
+
+- name: AWS ENV Pull
+  import_tasks: aws.yml
+  when: cloud_env == "aws"
+
+# if we don't regsiter, the aws import above, even if skipped, blanks all the declarations
+- name: register files
+  import_tasks: register-files.yml
+
+- name: Register Snapshot tokens
+  set_fact:
+    snapshot_token: "{{ lookup('file', snapshot_token_file.stat.path) }}"
+
+- name: Debug Output
+  import_tasks: debug.yml
+  when: debug_verbosity == 1
+
+- debug: msg="END - import_env.yml"

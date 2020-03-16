@@ -20,7 +20,4 @@
   wait_for:
     port: "{{ vault_api_port }}"
     delay: 6
-
-- name: Write Tokens to File System
-  import_tasks: token-write.yml
-  when: vault_token_file.stat.exists == false
+  when: vault_config.changed

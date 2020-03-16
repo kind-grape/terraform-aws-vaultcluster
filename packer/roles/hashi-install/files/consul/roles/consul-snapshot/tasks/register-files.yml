@@ -1,0 +1,19 @@
+- name: Check for snapshot token on filesystem
+  stat: path="{{ consul_config_path }}/tokens/snapshot"
+  register: snapshot_token_file
+  ignore_errors: yes
+
+- name: Check for consul_tls_ca_bundle
+  stat: path="{{ consul_config_path }}/tls/consul_tls_ca_bundle"
+  register: stat_consul_tls_ca_bundle
+  ignore_errors: yes
+
+- name: Check for consul_client_tls_cert
+  local_action: stat path="{{ consul_config_path }}/tls/consul_client_tls_cert"
+  register: stat_consul_client_tls_cert
+  ignore_errors: yes
+
+- name: Check for consul_client_tls_key
+  local_action: stat path="{{ consul_config_path }}/tls/consul_client_tls_key"
+  register: stat_consul_client_tls_key
+  ignore_errors: yes

@@ -3,14 +3,10 @@
 - name: Create snaps storage folder
   file:
     state: directory
-    path: "{{ consul_data_path }}"
+    path: "{{ consul_snapshot_storage }}"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0744
-
-- name: Generate Snapshot Token
-  import_tasks: token-snapshot.yml
-  when: snapshot_agent_token is not defined
 
 - name: Create snapshot systemd script
   template:

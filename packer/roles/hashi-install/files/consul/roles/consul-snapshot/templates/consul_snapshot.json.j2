@@ -1,13 +1,13 @@
 {
   "snapshot_agent": {
     "http_addr": "{{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}",
-    "token": "{{ snapshot_agent_token }}",
+    "token": "{{ snapshot_token }}",
     "datacenter": "{{ consul_datacenter }}",
-    {% if consul_https_enabled | bool -%}
+{% if consul_https_enabled | bool -%}
     "ca_file": "{{ consul_config_path }}/tls/consul_tls_ca_bundle",
     "cert_file": "{{ consul_config_path }}/tls/consul_client_tls_cert",
     "key_file": "{{ consul_config_path }}/tls/consul_client_tls_key",
-    {% endif %}
+{% endif %}
     "log": {
         "level": "INFO",
         "enable_syslog": true,
@@ -23,7 +23,23 @@
         "max_failures": 3
     },
     "local_storage": {
-      "path": "{{ consul_snapshot_storage }}"
+      "path": "{{ consul_snapshot_storage_path }}"
+    },
+{% if cloud_env == "aws" -%}
+    "aws_storage": {
+      "access_key_id": "{{ aws_access_key }}",
+      "secret_access_key": "{{ aws_secret_key }}",
+      "s3_region": "{{ aws_region }}",
+      "s3_bucket": "{{ consul_snapshot_storage_location }}",
+      "s3_key_prefix": "{{ consul_snapshot_storage_path }}",
+      "s3_server_side_encryption": false
     }
+{% elif cloud_env == "azure" -%}
+    "azure_blob_storage": {
+      "account_name": "{{ consul_snapshot_storage_location }}",
+      "account_key": "{{ azure_blob_storage_account_key }}",
+      "container_name": "{{ consul_snapshot_storage_path }}"
+    }
+{% endif -%}
   }
 }

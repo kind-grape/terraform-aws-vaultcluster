@@ -1,0 +1,39 @@
+- name: Enable Bootstrap
+  set_fact: consul_bootstrap=1
+
+- name: Bootstrap Configurations
+  import_tasks: configs.yml
+
+- name: Run leader detection and tasks
+  import_tasks: leader.yml
+
+- name: Bootstrap Tokens
+  include_tasks: "{{ item }}.yml"
+  with_items:
+    - token-agent
+    - token-vault
+    - token-default
+    - token-snapshot
+  when:
+    - consul_leader | bool
+
+- name: Set KV bootstrap
+  shell: |
+    . /etc/profile.d/99-consul-env.sh
+    export CONSUL_HTTP_TOKEN=$(sudo cat /etc/consul.d/tokens/master)
+    consul kv put acl-bootstrap-complete 1
+  when:
+    - consul_leader | bool
+
+- name: Set Bootstrap Success
+  copy:
+    content: "true"
+    dest: "{{ consul_config_path }}/bootstrapped"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0640
+  when:
+    - consul_leader | bool
+
+- name: Enable Bootstrap
+  set_fact: consul_bootstrap=0

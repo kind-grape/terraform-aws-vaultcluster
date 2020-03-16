@@ -1,0 +1,17 @@
+- name: Create protected directory for ACL tokens
+  file:
+    path: "{{ consul_config_path }}/tokens"
+    state: directory
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0700
+
+- name: Archive snapshot token
+  copy:
+    content: "{{ snapshot_token.stdout }}"
+    dest: "{{ consul_config_path }}/tokens/snapshot"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0640
+  when:
+    - snapshot_token_file.stat.exists == false

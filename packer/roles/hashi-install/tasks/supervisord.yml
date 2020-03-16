@@ -1,0 +1,11 @@
+- name: Install supervisord
+  apt:
+    name: "supervisor"
+    state: present
+    update_cache: true
+  become: true
+
+- name: Copy supervisord config
+  template:
+    src: services/supervisord/supervisord.conf.j2
+    dest: "{{ supervisor_directory }}/supervisord.conf"

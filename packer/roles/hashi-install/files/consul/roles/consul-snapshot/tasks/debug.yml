@@ -1,0 +1,4 @@
+## Show all the keys
+- name: Show Vault Token
+  debug:
+    var: snapshot_token
