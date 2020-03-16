@@ -1,23 +1,21 @@
-- name: Import Microsoft GPG key
-  apt_key:
-    url: https://packages.microsoft.com/keys/microsoft.asc
+- name: Import EPEL GPG key
+  rpm_key:
+    key: http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
     state: present
 
-- name: Install Microsoft Repository
-  apt_repository:
-    repo: deb https://packages.microsoft.com/repos/azure-cli/ bionic main
+- name: Install EPEL 7
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     state: present
 
 - name: Install dependencies
-  apt:
-    name: ['unzip', 'htop', 'jq', 'azure-cli', 'ansible', 'apt-transport-https', 'build-essential', 'python-dev', 'libffi-dev', 'libssl-dev', 'git', 'aptitude']
+  yum:
+    name: ['unzip', 'jq', 'awscli', 'ansible', 'python2-boto3', 'htop']
     state: present
     update_cache: true
 
-- name: Update and upgrade apt packages
-  apt:
-    upgrade: yes
-    update_cache: yes
-    cache_valid_time: 86400
-
-- include: supervisord.yml
+- name: Update the Operating System
+  yum:
+    name: "*"
+    state: latest
+    update_cache: true

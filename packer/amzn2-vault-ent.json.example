@@ -22,7 +22,8 @@
         "name": "{{user `source_ami_name`}}",
         "root-device-type": "ebs"
       },
-      "owners": ["{{user `source_ami_owner`}}"]
+      "owners": ["{{user `source_ami_owner`}}"],
+      "most_recent": true
     },
     "instance_type": "{{user `instance_type`}}",
     "ssh_username": "{{ user `ssh_username` }}",
