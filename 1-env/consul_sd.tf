@@ -18,11 +18,13 @@ module "consulsd_sg" {
 
 module "consul_sd_user_data" {
   source     = "../modules/aws-hashi_user_data"
+  
   kms_key_id = module.kms.kms_id
   region     = var.region
   tags       = local.tags
   serverinfo = local.consul_sd
   ports      = local.ports
+  bootstrap  = var.bootstrap # true or false
 }
 
 module "consul_sd" {

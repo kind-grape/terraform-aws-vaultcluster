@@ -18,7 +18,7 @@
     - acl
     - autopilot
     - cluster_version
-    - redundancy_zone
+#    - redundancy_zone (TODO: Add back in when voter replacement is fixed when redundancy zones are enabled)
   register: additional_config
 
 - name: Restart Consul

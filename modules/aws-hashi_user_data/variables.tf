@@ -90,6 +90,17 @@ variable "custom_serverinfo" {
   }
 }
 
+variable "cloud_env" {
+  description = "cloud environment - aws, gcp, azure"
+  default     = "aws"
+}
+
+variable "bootstrap" {
+  type        = bool
+  description = "Whether cluster should be deployed in bootstrap configuration"
+  default     = true
+}
+
 variable "unseal_cloud" {
   description = "Cloud acronym used for vault config to enable auto-unseal"
   default     = "awskms"

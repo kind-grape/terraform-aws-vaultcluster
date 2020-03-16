@@ -34,6 +34,7 @@ module "consul_snapshot_user_data" {
   snapshots  = local.snapshots
   serverinfo = local.consul_snap
   ports      = local.ports
+  bootstrap  = var.bootstrap # true or false
 }
 
 module "consul_snapshot" {

@@ -9,3 +9,6 @@
 
 - name: Build Server Configurations
   import_tasks: configs.yml
+
+- name: Check New Servers
+  import_tasks: new-servers.yml

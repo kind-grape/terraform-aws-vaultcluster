@@ -1,0 +1,77 @@
+- name: Check new servers are up
+  shell: "curl -s {{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/catalog/service/consul | jq -er 'map(select(.NodeMeta.consul_cluster_version == \"{{ consul_cluster_version }}\")) | length'"
+  register: new_server_count
+  until: new_server_count.stdout != consul_bootstrap_expect
+  retries: 120
+  delay: 2
+  ignore_errors: yes
+
+- debug: msg="{{ new_server_count.stdout }}"
+
+- name: Get new server IDs
+  shell: "curl -s {{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/catalog/service/consul | jq -r 'map(select(.NodeMeta.consul_cluster_version == \"{{ consul_cluster_version }}\")) | .[].ID'"
+  register: new_server_ids
+
+- name: Set New Server IDs
+  set_fact: new_server_ids="{{ new_server_ids.stdout }}"
+
+- name: Check and wait until new servers are Voters
+  args:
+    executable: /bin/bash
+  register: output
+  shell: |
+    let VOTERS=0
+    let RETRIES=0
+    IDS=(`echo -e "{{ new_server_ids }}"`)
+    until [[ $VOTERS -eq {{ consul_bootstrap_expect }} ]] || [[ $RETRIES -eq 120 ]]; do
+      for ID in ${IDS[@]}; do
+        echo "Checking $ID"
+        curl -s {{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/operator/autopilot/health | jq -e ".Servers[] | select(.ID == \"$ID\" and .Voter == true)" && let VOTERS+=1
+        sleep 2
+      done
+      let RETRIES+=1
+    done
+
+- debug: msg="{{ output.stdout }}"
+
+- name: Get old server IDs
+  shell: "curl -s {{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/catalog/service/consul | jq -r 'map(select(.NodeMeta.consul_cluster_version != \"{{ consul_cluster_version }}\")) | .[].ID'"
+  register: old_server_ids
+
+- name: Set Old Server IDs
+  set_fact: old_server_ids="{{ old_server_ids.stdout }}"
+
+- name: Check and wait until old servers are no longer Voters
+  args:
+    executable: /bin/bash
+  register: output
+  shell: |
+    let VOTERS=`curl -s {{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/catalog/service/consul | jq -er 'map(select(.NodeMeta.consul_cluster_version != "{{ consul_cluster_version }}")) | length'`
+    let RETRIES=0
+    IDS=(`echo -e "{{ old_server_ids }}"`)
+    until [[ $VOTERS -eq 0 ]] || [[ $RETRIES -eq 120 ]]; do
+      for ID in ${IDS[@]}; do
+        echo "Checking $ID"
+        curl -s {{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/operator/autopilot/health | jq -e ".Servers[] | select(.ID == \"$ID\" and .Voter == true)" && let VOTERS-=1
+        sleep 2
+      done
+      let RETRIES+=1
+    done
+
+- debug: msg="{{ output.stdout }}"
+
+- name: Check new Leader is elected
+  args:
+    executable: /bin/bash
+  register: output
+  shell: |
+    let LEADER=0
+    let RETRIES=0
+    until [[ $LEADER -eq 1 ]] || [[ $RETRIES -eq 120 ]]; do
+      LEADER_ID=`curl -s {{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/operator/autopilot/health | jq -er ".Servers[] | select(.Leader == true) | .ID"`
+      curl -s {{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/catalog/service/consul | jq -er ".[] | select(.ID == \"$LEADER_ID\" and .NodeMeta.consul_cluster_version == \"{{ consul_cluster_version }}\")" && let LEADER+=1
+      sleep 2
+      let RETRIES+=1
+    done
+
+- debug: msg="{{ output.stdout }}"

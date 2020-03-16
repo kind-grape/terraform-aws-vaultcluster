@@ -6,5 +6,4 @@ module "ssm_data" {
   namespace  = lower(local.tags["client"])
   key_id     = module.kms.kms_id
   serverinfo = local.vault
-  # module_depends_on = [module.certs.depends_on]
 }

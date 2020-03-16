@@ -23,6 +23,7 @@ module "vault_user_data" {
   tags       = local.tags
   serverinfo = local.vault
   ports      = local.ports
+  bootstrap  = var.bootstrap # true or false
 }
 
 module "vault" {

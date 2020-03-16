@@ -42,16 +42,21 @@ variable "example_cert" {
   }
 }
 
-# variable "module_depends_on" {
-#   description = "Depends Variable used to cross polinate modules"
-#   type        = any
-#   default     = null
-# }
-
-variable "os_user" {
-  description = "Default OS User when VM is Created"
-  default     = "ec2-user"
+variable "bootstrap" {
+  type        = bool
+  description = "Whether cluster should be deployed in bootstrap configuration"
+  default     = true
 }
+
+variable "cloud_env" {
+  description = "cloud environment - aws, gcp, azure"
+  default     = "aws"
+}
+
+# variable "os_user" {
+#   description = "Default OS User when VM is Created"
+#   default     = "ec2-user"
+# }
 
 variable "address_space" {
   description = "Default Supernet that all networks reside within"
@@ -220,11 +225,11 @@ variable "consul_storage" {
 }
 
 variable "custom_consul_storage" {
-  description = "Default values for an instance"
+  description = "Default values for a storage instance"
   type        = map(string)
 
   default = {
-    role          = "cslstore"
+    role          = "storage"
     datacenter    = "vault"
     ingress_rules = "consulbk-tcp,consulbk-cli-rpc-tcp,consulbk-webui-tcp,consulbk-webuis-tcp,consulbk-dns-tcp,consulbk-dns-udp,consulbk-serf-lan-tcp,consulbk-serf-lan-udp,consulbk-serf-wan-tcp,consulbk-serf-wan-udp"
     count         = 0
@@ -239,7 +244,7 @@ variable "consul_snap" {
 }
 
 variable "custom_consul_snap" {
-  description = "Default values for an instance"
+  description = "Default values for a snapshot instance"
   type        = map(string)
 
   default = {
@@ -262,7 +267,7 @@ variable "custom_consul_sd" {
   type        = map(string)
 
   default = {
-    role          = "cslsd"
+    role          = "serviced"
     datacenter    = "vault"
     ingress_rules = "consul-tcp,consul-cli-rpc-tcp,consul-webui-tcp,consul-webuis-tcp,consul-dns-tcp,consul-dns-udp,consul-serf-lan-tcp,consul-serf-lan-udp,consul-serf-wan-tcp,consul-serf-wan-udp"
     count         = 0

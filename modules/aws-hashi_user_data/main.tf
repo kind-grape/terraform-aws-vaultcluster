@@ -27,6 +27,8 @@ data "template_file" "user_data" {
     vault_api_port           = local.ports["vault_api_port"]
     vault_cluster_port       = local.ports["vault_cluster_port"]
     vault_https_enabled      = local.serverinfo["tlslistener"]
+    bootstrap                = var.bootstrap
+    cloud_env                = var.cloud_env
     vault_telemtry_enabled   = var.vault_telemetry
     vault_recovery_shares    = var.vault_recovery_shares
     vault_recovery_threshold = var.vault_recovery_threshold
