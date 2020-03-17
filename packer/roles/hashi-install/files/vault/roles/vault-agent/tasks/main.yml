@@ -4,8 +4,8 @@
 - name: Configure Vault
   import_tasks: vault.yml
 
-- name: Initialize Vault
-  import_tasks: initialize.yml
-  when:
-    - vault_initialize == true
-    - vault_unsealed.stat.exists == false
+# - name: Initialize Vault
+#   import_tasks: initialize.yml
+#   when:
+#     - vault_initialize == true
+#     - vault_unsealed.stat.exists == false

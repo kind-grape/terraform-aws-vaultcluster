@@ -1,0 +1,23 @@
+## Show all the keys
+- name: Show Master Token
+  debug:
+    var: consul_master_token
+  when: consul_agent_is_server | bool
+
+- name: Show Gossip Encryption Key
+  debug:
+    var: consul_encryption_key
+  when: consul_agent_is_server | bool
+
+- name: Show Default Token
+  debug:
+    var: default_token
+  when: consul_agent_is_server | bool
+
+- name: Show Agent Token
+  debug:
+    var: client_agent_token
+
+- name: Show Vault Token
+  debug:
+    var: vault_token

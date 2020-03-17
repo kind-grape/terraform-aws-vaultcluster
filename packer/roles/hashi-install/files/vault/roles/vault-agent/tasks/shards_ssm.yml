@@ -1,0 +1,24 @@
+- name: Archive shards to parameter store
+  aws_ssm_parameter_store:
+    string_type: "SecureString"
+    name: "vault_recovery_share_{{ ansible_loop.index }}"
+    value: "{{ item }}"
+    description: "Consul Storage Server client agent ACL token"
+    region: "{{ ansible_ec2_placement_region }}"
+    overwrite_value: "always"
+  with_lines: "cat {{ unseal_keys_temp_file.stat.path }}"
+
+# - name: Archive shards to parameter store
+#   aws_ssm_parameter_store:
+#     string_type: "SecureString"
+#     name: "vault_recovery_share_{{ ansible_loop.index }}"
+#     value: "{{ item }}"
+#     description: "Consul Storage Server client agent ACL token"
+#     region: "{{ ansible_ec2_placement_region }}"
+#     overwrite_value: "always"
+#     loop: "{{ unseal_keys_output }}"
+#     loop_control:
+#       extended: yes
+#   with_lines: "cat {{ unseal_keys_temp_file.stat.path }}"
+#   when:
+#     - ansible_loop.index <= vault_recovery_shares
