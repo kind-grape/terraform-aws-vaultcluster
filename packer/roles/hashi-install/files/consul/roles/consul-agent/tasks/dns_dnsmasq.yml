@@ -1,11 +1,11 @@
 - name: Uninstall unbound
-  apt: name=unbound state=absent
+  yum: name=unbound state=absent
 
 - name: Remove unbound configuration
   file: path=/etc/unbound state=absent
 
 - name: Install dnsmasq
-  apt: name=dnsmasq state=present
+  yum: name=dnsmasq state=present
 
 - name: Configure dnsmasq to resolve .consul TLD
   copy:
@@ -15,7 +15,7 @@
       local-service
       server=/consul/127.0.0.1#{{ consul_dns_port }}
     owner: nobody
-    group: nogroup
+    group: nobody
     mode: 0640
   register: dnsmasq_config
 

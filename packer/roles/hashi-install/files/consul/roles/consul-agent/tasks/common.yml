@@ -31,8 +31,8 @@
 
 - name: Set API endpoint to HTTP or HTTPS
   set_fact:
-    consul_api_protocol: "{{ consul_tls_enabled | ternary('https', 'http') }}"
-    consul_api_port: "{{ consul_tls_enabled | ternary(consul_https_port, consul_http_port) }}"
+    consul_api_protocol: "{{ consul_https_enabled | ternary('https', 'http') }}"
+    consul_api_port: "{{ consul_https_enabled | ternary(consul_https_port, consul_http_port) }}"
 
 - name: Set Consul environment variables
   copy:

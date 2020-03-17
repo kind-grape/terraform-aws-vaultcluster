@@ -4,6 +4,7 @@
     url: "{{ consul_api_protocol }}://127.0.0.1:{{ consul_api_port }}/v1/status/leader"
     validate_certs: no
     return_content: yes
+    body_format: json
   register: consul_leader_address
   until: consul_leader_address.json != ""
   retries: 120
