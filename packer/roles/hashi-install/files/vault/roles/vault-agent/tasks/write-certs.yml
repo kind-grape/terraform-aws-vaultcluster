@@ -1,0 +1,29 @@
+- name: Install Vault CA certificate bundle
+  copy:
+    content: "{{ vault_tls_ca_bundle.stdout }}"
+    dest: "{{ vault_config_path }}/tls/vault_tls_ca_bundle"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0440
+  when: stat_vault_tls_ca_bundle.stat.exists == false
+  no_log: true
+
+- name: Install Vault server certificate
+  copy:
+    content: "{{ vault_server_tls_cert.stdout }}"
+    dest: "{{ vault_config_path }}/tls/vault_server_tls_cert"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0400
+  no_log: true
+  when: stat_vault_server_tls_cert.stat.exists == false
+
+- name: Install Vault server certificate key
+  copy:
+    content: "{{ vault_server_tls_key.stdout }}"
+    dest: "{{ vault_config_path }}/tls/vault_server_tls_key"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0400
+  no_log: true
+  when: stat_vault_server_tls_key.stat.exists == false

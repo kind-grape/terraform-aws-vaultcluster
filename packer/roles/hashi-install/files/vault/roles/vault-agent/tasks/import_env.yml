@@ -14,14 +14,6 @@
 - name: register files
   import_tasks: register-files.yml
 
-## Master Token import
-- name: Register Master token for Ansible plays
-  set_fact: consul_master_token="{{ lookup('file', master_token_file.stat.path) }}"
-  when: consul_agent_is_server | bool
-
-## Gossip Key import
-- name: Register Gossip Key for Ansible plays
-  set_fact: consul_encryption_key="{{ lookup('file', gossip_key_file.stat.path) }}"
 
 ## Consul Agent Token import
 - name: Register consul agent token for Ansible plays
@@ -35,10 +27,6 @@
 - name: Register default agent token for Ansible plays
   set_fact: default_token="{{ lookup('file', default_token_file.stat.path) }}"
 
-## Snapshot Agent Token import
-- name: Register Snapshot token for Ansible plays
-  set_fact: snapshot_token="{{ lookup('file', snapshot_token_file.stat.path) }}"
-  when: consul_agent_is_server | bool
 
 - name: Debug Output
   import_tasks: debug.yml

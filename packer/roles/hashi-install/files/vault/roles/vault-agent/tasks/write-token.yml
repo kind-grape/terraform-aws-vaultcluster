@@ -6,27 +6,6 @@
     group: "{{ consul_group }}"
     mode: 0700
 
-- name: Archive Master token
-  copy:
-    content: "{{ consul_master_token.stdout }}"
-    dest: "{{ consul_config_path }}/tokens/master"
-    owner: "{{ consul_user }}"
-    group: "{{ consul_group }}"
-    mode: 0640
-  when:
-    - consul_agent_is_server | bool
-    - master_token_file.stat.exists == false
-
-- name: Archive Gossip Key
-  copy:
-    content: "{{ consul_encryption_key.stdout }}"
-    dest: "{{ consul_config_path }}/tokens/gossipkey"
-    owner: "{{ consul_user }}"
-    group: "{{ consul_group }}"
-    mode: 0640
-  when:
-    - gossip_key_file.stat.exists == false
-
 - name: Archive Client agent token
   copy:
     content: "{{ client_agent_token.stdout }}"
@@ -53,14 +32,3 @@
     group: "{{ consul_group }}"
     mode: 0640
   when: default_token_file.stat.exists == false
-
-- name: Archive snapshot token
-  copy:
-    content: "{{ snapshot_token.stdout }}"
-    dest: "{{ consul_config_path }}/tokens/snapshot"
-    owner: "{{ consul_user }}"
-    group: "{{ consul_group }}"
-    mode: 0640
-  when:
-    - consul_agent_is_server | bool
-    - snapshot_token_file.stat.exists == false

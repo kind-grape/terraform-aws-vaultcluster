@@ -48,85 +48,33 @@
 - name: Set Ip Address
   set_fact: local_ip_address="{{ network_info.json[0].ipv4.ipAddress[0].privateIpAddress }}"
 
-- name: Fetch master token from parameter store
-  shell: "az keyvault secret show --name consul-master-token --vault-name {{ kms_name }}  | jq -r '.value'"
-  register: consul_master_token
-  when:
-    - master_token_file.stat.exists == false
-    - consul_agent_is_server | bool
-
-- name: Fetch Gossip Key from parameter store
-  shell: "az keyvault secret show --name consul-gossip-encryption-key --vault-name {{ kms_name }}  | jq -r '.value'"
-  register: consul_encryption_key
-  when: gossip_key_file.stat.exists == false
-
-- name: Fetch consul agent token from parameter store
-  shell: "az keyvault secret show --name consul-client-agent-token --vault-name {{ kms_name }}  | jq -r '.value'"
-  register: client_agent_token
-  when: agent_token_file.stat.exists == false
-
-- name: Fetch vault agent token from parameter store
-  shell: "az keyvault secret show --name consul-vault-token --vault-name {{ kms_name }}  | jq -r '.value'"
-  register: vault_token
-  when: vault_token_file.stat.exists == false
-
-- name: Fetch default agent token from parameter store
-  shell: "az keyvault secret show --name consul-default-token --vault-name {{ kms_name }}  | jq -r '.value'"
-  register: default_token
-  when: default_token_file.stat.exists == false
-
-- name: Fetch snapshot agent token from parameter store
-  shell: "az keyvault secret show --name consul-snapshot-token --vault-name {{ kms_name }}  | jq -r '.value'"
-  register: snapshot_token
-  when: snapshot_token_file.stat.exists == false
-
-- name: Fetch Root Cert from parameter store
-  shell: "az keyvault secret show --name consul-tls-ca-bundle --vault-name {{ kms_name }}  | jq -r '.value'"
+- name: Fetch Vault CA certificate bundle from parameter store
+  shell: "az keyvault secret show --name vault-tls-ca-bundle --vault-name {{ kms_name }}  | jq -r '.value'"
   register: consul_tls_ca_bundle
   when:
-    - stat_consul_tls_ca_bundle.stat.exists == false
-    - consul_https_enabled | bool
+    - stat_vault_tls_ca_bundle.stat.exists == false
+    - vault_https_enabled | bool
 
-- name: Fetch Client Cert from parameter store
-  shell: "az keyvault secret show --name consul-client-tls-cert --vault-name {{ kms_name }}  | jq -r '.value'"
+- name: Fetch Vault server certificate from parameter store
+  shell: "az keyvault secret show --name vault-server-tls-cert --vault-name {{ kms_name }}  | jq -r '.value'"
   register: consul_client_tls_cert
   when:
-    - stat_consul_client_tls_cert.stat.exists == false
-    - consul_https_enabled | bool
+    - stat_vault_server_tls_cert.stat.exists == false
+    - vault_https_enabled | bool
 
-- name: Fetch Client Cert Key from parameter store
-  shell: "az keyvault secret show --name consul-client-tls-key --vault-name {{ kms_name }}  | jq -r '.value'"
+- name: Fetch Vault server certificate key from parameter store
+  shell: "az keyvault secret show --name vault-server-tls-key --vault-name {{ kms_name }}  | jq -r '.value'"
   register: consul_client_tls_key
   when:
-    - stat_consul_client_tls_key.stat.exists == false
-    - consul_https_enabled | bool
-
-- name: Fetch Server Cert from parameter store
-  shell: "az keyvault secret show --name consul-server-tls-cert --vault-name {{ kms_name }}  | jq -r '.value'"
-  register: consul_server_tls_cert
-  when:
-    - consul_agent_is_server | bool
-    - stat_consul_server_tls_cert.stat.exists == false
-    - consul_https_enabled | bool
-
-- name: Fetch Server Cert Key from parameter store
-  shell: "az keyvault secret show --name consul-server-tls-key --vault-name {{ kms_name }}  | jq -r '.value'"
-  register: consul_server_tls_key
-  when:
-    - consul_agent_is_server | bool
-    - stat_consul_server_tls_key.stat.exists == false
-    - consul_https_enabled | bool
+    - stat_vault_server_tls_key.stat.exists == false
+    - vault_https_enabled | bool
 
 - name: Write Tokens to File System
-  import_tasks: token-write.yml
+  import_tasks: write-token.yml
 
 - name: Copying Certificates
-  import_tasks: certs.yml
-  when: consul_https_enabled | bool
-
-  # - name: Copying Vault Certificates
-  #   import_tasks: certs.yml
-  #   when: vault_https_enabled | bool
+  import_tasks: write-certs.yml
+  when: vault_https_enabled | bool
 
 - name: Logout of Azure
   shell: |
