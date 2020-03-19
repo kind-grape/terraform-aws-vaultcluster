@@ -1,4 +1,9 @@
 autopilot {
-  # redundancy_zone_tag = "az"
+  last_contact_threshold = "200ms"
+  cleanup_dead_servers = true
+  max_trailing_logs = 250
+  server_stabilization_time = "10s"
+  disable_upgrade_migration = false
   upgrade_version_tag = "consul_cluster_version"
+  redundancy_zone_tag = ""
 }

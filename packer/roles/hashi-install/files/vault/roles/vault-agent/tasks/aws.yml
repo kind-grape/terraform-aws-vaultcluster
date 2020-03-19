@@ -32,9 +32,6 @@
     - stat_vault_server_tls_key.stat.exists == false
     - vault_https_enabled | bool
 
-- name: Write Tokens to File System
-  import_tasks: write-certs.yml
-
 - name: Copying Certificates
-  import_tasks: certs.yml
+  import_tasks: write-certs.yml
   when: vault_https_enabled | bool

@@ -43,28 +43,28 @@
   when: snapshot_token_file.stat.exists == false
 
 - name: Fetch Root Cert from parameter store
-  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul_tls_ca_bundle | jq -r '.Parameter | .Value'"
+  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul-tls-ca-bundle | jq -r '.Parameter | .Value'"
   register: consul_tls_ca_bundle
   when:
     - stat_consul_tls_ca_bundle.stat.exists == false
     - consul_https_enabled | bool
 
 - name: Fetch Client Cert from parameter store
-  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul_client_tls_cert | jq -r '.Parameter | .Value'"
+  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul-server-tls-cert | jq -r '.Parameter | .Value'"
   register: consul_client_tls_cert
   when:
     - stat_consul_client_tls_cert.stat.exists == false
     - consul_https_enabled | bool
 
 - name: Fetch Client Cert Key from parameter store
-  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul_client_tls_key | jq -r '.Parameter | .Value'"
+  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul-server-tls-key | jq -r '.Parameter | .Value'"
   register: consul_client_tls_key
   when:
     - stat_consul_client_tls_key.stat.exists == false
     - consul_https_enabled | bool
 
 - name: Fetch Server Cert from parameter store
-  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul_server_tls_cert | jq -r '.Parameter | .Value'"
+  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul-client-tls-cert | jq -r '.Parameter | .Value'"
   register: consul_server_tls_cert
   when:
     - consul_agent_is_server | bool
@@ -72,7 +72,7 @@
     - consul_https_enabled | bool
 
 - name: Fetch Server Cert Key from parameter store
-  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul_server_tls_key | jq -r '.Parameter | .Value'"
+  shell: "aws ssm get-parameter --output json --region {{ location }} --with-decryption --name consul-client-tls-key | jq -r '.Parameter | .Value'"
   register: consul_server_tls_key
   when:
     - consul_agent_is_server | bool

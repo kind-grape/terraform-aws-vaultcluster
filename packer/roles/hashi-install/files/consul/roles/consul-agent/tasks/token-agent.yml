@@ -10,6 +10,9 @@
       service_prefix "" {
         policy = "read"
       }
+      key "acl-bootstrap-complete" {
+        policy = "read"
+      }
 
 - name: Make Consul agent ACL policy machine-readable
   set_fact:
