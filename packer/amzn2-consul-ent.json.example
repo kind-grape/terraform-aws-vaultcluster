@@ -9,29 +9,38 @@
     "subnet_id": "",
     "source_ami_name": "",
     "source_ami_owner": "",
-    "instance_type": ""
+    "instance_type": "",
+    "release": "",
+    "owner": ""
   },
-  "builders": [{
-    "type": "amazon-ebs",
-    "region": "{{user `region`}}",
-    "vpc_id": "{{ user `vpc_id`}}",
-    "subnet_id": "{{ user `subnet_id`}}",
-    "source_ami_filter": {
-      "filters": {
-        "virtualization-type": "hvm",
-        "name": "{{user `source_ami_name`}}",
-        "root-device-type": "ebs"
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "{{user `region`}}",
+      "vpc_id": "{{ user `vpc_id`}}",
+      "subnet_id": "{{ user `subnet_id`}}",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "{{user `source_ami_name`}}",
+          "root-device-type": "ebs"
+        },
+        "owners": ["{{user `source_ami_owner`}}"],
+        "most_recent": true
       },
-      "owners": ["{{user `source_ami_owner`}}"],
-      "most_recent": true
-    },
-    "instance_type": "{{user `instance_type`}}",
-    "ssh_username": "{{ user `ssh_username` }}",
-    "ami_name": "amz2-{{user `app_name`}}-ent-{{user `consul_version`}}-{{timestamp}}",
-    "tags": {
-      "Name": "amz2-{{user `app_name`}}-ent-{{user `consul_version`}}-{{timestamp}}"
+      "instance_type": "{{user `instance_type`}}",
+      "ssh_username": "{{ user `ssh_username` }}",
+      "ami_name": "amz2-{{user `app_name`}}-ent-{{user `consul_version`}}-{{isotime \"2006-01-02-150405\"}}",
+      "tags": {
+        "Name": "amz2-{{user `app_name`}}-ent-{{user `consul_version`}}-{{isotime \"2006-01-02-150405\"}}",
+        "Product": "{{user `app_name`}}",
+        "Consul-Version": "{{ user `consul_version` }}",
+        "OS": "Amazon Linux",
+        "Release": "{{ user `release` }}",
+        "Owner": "{{ user `owner` }}"
+      }
     }
-  }],
+  ],
   "provisioners": [
     {
       "type": "shell",
@@ -47,6 +56,7 @@
     {
       "type": "ansible",
       "playbook_file": "./install.yml",
+      "user": "{{ user `ssh_username` }}",
       "extra_arguments": [
         "--extra-vars", "vault_version={{user `vault_version`}} consul_version={{user `consul_version`}} app={{user `app_name`}}"
       ],
