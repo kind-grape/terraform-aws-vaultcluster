@@ -31,6 +31,8 @@ kms = {
   key_deletion_window     = "10"
 }
 
+bootstrap = true
+
 consul_storage = {
   count             = 3
   version           = "1.6.1"
