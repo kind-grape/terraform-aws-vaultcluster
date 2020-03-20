@@ -1,8 +1,19 @@
 #!/bin/bash -x
 set -x
 role="${role}"
+bootstrap="${bootstrap}"
 
-sudo usermod -a -G consul ec2-user
+if [ "${cloud_env}" == "aws" ]; then
+  user="ec2-user"
+elif [ "${cloud_env}" == "azure" ]; then
+  user="azure-user"
+elif [ "${cloud_env}" == "gcp" ]; then
+  user="gcp-user"
+else
+  user="generic-user"
+fi
+
+sudo usermod -a -G consul $user
 
 function create_consul_config {
 cat <<- _EOF_
@@ -28,6 +39,7 @@ cat <<- _EOF_
     consul_http_port: ${consul_http_port}
     consul_https_port: ${consul_https_port}
     consul_dns_port: ${consul_dns_port}
+    cloud_env: ${cloud_env}
 
   roles:
     - consul-agent
@@ -58,11 +70,14 @@ cat <<- _EOF_
     consul_http_port: ${consul_http_port}
     consul_https_port: ${consul_https_port}
     consul_dns_port: ${consul_dns_port}
+    vault_unseal: ${vault_unseal}
     vault_api_port: ${vault_api_port}
     vault_cluster_port: ${vault_cluster_port}
     vault_https_enabled: ${vault_https_enabled}
     vault_telemtry_enabled: ${vault_telemtry_enabled}
-    unseal_cloud: ${unseal_cloud}
+    vault_recovery_shares: ${vault_recovery_shares}
+    vault_recovery_threshold: ${vault_recovery_threshold}
+    cloud_env: ${cloud_env}
     vault_kms_key_id: ${vault_kms_key_id}
 
   roles:
@@ -71,9 +86,45 @@ cat <<- _EOF_
 _EOF_
 }
 
-if [ "$role" == "cslstore" ] || [ "$role" == "cslsd" ]; then
+function create_snapshot_config {
+cat <<- _EOF_
+- hosts: localhost
+  become: yes
+  become_user: root
+
+  vars:
+    consul_bootstrap_expect: ${consul_bootstrap_expect}
+    consul_datacenter: ${consul_datacenter}
+    consul_join_tag_key: auto_join
+    consul_join_tag_value: ${consul_join_tag_value}
+    consul_join_region: ${consul_join_region}
+    consul_agent_role: ${role}
+    consul_unbound: ${consul_unbound}
+    consul_dnsmasq: ${consul_dnsmasq}
+    consul_https_enabled: ${consul_https_enabled}
+    consul_bucket_name: ${consul_bucket_name}
+    consul_snapshot_name: ${consul_snapshot_name}
+    consul_agent_is_server: ${consul_agent_is_server}
+    consul_server_rpc_port: ${consul_server_rpc_port}
+    consul_serf_lan_port: ${consul_serf_lan_port}
+    consul_serf_wan_port: ${consul_serf_wan_port}
+    consul_http_port: ${consul_http_port}
+    consul_https_port: ${consul_https_port}
+    consul_dns_port: ${consul_dns_port}
+    cloud_env: ${cloud_env}
+
+  roles:
+    - consul-agent
+    - consul-snapshot
+_EOF_
+}
+
+if [ "$role" == "storage" ] || [ "$role" == "serviced" ]; then
   export -f create_consul_config
   create_consul_config > /etc/ansible/bootstrap.yml
+elif [ "$role" == "snapshot" ]; then
+  export -f create_snapshot_config
+  create_snapshot_config > /etc/ansible/bootstrap.yml
 elif [ "$role" == "vault" ]; then
   export -f create_vault_config
   create_vault_config > /etc/ansible/bootstrap.yml
@@ -81,4 +132,8 @@ else
   echo "You suck at role association"
 fi
 
-ansible-playbook /etc/ansible/bootstrap.yml
+if [ $bootstrap == true ]; then
+  sudo ansible-playbook /etc/ansible/bootstrap.yml
+else
+  echo "Not running Bootstrap, as Bootstrap = $bootstrap"
+fi
