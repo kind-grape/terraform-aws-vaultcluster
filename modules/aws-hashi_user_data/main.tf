@@ -1,4 +1,5 @@
 data "template_file" "user_data" {
+  # count    = local.serverinfo["count"] >= 1 ? 1 : 0
   template = file(var.user_data)
 
   vars = {
@@ -17,15 +18,15 @@ data "template_file" "user_data" {
     consul_https_enabled     = local.serverinfo["https"]
     consul_bucket_name       = local.snapshots["bucket_name"]
     consul_snapshot_name     = local.snapshots["snapshot_name"]
-    consul_server_rpc_port   = local.ports["consulbk_server_rpc_port"]
-    consul_serf_lan_port     = local.ports["consulbk_serf_lan_port"]
-    consul_serf_wan_port     = local.ports["consulbk_serf_wan_port"]
-    consul_http_port         = local.ports["consulbk_http_port"]
-    consul_https_port        = local.ports["consulbk_https_port"]
-    consul_dns_port          = local.ports["consulbk_dns_port"]
+    consul_server_rpc_port   = local.consul_ports["consul_server_rpc_port"]
+    consul_serf_lan_port     = local.consul_ports["consul_serf_lan_port"]
+    consul_serf_wan_port     = local.consul_ports["consul_serf_wan_port"]
+    consul_http_port         = local.consul_ports["consul_http_port"]
+    consul_https_port        = local.consul_ports["consul_https_port"]
+    consul_dns_port          = local.consul_ports["consul_dns_port"]
     vault_unseal             = var.vault_unseal
-    vault_api_port           = local.ports["vault_api_port"]
-    vault_cluster_port       = local.ports["vault_cluster_port"]
+    vault_api_port           = local.vault_ports["vault_api_port"]
+    vault_cluster_port       = local.vault_ports["vault_cluster_port"]
     vault_https_enabled      = local.serverinfo["tlslistener"]
     bootstrap                = var.bootstrap
     cloud_env                = var.cloud_env
@@ -46,4 +47,6 @@ data "template_cloudinit_config" "user_data" {
     content_type = "text/cloud-config"
     content      = data.template_file.user_data.rendered
   }
+
+  depends_on = [data.template_file.user_data]
 }

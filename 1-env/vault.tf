@@ -17,13 +17,14 @@ module "vault_sg" {
 }
 
 module "vault_user_data" {
-  source     = "../modules/aws-hashi_user_data"
-  kms_key_id = module.kms.kms_id
-  region     = var.region
-  tags       = local.tags
-  serverinfo = local.vault
-  ports      = local.ports
-  bootstrap  = var.bootstrap # true or false
+  source       = "../modules/aws-hashi_user_data"
+  kms_key_id   = module.kms.kms_id
+  region       = var.region
+  tags         = local.tags
+  serverinfo   = local.vault
+  consul_ports = module.consul_storage_sg.consul_ports
+  vault_ports  = module.vault_sg.vault_ports
+  bootstrap    = var.bootstrap # true or false
 }
 
 module "vault" {

@@ -28,13 +28,13 @@ module "consul_snapshot_s3" {
 module "consul_snapshot_user_data" {
   source = "../modules/aws-hashi_user_data"
 
-  kms_key_id = module.kms.kms_id
-  region     = var.region
-  tags       = local.tags
-  snapshots  = local.snapshots
-  serverinfo = local.consul_snap
-  ports      = local.ports
-  bootstrap  = var.bootstrap # true or false
+  kms_key_id   = module.kms.kms_id
+  region       = var.region
+  tags         = local.tags
+  snapshots    = local.snapshots
+  serverinfo   = local.consul_snap
+  consul_ports = module.consul_snap_sg.consul_ports
+  bootstrap    = var.bootstrap # true or false
 }
 
 module "consul_snapshot" {

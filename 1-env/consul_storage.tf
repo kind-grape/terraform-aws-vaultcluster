@@ -17,15 +17,15 @@ module "consul_storage_sg" {
 }
 
 module "consul_storage_user_data" {
-  source     = "../modules/aws-hashi_user_data"
+  source = "../modules/aws-hashi_user_data"
 
-  kms_key_id = module.kms.kms_id
-  region     = var.region
-  tags       = local.tags
-  serverinfo = local.consul_storage
-  ports      = local.ports
-  bootstrap  = var.bootstrap # true or false
-  cloud_env  = var.cloud_env # aws, azure, gcp
+  kms_key_id   = module.kms.kms_id
+  region       = var.region
+  tags         = local.tags
+  serverinfo   = local.consul_storage
+  consul_ports = module.consul_storage_sg.consul_ports
+  bootstrap    = var.bootstrap # true or false
+  cloud_env    = var.cloud_env # aws, azure, gcp
 }
 
 module "consul_storage" {

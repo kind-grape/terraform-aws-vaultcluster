@@ -5,4 +5,3 @@ output "user_data" {
 output "user_data_base64" {
   value = data.template_cloudinit_config.user_data.rendered
 }
-
