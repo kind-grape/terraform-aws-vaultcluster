@@ -1,0 +1,6 @@
+name 'consul'
+maintainer 'DigitalOnUs'
+description 'Provides recipes for managing Consul'
+version '0.1.0'
+source_url 'https://gitlab.com/DigitalOnUs/terraform/terraform-aws-vaultcluster'
+chef_version '>= 15.0'
