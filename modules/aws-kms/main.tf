@@ -8,12 +8,6 @@ resource "aws_iam_role" "instance_role" {
   }
 }
 
-resource "aws_iam_role_policy" "instance_role" {
-  name   = "consul-server-${var.name_prefix}"
-  role   = aws_iam_role.instance_role.id
-  policy = data.aws_iam_policy_document.policy.json
-}
-
 resource "aws_kms_key" "key" {
   description             = "Vault auto unseal key for ${var.name_prefix}"
   deletion_window_in_days = local.kmsinfo["key_deletion_window"]
@@ -52,4 +46,17 @@ resource "aws_iam_instance_profile" "instance_profile" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+## All Policies being created
+resource "aws_iam_role_policy" "instance_role" {
+  name   = "consul-server-${var.name_prefix}"
+  role   = aws_iam_role.instance_role.id
+  policy = data.aws_iam_policy_document.policy.json
+}
+
+resource "aws_iam_role_policy" "transit_role" {
+  name   = "consul-server-${var.name_prefix}-transit"
+  role   = aws_iam_role.instance_role.id
+  policy = data.aws_iam_policy_document.transit.json
 }

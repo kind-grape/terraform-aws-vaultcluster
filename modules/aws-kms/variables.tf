@@ -40,3 +40,9 @@ variable "snapshots" {
     snapshot_name = "consul-snapshot"
   }
 }
+
+variable "ami_owner_account" {
+  description = "Account that owns the AMI used"
+  type        = string
+  default     = "123456789111"
+}

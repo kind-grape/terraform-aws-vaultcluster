@@ -27,3 +27,16 @@ data "aws_iam_policy_document" "policy" {
     resources = ["arn:aws:s3:::${var.snapshots["bucket_name"]}"]
   }
 }
+
+data "aws_iam_policy_document" "transit" {
+  statement {
+    effect    = "Allow"
+    actions   = ["ec2:DescribeInstances", "iam:GetInstanceProfile", "iam:GetUser", "iam:GetRole"]
+    resources = ["*"]
+  }
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    resources = ["arn:aws:iam::${var.ami_owner_account}:role/${aws_iam_role.instance_role.name}"]
+  }
+}
