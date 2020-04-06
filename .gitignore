@@ -20,12 +20,14 @@ id_rsa*
 *.zip
 *.pem
 *.sh
+!**/VaultDR/*.sh
 !update_groups.sh
 !unseal.sh
 !cfssl*.sh
 !cert.sh
 !cleanup.sh
 !generate_consul_certs.sh
+!wait_for_vault.sh
 
 crash.log
 blah.txt

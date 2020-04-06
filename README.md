@@ -2,7 +2,7 @@
 
 ## Requirements
 1. Access to the Hashi Binaries ()
-1. AWS account, and environment variables set (AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID)
+1. AWS account, and environment variables set (AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID) - Requires iam:CreatePolicy permissions in AWS
 1. AWS Key Pair uploaded - Referenced in the code (see step 6 below)
 1. Terraform 12
 1. run 0-setup to create required network (if not already provided)

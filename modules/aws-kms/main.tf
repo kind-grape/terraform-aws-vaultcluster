@@ -49,6 +49,15 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 ## All Policies being created
+resource "aws_iam_policy" "policy" {
+  # Requires iam:CreatePolicy permissions in AWS
+  name        = "consul-server-${var.name_prefix}-transit"
+  path        = "/"
+  description = "Transit Policy for Vault"
+
+  policy = data.aws_iam_policy_document.transit.json
+}
+
 resource "aws_iam_role_policy" "instance_role" {
   name   = "consul-server-${var.name_prefix}"
   role   = aws_iam_role.instance_role.id
@@ -58,5 +67,5 @@ resource "aws_iam_role_policy" "instance_role" {
 resource "aws_iam_role_policy" "transit_role" {
   name   = "consul-server-${var.name_prefix}-transit"
   role   = aws_iam_role.instance_role.id
-  policy = data.aws_iam_policy_document.transit.json
+  policy = aws_iam_policy.policy.policy
 }
